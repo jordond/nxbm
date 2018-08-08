@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+        environment:
+          - NODE_ENV: TEST
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: yarn versions
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-{{ .Branch }}
+            - yarn-packages-master
+            - yarn-packages-
+      - run:
+          name: Install greenkeeper
+          command: npm install greenkeeper-lockfile@1
+      - run:
+          name: Install Dependencies
+          command: yarn install
+      - run:
+          name: Update Lockfile
+          command: ./node_modules/.bin/greenkeeper-lockfile-update
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules/
+      - run: yarn lint
+      - run: yarn build
+      - run:
+          name: Upload Lockfile
+          command: ./node_modules/.bin/greenkeeper-lockfile-upload

@@ -1,0 +1,89 @@
+{
+  "name": "nxbm",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=8.11.1"
+  },
+  "scripts": {
+    "precommit": "lint-staged",
+    "commit": "git-cz",
+    "lint": "tslint --project tsconfig.json --fix src/**/*.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "dev": "nodemon src/index.ts",
+    "dev:debug": "nodemon --inspect=5858 src/index.ts",
+    "prestart": "yarn build",
+    "start": "cross-env HOST=0.0.0.0 node dist/"
+  },
+  "author": "Jordon de Hoog",
+  "license": "ISC",
+  "dependencies": {
+    "@types/convict": "^4.2.0",
+    "axios": "^0.18.0",
+    "boom": "^7.2.0",
+    "convict": "^4.3.2",
+    "cross-env": "^5.2.0",
+    "dotenv": "^6.0.0",
+    "fs-extra": "^6.0.1",
+    "good": "^8.1.1",
+    "hapi": "^17.5.2",
+    "hapi-good-winston": "2.0.1",
+    "winston": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/boom": "^7.2.0",
+    "@types/dotenv": "^4.0.3",
+    "@types/fs-extra": "^5.0.4",
+    "@types/hapi": "^17.0.15",
+    "@types/node": "^10.5.2",
+    "@types/winston": "^2.3.9",
+    "commitizen": "^2.10.1",
+    "cz-conventional-changelog": "^2.1.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
+    "nodemon": "^1.18.1",
+    "prettier": "^1.13.7",
+    "rimraf": "^2.6.2",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "tslint-config-prettier": "^1.13.0",
+    "typescript": "^2.9.2"
+  },
+  "typings": "dist/types/index.d.ts",
+  "types": "dist/types/index.d.ts",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "{src,test}/**/*.ts": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "verbose": false,
+    "watch": [
+      "src",
+      ".env"
+    ],
+    "ext": "ts",
+    "ignore": [
+      "src/**/*.spec.ts"
+    ],
+    "execMap": {
+      "ts": "ts-node --files"
+    }
+  }
+}
