@@ -27,11 +27,11 @@
     "convict": "^4.3.2",
     "cross-env": "^5.2.0",
     "dotenv": "^6.0.0",
-    "fs-extra": "^6.0.1",
+    "fs-extra": "^7.0.0",
     "good": "^8.1.1",
     "hapi": "^17.5.2",
     "hapi-good-winston": "2.0.1",
-    "winston": "^2.4.2"
+    "winston": "^3.0.0"
   },
   "devDependencies": {
     "@types/boom": "^7.2.0",
@@ -51,7 +51,7 @@
     "tslint": "^5.10.0",
     "tslint-config-airbnb": "^5.9.2",
     "tslint-config-prettier": "^1.13.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.0.1"
   },
   "typings": "dist/types/index.d.ts",
   "types": "dist/types/index.d.ts",
