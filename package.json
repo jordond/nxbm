@@ -13,8 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "dev": "nodemon src/index.ts",
-    "dev:debug": "nodemon --inspect=5858 src/index.ts",
+    "dev": "nodemon src/index.ts -- --data=./tmp/data --level=debug",
+    "dev:debug": "nodemon --inspect=5858 src/index.ts -- --data=./tmp/data --level=debug",
     "prestart": "yarn build",
     "start": "cross-env HOST=0.0.0.0 node dist/"
   },
@@ -23,10 +23,11 @@
   "dependencies": {
     "@types/convict": "^4.2.0",
     "axios": "^0.18.0",
+    "bluebird": "^3.5.1",
     "boom": "^7.2.0",
+    "chokidar": "^2.0.4",
     "convict": "^4.3.2",
     "cross-env": "^5.2.0",
-    "dotenv": "^6.0.0",
     "fs-extra": "^6.0.1",
     "good": "^8.1.1",
     "hapi": "^17.5.2",
@@ -34,8 +35,9 @@
     "winston": "^2.4.2"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.23",
     "@types/boom": "^7.2.0",
-    "@types/dotenv": "^4.0.3",
+    "@types/chokidar": "^1.7.5",
     "@types/fs-extra": "^5.0.4",
     "@types/hapi": "^17.0.15",
     "@types/node": "^10.5.2",

@@ -6,7 +6,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/ts-node/dist/bin.js",
-      "args": ["--files", "--no-cache", "${workspaceRoot}/src/index.ts", "--level=debu"],
+      "args": ["--files", "--no-cache", "${workspaceRoot}/src/index.ts", "--level=debug", "--data=./tmp/data"],
       "cwd": "${workspaceRoot}",
       "protocol": "inspector"
     },
