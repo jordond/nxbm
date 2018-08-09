@@ -1,26 +1,46 @@
 import { mkdirp } from "fs-extra";
 import { resolve } from "path";
 
-import { configPath, getConfig, validateConfig } from "./config/config";
+import {
+  configPath,
+  getConfig,
+  IConfig,
+  saveConfig,
+  validateConfig
+} from "./config";
+import { startScanner } from "./files/scanner";
 import { create } from "./logger";
 import { format } from "./util/misc";
 
 export default async function bootstrap() {
   const config = getConfig();
 
+  await initData(config);
+  await initConfig(config);
+  await initFolderScanner(config);
+
+  await saveConfig();
+
+  return config;
+}
+
+async function initData({ paths }: IConfig) {
   try {
-    // Ensure data directory exists
-    await mkdirp(resolve(config.paths.data));
+    await mkdirp(resolve(paths!.data));
   } catch (error) {
-    create().error(`Unable to create data directory ${config.paths.data}`);
+    create().error(`Unable to create data directory ${paths!.data}`);
     throw error;
   }
 
-  const log = create("Bootstrap");
-  log.verbose(`Using ${config.paths.data} as the data directory`);
-  log.debug("Validating config...");
+  create("Bootstrap").verbose(`Using ${paths!.data} as the data directory`);
+}
+
+async function initConfig(config: IConfig) {
+  const log = create("Bootstrap:Config");
+  log.info(`Using config from ${configPath()}`);
 
   try {
+    log.debug("Validating config...");
     validateConfig();
     log.verbose("Config is valid");
   } catch (error) {
@@ -28,8 +48,11 @@ export default async function bootstrap() {
     throw new Error("Config is invalid!");
   }
 
-  log.info(`Using config from ${configPath()}`);
   log.verbose(`Using config:\n${format(config)}`);
+}
 
-  return config;
+async function initFolderScanner({ backups }: IConfig) {
+  const log = create("Bootstrap:Scanner");
+  const result = await startScanner(backups);
+  log.info(result ? "Folder scanner active" : "Nothing to scan");
 }

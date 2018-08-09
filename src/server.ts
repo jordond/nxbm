@@ -28,6 +28,7 @@ export async function start(config: IConfig) {
 
   await server.register({ options, plugin: require("good") });
 
+  log.info(`Adding ${routes.length} routes`);
   routes.forEach(({ method, path }) =>
     log.debug(`Adding -> ${method} - ${path}`)
   );

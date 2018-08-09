@@ -5,19 +5,25 @@ import { ILogConfig, LogLevel } from "../logger/ILogger";
 
 const root = resolve(__dirname, "../");
 const data = join(root, "data");
-const log = resolve(data, FILENAME);
 
 export interface IConfig {
-  env: string;
-  host: string;
-  port: number;
-  paths: IPaths;
-  logger: ILogConfig;
+  env?: string;
+  host?: string;
+  port?: number;
+  paths?: IPaths;
+  logger?: ILogConfig;
+  backups: IBackupConfig;
 }
 
 export interface IPaths {
   root: string;
   data: string;
+}
+
+export interface IBackupConfig {
+  folders: string[];
+  watch: boolean;
+  recursive: boolean;
 }
 
 export const schema: Schema<any> = {
@@ -31,7 +37,7 @@ export const schema: Schema<any> = {
   host: {
     doc: "The IP address to bind.",
     format: "ipaddress",
-    default: "127.0.0.1",
+    default: "0.0.0.0",
     env: "HOST",
     arg: "host"
   },
@@ -59,10 +65,6 @@ export const schema: Schema<any> = {
     }
   },
   logger: {
-    path: {
-      format: String,
-      default: log
-    },
     level: {
       doc: "Log level to use",
       default: LogLevel.INFO,
@@ -79,6 +81,25 @@ export const schema: Schema<any> = {
           );
         }
       }
+    }
+  },
+  backups: {
+    folders: {
+      doc: "Folders to watch for XCI and NSP files",
+      format: Array,
+      default: []
+    },
+    watch: {
+      doc: "Watch folders for changes",
+      format: Boolean,
+      default: true,
+      arg: "watch"
+    },
+    recursive: {
+      doc: "Scan folders recursively",
+      format: Boolean,
+      default: true,
+      arg: "recursive"
     }
   }
 };

@@ -1,6 +1,7 @@
+import { resolve } from "path";
 import { Logger, LoggerInstance, LoggerOptions, transports } from "winston";
 
-import { getConfig } from "../config/config";
+import { getConfig, IConfig } from "../config";
 import { ILogConfig, LogLevel } from "./ILogger";
 
 const { Console, File } = transports;
@@ -23,9 +24,9 @@ export function validateLevelOrDefault(level: string) {
 
 export function create(
   label: string = "App",
-  { level, path }: ILogConfig = getConfig().logger
+  config: IConfig = getConfig()
 ): LoggerInstance {
-  const logLevel = validateLevelOrDefault(level);
+  const logLevel = validateLevelOrDefault(config.logger!.level);
   const common: object = { level: logLevel, timestamp: true };
   const loggerOptions: LoggerOptions = {
     label,
@@ -38,7 +39,7 @@ export function create(
       }),
       new File({
         ...common,
-        filename: path,
+        filename: resolve(config.paths!.data, FILENAME),
         maxSize: 50 * 1024,
         maxFiles: 5,
         json: true
