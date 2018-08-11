@@ -1,6 +1,6 @@
 import * as convict from "convict";
 import { outputJson } from "fs-extra";
-import { resolve } from "path";
+import { join, resolve } from "path";
 
 import { create } from "../logger";
 import { IConfig, schema } from "./schema";
@@ -10,7 +10,12 @@ const config = convict(schema);
 export const CONFIG_NAME: string = "config.json";
 
 export function configPath() {
-  return resolve(config.get("paths.data"), CONFIG_NAME);
+  let path = config.get("paths.data");
+  if (!path) {
+    path = join(config.get("paths.root"), "data");
+    config.set("paths.data", path);
+  }
+  return resolve(path, CONFIG_NAME);
 }
 
 let cachedConfig: IConfig;

@@ -1,10 +1,8 @@
 import { Schema } from "convict";
-import { join, resolve } from "path";
-import { FILENAME } from "../logger";
+import { resolve } from "path";
 import { ILogConfig, LogLevel } from "../logger/ILogger";
 
 const root = resolve(__dirname, "../");
-const data = join(root, "data");
 
 export interface IConfig {
   env?: string;
@@ -24,6 +22,12 @@ export interface IBackupConfig {
   folders: string[];
   watch: boolean;
   recursive: boolean;
+  nswdb: INSWDBOptions;
+}
+
+export interface INSWDBOptions {
+  force?: boolean;
+  refreshInterval?: number;
 }
 
 export const schema: Schema<any> = {
@@ -59,7 +63,7 @@ export const schema: Schema<any> = {
     data: {
       doc: "Data directory for application",
       format: String,
-      default: data,
+      default: "",
       env: "DATA_DIR",
       arg: "data"
     }
@@ -100,6 +104,22 @@ export const schema: Schema<any> = {
       format: Boolean,
       default: true,
       arg: "recursive"
+    },
+    nswdb: {
+      force: {
+        doc: "Force the downloading of a fresh NSWDB",
+        format: Boolean,
+        default: false,
+        env: "NSWDB_FORCE",
+        arg: "nswdbForce"
+      },
+      refreshInterval: {
+        doc: "Refresh NSWDB after interval (in hours)",
+        format: Number,
+        default: 24,
+        env: "NSWDB_INTERVAL",
+        arg: "nswdbInterval"
+      }
     }
   }
 };

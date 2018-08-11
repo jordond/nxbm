@@ -1,7 +1,7 @@
 import { filter } from "bluebird";
-import chokidar from "chokidar";
+import * as chokidar from "chokidar";
 import { pathExists } from "fs-extra";
-import { basename, join, resolve } from "path";
+import { join, resolve } from "path";
 
 import { IBackupConfig } from "../config";
 import { create } from "../logger";
@@ -20,31 +20,39 @@ export async function startScanner({
     return;
   }
 
-  log.info(`Watching ${folders.length} folders`);
-
   const resolved = folders.map(path => resolve(path));
   const existing = await filter(resolved, verifyFolderExists);
 
-  scan(existing, watch, recursive);
+  if (!existing.length) {
+    log.warn("None of the specified folders exist...");
+    return;
+  }
 
-  return existing.length;
+  log.info(`${watch ? "Watching" : "Scanning"} ${existing.length} folders`);
+
+  await scan(existing, watch, recursive);
+  log.info(`${watch ? "Scanner is active" : "Scanning completed"}`);
 }
 
 function scan(
   paths: string[],
   persistent: boolean = true,
   recursive: boolean = true
-) {
-  const watchPaths = paths.map(x =>
-    join(x, `${recursive ? "**/" : ""}*.(xci|nsp)`)
-  );
-  watchPaths.forEach(x => log.verbose(`Watching -> ${x}`));
+): Promise<void> {
+  return new Promise(done => {
+    const watchPaths = paths.map(x =>
+      join(x, `${recursive ? "**/" : ""}*.(xci|nsp)`)
+    );
+    watchPaths.forEach(x =>
+      log.verbose(`${persistent ? "Watching" : "Scanning"}  -> ${x}`)
+    );
 
-  chokidar
-    .watch(watchPaths, { persistent })
-    .on("ready", () => log.verbose(`ready`))
-    .on("add", file => log.debug(`add -> ${file}`))
-    .on("unlink", file => log.debug(`remove -> ${file}`));
+    chokidar
+      .watch(watchPaths, { persistent })
+      .on("add", file => log.debug(`add -> ${file}`))
+      .on("unlink", file => log.debug(`remove -> ${file}`))
+      .on("ready", () => done());
+  });
 }
 
 async function verifyFolderExists(path: string) {

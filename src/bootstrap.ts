@@ -8,7 +8,7 @@ import {
   saveConfig,
   validateConfig
 } from "./config";
-import { startScanner } from "./files/scanner";
+import { getReleasesDB, startScanner } from "./files";
 import { create } from "./logger";
 import { format } from "./util/misc";
 
@@ -52,7 +52,6 @@ async function initConfig(config: IConfig) {
 }
 
 async function initFolderScanner({ backups }: IConfig) {
-  const log = create("Bootstrap:Scanner");
-  const result = await startScanner(backups);
-  log.info(result ? "Folder scanner active" : "Nothing to scan");
+  await getReleasesDB(backups.nswdb);
+  await startScanner(backups);
 }

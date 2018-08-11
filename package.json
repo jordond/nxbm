@@ -13,8 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "dev": "nodemon src/index.ts -- --data=./tmp/data --level=debug",
-    "dev:debug": "nodemon --inspect=5858 src/index.ts -- --data=./tmp/data --level=debug",
+    "dev": "nodemon src/index.ts -- --root=./tmp --level=debug",
+    "dev:debug": "nodemon --inspect=5858 src/index.ts -- --root=./tmp --level=debug",
     "prestart": "yarn build",
     "start": "cross-env HOST=0.0.0.0 node dist/"
   },
@@ -32,7 +32,8 @@
     "good": "^8.1.1",
     "hapi": "^17.5.2",
     "hapi-good-winston": "2.0.1",
-    "winston": "^2.4.2"
+    "winston": "^2.4.2",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.23",
@@ -42,6 +43,7 @@
     "@types/hapi": "^17.0.15",
     "@types/node": "^10.5.2",
     "@types/winston": "^2.3.9",
+    "@types/xml2js": "^0.4.3",
     "commitizen": "^2.10.1",
     "cz-conventional-changelog": "^2.1.0",
     "husky": "^0.14.3",
@@ -65,6 +67,7 @@
   "lint-staged": {
     "{src,test}/**/*.ts": [
       "prettier --write",
+      "tslint --project tsconfig.json --fix",
       "git add"
     ]
   },
@@ -77,8 +80,7 @@
     "restartable": "rs",
     "verbose": false,
     "watch": [
-      "src",
-      ".env"
+      "src"
     ],
     "ext": "ts",
     "ignore": [

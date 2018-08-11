@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { Logger, LoggerInstance, LoggerOptions, transports } from "winston";
 
 import { getConfig, IConfig } from "../config";
-import { ILogConfig, LogLevel } from "./ILogger";
+import { LogLevel } from "./ILogger";
 
 const { Console, File } = transports;
 
@@ -27,9 +27,8 @@ export function create(
   config: IConfig = getConfig()
 ): LoggerInstance {
   const logLevel = validateLevelOrDefault(config.logger!.level);
-  const common: object = { level: logLevel, timestamp: true };
+  const common: object = { label, level: logLevel, timestamp: true };
   const loggerOptions: LoggerOptions = {
-    label,
     transports: [
       new Console({
         ...common,
