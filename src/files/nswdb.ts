@@ -42,12 +42,6 @@ export async function getGameDatabase(
   return nswdb;
 }
 
-// TODO - BROKEN
-/*
-  Download if doesn't exist = works
-  Download if exists and old = true
-  download if exists and NOT OLD = false
-*/
 async function getXmlGamesDatabase(
   path: string,
   { force, refreshInterval }: INSWDBOptions
@@ -58,7 +52,10 @@ async function getXmlGamesDatabase(
   }
 
   const cached = await readDBJsonFile(path, refreshInterval!);
-  if (!cached.updatedAt || shouldDownloadNewDB(cached, refreshInterval!)) {
+  if (
+    !cached.updatedAt ||
+    (await shouldDownloadNewDB(cached, refreshInterval!))
+  ) {
     log.info("Cached DB is too old, downloading a new NSWDB");
     return startDownloadAndSaveResult(path);
   }
