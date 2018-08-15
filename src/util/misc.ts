@@ -22,3 +22,13 @@ export function hourToMs(hours: number): number {
 export function prettyDateTime(date: Date): string {
   return `${date.toLocaleDateString()} - ${date.toLocaleTimeString()}`;
 }
+
+export function create0toNArray(length: number): number[] {
+  return [...Array(length).keys()];
+}
+
+export function create1toNArray(length: number): number[] {
+  return Array(length)
+    .fill(null)
+    .map((_, index) => index + 1);
+}

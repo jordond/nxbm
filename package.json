@@ -32,6 +32,7 @@
     "good": "^8.1.1",
     "hapi": "^17.5.2",
     "hapi-good-winston": "2.0.1",
+    "int64-buffer": "^0.1.10",
     "winston": "^2.4.2",
     "xml2js": "^0.4.19"
   },
