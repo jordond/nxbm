@@ -1,4 +1,4 @@
-import { read } from "fs-extra";
+import { open, read } from "fs-extra";
 import { Int64LE } from "int64-buffer";
 
 export function read64LEFloat(buffer: Buffer, start: number = 0): number {
@@ -14,6 +14,15 @@ export function copyBuffer(
   const newBuffer = Buffer.alloc(length);
   buffer.copy(newBuffer, 0, start, start + length);
   return newBuffer;
+}
+
+export async function openReadNBytes(
+  filePath: string,
+  length: number,
+  position: number = 0
+): Promise<Buffer> {
+  const fd = await open(filePath, "r");
+  return readNBytes(fd, length, position);
 }
 
 export async function readNBytes(

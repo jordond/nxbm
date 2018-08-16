@@ -102,6 +102,12 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/podium/-/podium-1.0.0.tgz#bfaa2151be2b1d6109cc69f7faa9dac2cba3bb20"
 
+"@types/python-shell@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@types/python-shell/-/python-shell-0.4.1.tgz#5eac2cf408e31ed8f870b30eeab1128d11a932ed"
+  dependencies:
+    "@types/events" "*"
+
 "@types/shot@*":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@types/shot/-/shot-3.4.0.tgz#459477c5187d3ebd303660ab099e7e9e0f3b656f"
@@ -2528,6 +2534,10 @@ pumpify@1.3.x:
 punycode@2.x.x:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.0.tgz#5f863edc89b96db09074bad7947bf09056ca4e7d"
+
+python-shell@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-0.5.0.tgz#461983bafd092010bc2760c365b13e7d50aab231"
 
 randomatic@^3.0.0:
   version "3.0.0"

@@ -1,15 +1,17 @@
+import BlueBird, { map as mapPromise } from "bluebird";
 import { open } from "fs-extra";
 
-import BlueBird, { map as mapPromise } from "bluebird";
 import { readByByte, readNBytes } from "../../util/buffer";
 import { FSEntry } from "./models/FSEntry";
 import { FSHeader } from "./models/FSHeader";
-import { Detail, Details } from "./secure";
+import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
 import { findVersion } from "./Version";
 import { XCIHeader } from "./XCIHeader";
 
 const FILE =
   "/Users/jordondehoog/Downloads/switchsd/0003 - ARMS (World) (En,Ja,Fr,De,Es,It,Nl,Ru) [Trimmed].xci";
+
+const KEY = "AEAAB1CA08ADF9BEF12991F369E3C567D6881E4E4A6A47A51F6E4877062D542D";
 
 open(FILE, "r", async (err, fd) => {
   if (err) {
@@ -40,6 +42,11 @@ open(FILE, "r", async (err, fd) => {
 
   const secureDetails = await getSecureHFS0Details(fd, secureHFS0, hfs0Size);
   console.log(JSON.stringify(secureDetails, null, 2));
+
+  // Decrypt the NCA header
+  const details = getNCADetails(secureDetails);
+  const ncaHeader = await decryptNCAHeader(FILE, KEY, details.offset);
+  console.log(`XCI TitleID: ${ncaHeader.displayTitleId()}`);
 
   // Get the version number
   const updateHFS0 = hsf0Entries.find(entry => entry.name === "update");

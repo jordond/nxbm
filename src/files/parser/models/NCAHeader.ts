@@ -19,10 +19,15 @@ export class NCAHeader {
     this.masterKeyRev = bytes[544];
   }
 
+  public displayTitleId() {
+    return `0${this.titleID.toString(16).toUpperCase()}`;
+  }
+
   public toString() {
     return `NCA - Header:
     Magic: ${this.magic}
     Title ID: ${this.titleID}
+              ${this.displayTitleId()}
     SDK Version 1: ${this.sdkVersion1}
     SDK Version 2: ${this.sdkVersion2}
     SDK Version 3: ${this.sdkVersion3}
