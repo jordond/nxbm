@@ -5,7 +5,7 @@ import { readByByte, readNBytes } from "../../util/buffer";
 import { FSEntry } from "./models/FSEntry";
 import { FSHeader } from "./models/FSHeader";
 import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
-import { findVersion } from "./Version";
+import { findVersion } from "./version";
 import { XCIHeader } from "./XCIHeader";
 
 const FILE =
