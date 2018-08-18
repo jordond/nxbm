@@ -9,11 +9,31 @@ export function read64LEFloat(buffer: Buffer, start: number = 0): number {
 export function copyBuffer(
   buffer: Buffer,
   start: number = 0,
-  length: number = buffer.length
+  length?: number
 ): Buffer {
-  const newBuffer = Buffer.alloc(length);
-  buffer.copy(newBuffer, 0, start, start + length);
+  const takeLength = length ? start + length : buffer.length;
+  const newBuffer = Buffer.alloc(takeLength);
+  buffer.copy(newBuffer, 0, start, takeLength);
   return newBuffer;
+}
+
+export function takeBytes() {
+  const options: { buffer?: Buffer; skip?: number } = {};
+  const factory = {
+    from(buffer: Buffer) {
+      options.buffer = buffer;
+      return factory;
+    },
+    skip(length: number) {
+      options.skip = length;
+      return factory;
+    },
+    take(length: number) {
+      return copyBuffer(options.buffer!, options.skip || 0, length);
+    }
+  };
+
+  return factory;
 }
 
 export async function openReadNBytes(
