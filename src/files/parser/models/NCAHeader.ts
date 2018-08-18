@@ -1,4 +1,5 @@
 import { read64LEFloat } from "../../../util/buffer";
+import { formatTitleId } from "../../../util/parser";
 
 export class NCAHeader {
   public magic: string;
@@ -20,7 +21,16 @@ export class NCAHeader {
   }
 
   public displayTitleId() {
-    return `0${this.titleID.toString(16).toUpperCase()}`;
+    return formatTitleId(this.titleID);
+  }
+
+  public formatSDKVersion() {
+    return [
+      this.sdkVersion4,
+      this.sdkVersion3,
+      this.sdkVersion2,
+      this.sdkVersion1
+    ].join(".");
   }
 
   public toString() {

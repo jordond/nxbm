@@ -2,6 +2,7 @@ import BlueBird, { map as mapPromise } from "bluebird";
 import { open } from "fs-extra";
 
 import { readByByte, readNBytes } from "../../util/buffer";
+import { readRawKeyFile } from "../keys";
 import { FSEntry } from "./models/FSEntry";
 import { FSHeader } from "./models/FSHeader";
 import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
@@ -11,7 +12,7 @@ import { XCIHeader } from "./XCIHeader";
 const FILE =
   "/Users/jordondehoog/Downloads/switchsd/0003 - ARMS (World) (En,Ja,Fr,De,Es,It,Nl,Ru) [Trimmed].xci";
 
-const KEY = "AEAAB1CA08ADF9BEF12991F369E3C567D6881E4E4A6A47A51F6E4877062D542D";
+const KEYS_PATH = "/Users/jordondehoog/dev/nxbm/tmp/data/keys.txt";
 
 open(FILE, "r", async (err, fd) => {
   if (err) {
@@ -20,13 +21,16 @@ open(FILE, "r", async (err, fd) => {
     return;
   }
 
-  const xciHeader = new XCIHeader(await readNBytes(fd, 61440));
-  console.log(xciHeader.toString());
+  const { headerKey, validate } = await readRawKeyFile(KEYS_PATH);
+  const valid = validate();
+  if (!valid.valid) {
+    throw valid.errors.join("\n");
+  }
 
+  const xciHeader = new XCIHeader(await readNBytes(fd, 61440));
   const hfs0Header = new FSHeader(
     await readNBytes(fd, 16, xciHeader.hfs0Offset)
   );
-  console.log(hfs0Header.toString());
 
   const hfs0Size = xciHeader.hfs0Offset + xciHeader.hfs0Size;
   const hsf0Entries: FSEntry[] = await getMainHFS0Entries(
@@ -34,18 +38,15 @@ open(FILE, "r", async (err, fd) => {
     xciHeader,
     hfs0Header
   );
-  hsf0Entries.forEach(x => console.log(x.toString()));
 
   // Handle secure partition details
   const secureHFS0 = hsf0Entries.find(entry => entry.name === "secure");
   if (!secureHFS0) throw new Error("A Secure partition was not found!");
 
-  const secureDetails = await getSecureHFS0Details(fd, secureHFS0, hfs0Size);
-  console.log(JSON.stringify(secureDetails, null, 2));
-
   // Decrypt the NCA header
+  const secureDetails = await getSecureHFS0Details(fd, secureHFS0, hfs0Size);
   const details = getNCADetails(secureDetails);
-  const ncaHeader = await decryptNCAHeader(FILE, KEY, details.offset);
+  const ncaHeader = await decryptNCAHeader(FILE, headerKey, details.offset);
   console.log(`XCI TitleID: ${ncaHeader.displayTitleId()}`);
 
   // Get the version number
@@ -71,10 +72,7 @@ async function getFS0Header(
   hfs0Size: number
 ): Promise<FSHeader> {
   const offset = entry.offset + hfs0Size;
-  const header = new FSHeader(await readNBytes(file, 16, offset));
-  console.log(header.toString());
-
-  return header;
+  return new FSHeader(await readNBytes(file, 16, offset));
 }
 
 function getFSEntries(
@@ -110,14 +108,10 @@ async function getSecureHFS0Details(
   );
 
   // Iterate over the children in the secure partition and gather sizes and offsets
-  const secureDetail = secureEntries.map<Detail>(entry => ({
+  return secureEntries.map<Detail>(entry => ({
     size: entry.size,
     offset: calcSecureOffset(secureHeader, rootEntry, entry, hfs0Size)
   }));
-
-  secureEntries.forEach(x => console.log(x.toString()));
-
-  return secureDetail;
 }
 
 function calcSecureOffset(

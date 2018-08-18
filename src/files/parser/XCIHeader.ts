@@ -1,4 +1,5 @@
 import { read64LEFloat } from "../../util/buffer";
+import { hexToGbStr } from "../../util/parser";
 
 export class XCIHeader {
   public magic: string;
@@ -20,33 +21,9 @@ export class XCIHeader {
     Magic: ${this.magic}
     Card Size: 0x${this.cardSize1.toString(16)} -> ${
       this.cardSize1
-    } => ${this.hexToGb(this.cardSize1, true)}
+    } => ${hexToGbStr(this.cardSize1)}
     Card Size2: ${this.cardSize2}
     HFS0 Offset: ${this.hfs0Offset}
     HFS0 Size: ${this.hfs0Size}`;
-  }
-
-  public hexToGb(hex: number, isStr = false): string | number {
-    const conv = () => {
-      switch (hex) {
-        case 0xfa:
-          return 1;
-        case 0xf8:
-          return 2;
-        case 0xf0:
-          return 4;
-        case 0xe0:
-          return 8;
-        case 0xe1:
-          return 16;
-        case 0xe2:
-          return 32;
-        default:
-          return 0;
-      }
-    };
-
-    const val = conv();
-    return isStr ? `${val}GB` : val;
   }
 }
