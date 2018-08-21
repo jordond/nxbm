@@ -16,7 +16,7 @@ export function getNCADetails(details: Details): Detail {
       }
       return prev;
     },
-    { size: -1, offset: -1 }
+    { size: -1, offset: -1, name: "" }
   );
 }
 
@@ -52,5 +52,6 @@ export type Details = Detail[];
 
 export interface Detail {
   size: number;
+  name: string;
   offset: number;
 }

@@ -7,6 +7,7 @@ import { create } from "../logger";
 import { format, olderThan, prettyDateTime, youngerThan } from "../util/misc";
 import { parseXml } from "../util/xmlToJson";
 import { NSWDBCache, ParsedXml, Release } from "./nswdb.types";
+import { File } from "./parser/models/File";
 
 const FILENAME = "nswdb.json";
 const NSWDB_URL = "http://nswdb.com/xml.php";
@@ -14,32 +15,49 @@ const STALE_HOURS = 24;
 
 const log = create("NSWDB");
 
-const cache: NSWDBCache = { db: [] };
+let cache: NSWDBCache = {
+  releases: [],
+  find: (file: File) => findGameFromDB(cache.releases, file)
+};
+
+function findGameFromDB(
+  db: Release[],
+  { titleID, version }: File
+): Release | undefined {
+  return db.find(
+    release =>
+      release.titleid === titleID() &&
+      release.firmware.toLowerCase() === version
+  );
+}
 
 export async function getGameDatabase(
   dataDir: string,
-  { force = false, refreshInterval = STALE_HOURS }: INSWDBOptions
+  { force = false, refreshInterval = STALE_HOURS }: INSWDBOptions = {}
 ) {
-  const { updatedAt, db } = cache;
+  const { updatedAt, releases } = cache;
   if (
     !force &&
-    db.length &&
+    releases.length &&
     updatedAt &&
-    youngerThan(updatedAt, refreshInterval)
+    youngerThan(new Date(updatedAt), refreshInterval)
   ) {
-    return db;
+    return cache;
   }
 
   const path = resolve(dataDir, FILENAME);
 
   const nswdb = await getXmlGamesDatabase(path, { force, refreshInterval });
-  if (!nswdb.db.length) {
+  if (!nswdb.releases || !nswdb.releases.length) {
     log.error("The games database is empty, something went wrong");
   } else {
-    log.info(`Successfully loaded nswdb with [${nswdb.db.length}] entries`);
+    log.info(
+      `Successfully loaded nswdb with [${nswdb.releases.length}] entries`
+    );
+    cache = { ...cache, ...nswdb };
   }
 
-  return nswdb;
+  return cache;
 }
 
 async function getXmlGamesDatabase(
@@ -51,27 +69,29 @@ async function getXmlGamesDatabase(
     return startDownloadAndSaveResult(path);
   }
 
-  const cached = await readDBJsonFile(path, refreshInterval!);
+  const cached = await readDBJsonFile(path!);
+  const updatedAt = cached.updatedAt ? new Date(cached.updatedAt) : null;
   if (
-    !cached.updatedAt ||
-    (await shouldDownloadNewDB(cached, refreshInterval!))
+    updatedAt === null ||
+    (await shouldDownloadNewDB(updatedAt, refreshInterval!))
   ) {
-    log.info("Cached DB is too old, downloading a new NSWDB");
+    log.info("Cached DB doesn't exist, or is too old.");
+    log.info("Downloading a fresh copy of the NSWDB");
     return startDownloadAndSaveResult(path);
   }
 
   return cached;
 }
 
-async function startDownloadAndSaveResult(path: string): Promise<NSWDBCache> {
+async function startDownloadAndSaveResult(
+  path: string
+): Promise<Partial<NSWDBCache>> {
   const releases = await downloadNswDBFromWeb();
+
   return saveDBJsonFile(path, releases);
 }
 
-async function readDBJsonFile(
-  path: string,
-  refreshInterval: number
-): Promise<NSWDBCache> {
+async function readDBJsonFile(path: string): Promise<Partial<NSWDBCache>> {
   log.info(`Attempting to read DB from ${path}`);
 
   try {
@@ -80,7 +100,7 @@ async function readDBJsonFile(
     log.verbose(
       `Cache was last updated at ${prettyDateTime(new Date(result.updatedAt!))}`
     );
-    log.verbose(`Found ${result.db.length} games in database`);
+    log.verbose(`Found ${result.releases.length} games in database`);
 
     return result;
   } catch (error) {
@@ -88,17 +108,16 @@ async function readDBJsonFile(
     log.debug(error);
   }
 
-  return { db: [] };
+  return { releases: [] };
 }
 
 function shouldDownloadNewDB(
-  cached: NSWDBCache,
-  refreshInterval: number
+  updatedAt?: Date,
+  refreshInterval: number = STALE_HOURS
 ): boolean {
   log.verbose("Checking if cache needs to be refreshed");
 
-  const isOlder =
-    !cached.updatedAt || olderThan(cached.updatedAt, refreshInterval);
+  const isOlder = !updatedAt || olderThan(updatedAt, refreshInterval);
   log.verbose(
     isOlder
       ? `DB is older than ${refreshInterval} hours`
@@ -135,13 +154,13 @@ async function downloadNswDBFromWeb(): Promise<Release[]> {
 async function saveDBJsonFile(
   path: string,
   data: Release[]
-): Promise<NSWDBCache> {
+): Promise<Partial<NSWDBCache>> {
   log.verbose(`Attempting to save DB to ${path}`);
 
   try {
-    const output: NSWDBCache = {
+    const output: Partial<NSWDBCache> = {
       updatedAt: new Date(),
-      db: data
+      releases: data
     };
 
     await outputJson(path, output, { spaces: 2 });
@@ -151,5 +170,5 @@ async function saveDBJsonFile(
     log.error("Unable to save NSWDB...");
     log.error(error);
   }
-  return { db: [] };
+  return { releases: [] };
 }

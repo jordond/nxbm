@@ -1,3 +1,5 @@
+import { File } from "./parser/models/File";
+
 export interface Release {
   id: string;
   name: string;
@@ -25,5 +27,6 @@ export interface ParsedXml {
 
 export interface NSWDBCache {
   updatedAt?: Date;
-  db: Release[];
+  releases: Release[];
+  find: (file: File) => Release | undefined;
 }

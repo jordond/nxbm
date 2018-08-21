@@ -1,5 +1,17 @@
-// TODO
-// export function getMasterKey(keys: MasterKeys, keyRevision: number) {}
+import { MasterKeys } from "../keys";
+
+export function getMasterKey(keys: MasterKeys, keyRevision: number) {
+  let strRevision: string = "";
+  if (keyRevision === 0 || keyRevision === 1) {
+    strRevision = "00";
+  } else if (keyRevision < 17) {
+    strRevision = `0${keyRevision - 1}`;
+  } else if (keyRevision >= 17) {
+    strRevision = `${keyRevision - 1}`;
+  }
+
+  return keys[strRevision] || "";
+}
 
 /**
  * Convert the master key byte value to a human readable string
@@ -8,9 +20,10 @@
  * @param id Raw byte value for master key
  */
 export function getMasterKeyStr(id: number) {
-  if (id < 1) return "N/A";
+  if (id < 0) return "";
 
   const map: { [key: string]: string } = {
+    0: "MasterKey0 (1.0.0-2.3.0)",
     1: "MasterKey0 (1.0.0-2.3.0)",
     2: "MasterKey1 (3.0.0)",
     3: "MasterKey2 (3.0.1-3.0.2)",
