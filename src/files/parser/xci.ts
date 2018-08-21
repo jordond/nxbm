@@ -1,8 +1,10 @@
 import BlueBird, { map as mapPromise } from "bluebird";
-import { open } from "fs-extra";
+import { open, stat } from "fs-extra";
 
-import { readByByte, readNBytes } from "../../util/buffer";
+import { readByByte, readNBytes, readWriteByNBytes } from "../../util/buffer";
 import { readRawKeyFile } from "../keys";
+import { getGameDatabase } from "../nswdb";
+import { File } from "./models/File";
 import { FSEntry } from "./models/FSEntry";
 import { FSHeader } from "./models/FSHeader";
 import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
@@ -13,21 +15,45 @@ const FILE =
   "/Users/jordondehoog/Downloads/switchsd/0003 - ARMS (World) (En,Ja,Fr,De,Es,It,Nl,Ru) [Trimmed].xci";
 
 const KEYS_PATH = "/Users/jordondehoog/dev/nxbm/tmp/data/keys.txt";
+const TEMP_META_OUT = "/Users/jordondehoog/dev/nxbm/tmp/meta";
 
-open(FILE, "r", async (err, fd) => {
-  if (err) {
-    console.error("Whoops");
-    console.error(err);
-    return;
+async function testParseAndGrab(path: string) {
+  const game = await parseXCI(path);
+  const db = await getGameDatabase("/Users/jordondehoog/dev/nxbm/tmp/data");
+
+  const release = db.find(game);
+  if (release) {
+    console.log(`Found release`);
+  } else {
+    console.log(`Unable to find release... ${game.filename()}`);
   }
+}
 
+testParseAndGrab(FILE);
+
+export async function parseXCI(path: string): Promise<File> {
   const { headerKey, validate } = await readRawKeyFile(KEYS_PATH);
   const valid = validate();
   if (!valid.valid) {
     throw valid.errors.join("\n");
   }
 
+  const fd = await open(path, "r");
+  const stats = await stat(FILE);
+
+  const xciData = new File({
+    filepath: FILE,
+    totalSizeBytes: stats.size,
+    distributionType: "Cartridge",
+    contentType: "Application"
+  });
+
   const xciHeader = new XCIHeader(await readNBytes(fd, 61440));
+  xciData.assign({
+    usedSizeBytes: xciHeader.cardSize2 * 512 + 512,
+    rawCartSize: xciHeader.cardSize1
+  });
+
   const hfs0Header = new FSHeader(
     await readNBytes(fd, 16, xciHeader.hfs0Offset)
   );
@@ -43,11 +69,20 @@ open(FILE, "r", async (err, fd) => {
   const secureHFS0 = hsf0Entries.find(entry => entry.name === "secure");
   if (!secureHFS0) throw new Error("A Secure partition was not found!");
 
-  // Decrypt the NCA header
+  // Gather information about the secure partition
   const secureDetails = await getSecureHFS0Details(fd, secureHFS0, hfs0Size);
+
+  // Decrypt the NCA header
   const details = getNCADetails(secureDetails);
   const ncaHeader = await decryptNCAHeader(FILE, headerKey, details.offset);
-  console.log(`XCI TitleID: ${ncaHeader.displayTitleId()}`);
+  xciData.assign({
+    titleIDRaw: ncaHeader.titleID,
+    sdkVersion: ncaHeader.formatSDKVersion(),
+    masterKeyRevisionRaw: ncaHeader.masterKeyRev
+  });
+
+  // Get detailed information containe in secure partition
+  await gatherNCATargets(fd, secureDetails);
 
   // Get the version number
   const updateHFS0 = hsf0Entries.find(entry => entry.name === "update");
@@ -55,8 +90,11 @@ open(FILE, "r", async (err, fd) => {
 
   const updateHeader = await getFS0Header(fd, updateHFS0, hfs0Size);
   const updateEntries = await getFSEntries(fd, updateHeader, hfs0Size);
-  console.log(`XCI Version: ${findVersion(updateEntries.map(x => x.name))}`);
-});
+  xciData.version = findVersion(updateEntries.map(x => x.name));
+
+  console.log(xciData.toString());
+  return xciData;
+}
 
 function calcFSOffset(offset: number, additional?: number): number {
   return offset + 16 + 64 * (additional !== undefined ? additional : 1);
@@ -110,6 +148,7 @@ async function getSecureHFS0Details(
   // Iterate over the children in the secure partition and gather sizes and offsets
   return secureEntries.map<Detail>(entry => ({
     size: entry.size,
+    name: entry.name,
     offset: calcSecureOffset(secureHeader, rootEntry, entry, hfs0Size)
   }));
 }
@@ -128,4 +167,27 @@ function calcSecureOffset(
     header.stringTableSize +
     header.filecount * 64
   );
+}
+
+// TODO
+// async function getDetailedInformation(fd: number, secureDetails: Details) {
+//   //  Iterate through each `secureDetails` to gather a list of NCA targets
+// }
+
+async function gatherNCATargets(fd: number, secureDetails: Details) {
+  const details = secureDetails.filter(detail => detail.size < 0x4e20000);
+
+  // TODO
+  // Temporary
+  await readWriteByNBytes(
+    fd,
+    8192,
+    details[0].size,
+    TEMP_META_OUT,
+    details[0].offset
+  );
+
+  // mapPromise(details, async (item, index) => {
+
+  // })
 }

@@ -1,5 +1,6 @@
-import { open, read } from "fs-extra";
+import { open, read as fsRead, write } from "fs-extra";
 import { Int64LE } from "int64-buffer";
+import { ensureOpenWrite } from "./filesystem";
 
 export function read64LEFloat(buffer: Buffer, start: number = 0): number {
   const result = new Int64LE(copyBuffer(buffer, start, 8));
@@ -45,12 +46,16 @@ export async function openReadNBytes(
   return readNBytes(fd, length, position);
 }
 
+export function read(fd: number, length: number, position: number) {
+  return fsRead(fd, Buffer.alloc(length), 0, length, position);
+}
+
 export async function readNBytes(
   fd: number,
   length: number,
   position: number = 0
 ): Promise<Buffer> {
-  const { buffer } = await read(fd, Buffer.alloc(length), 0, length, position);
+  const { buffer } = await read(fd, length, position);
   return buffer;
 }
 
@@ -59,13 +64,13 @@ export function readByByte(
   startPosition: number = 0,
   condition: (num: number) => boolean
 ): Promise<Buffer> {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (finish, reject) => {
     let pos = startPosition;
     const value: number[] = [];
     let prevVal: number = -1;
     while (condition(prevVal)) {
       try {
-        const { buffer } = await read(fd, Buffer.alloc(1), 0, 1, pos);
+        const { buffer } = await read(fd, 1, pos);
 
         prevVal = buffer[0];
         if (condition(prevVal)) {
@@ -77,6 +82,38 @@ export function readByByte(
       }
     }
 
-    resolve(Buffer.from(value));
+    finish(Buffer.from(value));
+  });
+}
+
+export function readWriteByNBytes(
+  fd: number,
+  sectorLength: number,
+  totalBytesToRead: number,
+  outputPath: string,
+  startPosition: number = 0
+) {
+  return new Promise(async (finish, reject) => {
+    let pos = 0;
+    let remainingBytes = totalBytesToRead;
+    let readBytes = 0;
+
+    try {
+      const outputFd = await ensureOpenWrite(outputPath);
+      do {
+        const { buffer, bytesRead } = await read(
+          fd,
+          sectorLength,
+          startPosition + pos
+        );
+        await write(outputFd, buffer, 0, sectorLength, pos);
+
+        readBytes = bytesRead;
+        pos += sectorLength;
+        remainingBytes -= bytesRead;
+      } while (readBytes > 0 && remainingBytes > 0);
+    } catch (error) {
+      reject(error);
+    }
   });
 }

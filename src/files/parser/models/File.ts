@@ -1,5 +1,6 @@
 import { basename, extname } from "path";
 import { fileSize, formatTitleId, hexToGbStr } from "../../../util/parser";
+import { Release } from "../../nswdb.types";
 import { getMasterKeyStr } from "../masterkey";
 
 export interface IFile {
@@ -35,13 +36,6 @@ export interface IFile {
   ESRB: number;
 }
 
-/*
- TODO - Getters for:
-    titleId (pretty || basegame)
-    isSplit
-    hasExtendedInfo
-*/
-
 export class File implements IFile {
   public filepath = "";
   public totalSizeBytes = 0;
@@ -72,7 +66,9 @@ export class File implements IFile {
   public categories = [];
   public ESRB = 0;
 
-  constructor(opts: Partial<IFile>) {
+  public release?: Release;
+
+  constructor(opts: Partial<IFile> = {}) {
     this.assign(opts);
   }
 
@@ -91,4 +87,18 @@ export class File implements IFile {
 
   public titleID = () => formatTitleId(this.titleIDRaw);
   public masterKeyRevision = () => getMasterKeyStr(this.masterKeyRevisionRaw);
+
+  public toString() {
+    return ` XCI Info:
+    File Path: ${this.filepath}
+    Filename: ${this.filename()}
+    Total Size: ${this.totalSize()}
+    Used Size: ${this.usedSize()}
+    Cart Size: ${this.cartSize()}
+    Is Trimmed: ${this.isTrimmed()}
+    Title ID: ${this.titleID()}
+    MasterKey Rev: ${this.masterKeyRevision()}
+    SDK Version: ${this.sdkVersion}
+    Version: ${this.version}`;
+  }
 }
