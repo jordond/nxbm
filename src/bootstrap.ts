@@ -9,6 +9,7 @@ import {
   validateConfig
 } from "./config";
 import { getReleasesDB, startScanner } from "./files";
+import { ensureHactool } from "./files/parser/hactool";
 import { create } from "./logger";
 import { format } from "./util/misc";
 
@@ -17,6 +18,7 @@ export default async function bootstrap() {
 
   await initData(config);
   await initConfig(config);
+  await initHactool(config);
   await initFolderScanner(config);
 
   await saveConfig();
@@ -49,6 +51,23 @@ async function initConfig(config: IConfig) {
   }
 
   log.verbose(`Using config:\n${format(config)}`);
+}
+
+async function initHactool({ paths }: IConfig) {
+  const log = create("Bootstrap:hactool");
+  try {
+    const hasHactool = await ensureHactool(paths!.data);
+    if (hasHactool) {
+      log.info("Hactool is ready to go!");
+    } else {
+      log.error("Was unable to find or download hactool!");
+      log.error("Scanning files for information will not work!");
+    }
+  } catch (error) {
+    log.error("Something bad happened when trying to get hactool");
+    log.error(error);
+    throw error;
+  }
 }
 
 async function initFolderScanner({ backups }: IConfig) {

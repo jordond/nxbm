@@ -1,3 +1,5 @@
+import { platform } from "os";
+
 // tslint:disable-next-line:no-empty
 export function noop() {}
 
@@ -31,4 +33,8 @@ export function create1toNArray(length: number): number[] {
   return Array(length)
     .fill(null)
     .map((_, index) => index + 1);
+}
+
+export function isWindows(): boolean {
+  return platform() === "win32";
 }
