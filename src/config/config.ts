@@ -27,6 +27,10 @@ export function loadConfig(): IConfig {
     // No existing config, load defaults
   }
 
+  if (!config.get("paths.keys")) {
+    config.set("paths.keys", join(config.get("paths.data"), "keys"));
+  }
+
   return config.getProperties() as IConfig;
 }
 
@@ -53,10 +57,11 @@ export async function saveConfig(data?: IConfig) {
     }
 
     // Resolve the relative paths to absolute
-    const paths = {
+    const paths: Partial<IConfig> = {
       paths: {
         root: resolve(config.get("paths.root")),
-        data: resolve(config.get("paths.data"))
+        data: resolve(config.get("paths.data")),
+        keys: resolve(config.get("paths.keys"))
       }
     };
 

@@ -1,7 +1,11 @@
 import { createReadStream, ensureDir, ensureFile, open } from "fs-extra";
+import * as originalGlob from "glob";
 import { tmpdir } from "os";
 import { extname, join, resolve } from "path";
 import { Extract } from "unzipper";
+import { promisify } from "util";
+
+const glob = promisify(originalGlob);
 
 export async function ensureOpen(path: string, flags: string): Promise<number> {
   const resolvedPath = resolve(path);
@@ -35,4 +39,13 @@ export function unzip(file: string, destination: string) {
       .on("error", (err: any) => reject(err))
       .on("close", () => finish());
   });
+}
+
+export function findFilesByName(folder: string, name: string) {
+  return glob(resolve(folder, `*${name}`));
+}
+
+export async function findFirstFileByName(folder: string, name: string) {
+  const results = await findFilesByName(folder, name);
+  return results.length ? results[0] : "";
 }

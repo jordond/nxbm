@@ -1,7 +1,13 @@
-import { outputJSON, readFile } from "fs-extra";
+import axios from "axios";
+import { outputFile, outputJSON, pathExists, readFile } from "fs-extra";
 import { resolve } from "path";
 
+import { getConfig } from "../config";
+import { create } from "../logger";
+import { format } from "../util/misc";
 import { underscoreToCamel } from "../util/string";
+
+const KEY_URL = "https://pastebin.com/raw/ekSH9R8t";
 
 export interface Keys {
   headerKey: string;
@@ -48,6 +54,66 @@ function parseKeys(contentString: string): Keys {
   parsed.validate = () => validateKeyFile(parsed);
 
   return parsed;
+}
+
+async function downloadKeys(destination: string) {
+  const log = create("Keys");
+  log.info("Downloading keys file");
+  log.verbose(`Saving to -> ${destination}`);
+
+  try {
+    const { data } = await axios.get(KEY_URL);
+    log.verbose(`Successfully downloaded from ${KEY_URL}`);
+
+    log.debug(`Writing to disk\n${data}`);
+    await outputFile(destination, data);
+
+    return pathExists(destination);
+  } catch (error) {
+    log.error("Failed to download keys");
+    log.error(error);
+  }
+
+  return false;
+}
+
+async function keysExist(path: string, download: boolean) {
+  if (!(await pathExists(path))) {
+    if (download) {
+      return downloadKeys(path);
+    }
+    return false;
+  }
+  return true;
+}
+
+export async function getKeys(
+  keysPath: string = getConfig().paths!.keys,
+  shouldDownload: boolean = false
+): Promise<Keys | undefined> {
+  const log = create("Keys");
+
+  if (!(await keysExist(keysPath, shouldDownload))) {
+    return;
+  }
+
+  try {
+    log.verbose(`Trying to fetch keys from ${keysPath}`);
+    const keys = await readRawKeyFile(keysPath);
+    const validated = keys.validate();
+    log.debug(`Validation results: ${format(validated)}`);
+    if (!validated.valid) {
+      log.error("Failed to validate keys");
+      throw validated.errors.join(",");
+    }
+
+    log.debug(`Using the following keys:\n${format(keys)}`);
+
+    return keys;
+  } catch (error) {
+    log.error("Unable to find usable key file");
+    throw error;
+  }
 }
 
 export function validateKeyFile(

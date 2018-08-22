@@ -4,6 +4,8 @@ import { ILogConfig, LogLevel } from "../logger/ILogger";
 
 const root = resolve(__dirname, "../");
 
+// TODO
+// Change usage of this to a Partial<>
 export interface IConfig {
   env?: string;
   host?: string;
@@ -16,6 +18,7 @@ export interface IConfig {
 export interface IPaths {
   root: string;
   data: string;
+  keys: string;
 }
 
 export interface IBackupConfig {
@@ -23,6 +26,8 @@ export interface IBackupConfig {
   watch: boolean;
   recursive: boolean;
   nswdb: INSWDBOptions;
+  autoInstallHactool: boolean;
+  downloadKeys: boolean;
 }
 
 export interface INSWDBOptions {
@@ -66,6 +71,13 @@ export const schema: Schema<any> = {
       default: "",
       env: "DATA_DIR",
       arg: "data"
+    },
+    keys: {
+      doc: "Path to the `keys` file to use with hactool",
+      format: String,
+      default: "",
+      env: "KEY_FILE",
+      arg: "keys"
     }
   },
   logger: {
@@ -120,6 +132,19 @@ export const schema: Schema<any> = {
         env: "NSWDB_INTERVAL",
         arg: "nswdbInterval"
       }
+    },
+    autoInstallHactool: {
+      doc:
+        "If hactool is missing, automatically download and compile (if needed)",
+      format: Boolean,
+      default: true,
+      arg: "autoHactool"
+    },
+    downloadKeys: {
+      doc: "Automatically download keys file if it cannot be found",
+      format: Boolean,
+      default: false,
+      arg: "downloadKeys"
     }
   }
 };
