@@ -3,7 +3,7 @@ import { formatTitleId } from "../../../util/parser";
 
 export class NCAHeader {
   public magic: string;
-  public titleID: number;
+  public rawTitleID: number;
   public sdkVersion1: number;
   public sdkVersion2: number;
   public sdkVersion3: number;
@@ -12,7 +12,7 @@ export class NCAHeader {
 
   constructor(bytes: Buffer) {
     this.magic = bytes.toString("utf8", 512, 516);
-    this.titleID = read64LEFloat(bytes, 528);
+    this.rawTitleID = read64LEFloat(bytes, 528);
     this.sdkVersion1 = bytes[540];
     this.sdkVersion2 = bytes[541];
     this.sdkVersion3 = bytes[542];
@@ -20,9 +20,7 @@ export class NCAHeader {
     this.masterKeyRev = bytes[544];
   }
 
-  public displayTitleId() {
-    return formatTitleId(this.titleID);
-  }
+  public titleId = () => formatTitleId(this.rawTitleID);
 
   public formatSDKVersion() {
     return [
@@ -36,8 +34,8 @@ export class NCAHeader {
   public toString() {
     return `NCA - Header:
     Magic: ${this.magic}
-    Title ID: ${this.titleID}
-              ${this.displayTitleId()}
+    Title ID: ${this.rawTitleID}
+              ${this.titleId()}
     SDK Version 1: ${this.sdkVersion1}
     SDK Version 2: ${this.sdkVersion2}
     SDK Version 3: ${this.sdkVersion3}

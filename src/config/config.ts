@@ -34,6 +34,14 @@ export function loadConfig(): IConfig {
   return config.getProperties() as IConfig;
 }
 
+export function getDataDir() {
+  return getConfig().paths!.data;
+}
+
+export function getCacheDir() {
+  return resolve(getDataDir(), "cache");
+}
+
 export function getConfig() {
   if (!cachedConfig) {
     cachedConfig = loadConfig();

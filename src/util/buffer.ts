@@ -1,4 +1,4 @@
-import { open, read as fsRead, write } from "fs-extra";
+import { open, read as fsRead, readFile, write } from "fs-extra";
 import { Int64LE } from "int64-buffer";
 import { ensureOpenWrite } from "./filesystem";
 
@@ -18,11 +18,11 @@ export function copyBuffer(
   return newBuffer;
 }
 
-export function takeBytes() {
+export function takeBytes(buffer?: Buffer, skip?: number) {
   const options: { buffer?: Buffer; skip?: number } = {};
   const factory = {
-    from(buffer: Buffer) {
-      options.buffer = buffer;
+    from(fromBuff: Buffer) {
+      options.buffer = fromBuff;
       return factory;
     },
     skip(length: number) {
@@ -30,8 +30,13 @@ export function takeBytes() {
       return factory;
     },
     take(length: number) {
-      const skip = options.skip || 0;
-      return copyBuffer(options.buffer!, skip, length);
+      const useSkip = options.skip || skip || 0;
+      const useBuff = options.buffer || buffer;
+      if (!useBuff) {
+        throw new Error("No buffer was supplied to takeBytes()");
+      }
+
+      return copyBuffer(useBuff, useSkip, length);
     }
   };
 
@@ -49,6 +54,11 @@ export async function openReadNBytes(
 
 export function read(fd: number, length: number, position: number) {
   return fsRead(fd, Buffer.alloc(length), 0, length, position);
+}
+
+export async function openReadFile(filePath: string) {
+  const fd = await open(filePath, "r");
+  return readFile(fd);
 }
 
 export async function readNBytes(

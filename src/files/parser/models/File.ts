@@ -19,6 +19,7 @@ export interface IFile {
     [key: string]: string;
   };
   languages: string[];
+  sceneLanguages: string[];
   group: string;
   serial: string;
   firmware: string;
@@ -50,6 +51,7 @@ export class File implements IFile {
   public masterKeyRevisionRaw = -1;
   public regionIcon = {};
   public languages = [];
+  public sceneLanguages = [];
   public group = "";
   public serial = "";
   public firmware = "";
@@ -66,6 +68,16 @@ export class File implements IFile {
   public categories = [];
   public ESRB = 0;
 
+  public titleID: string = "";
+  public masterKeyRevision: string = "";
+  public extension: string = "";
+  public filename: string = "";
+  public filenameWithExt: string = "";
+  public totalSize: string = "";
+  public usedSize: string = "";
+  public isTrimmed: boolean = false;
+  public cartSize: string = "";
+
   public release?: Release;
 
   constructor(opts: Partial<IFile> = {}) {
@@ -74,31 +86,58 @@ export class File implements IFile {
 
   public assign(opts: Partial<IFile>) {
     Object.keys(opts).forEach(key => ((this as any)[key] = (opts as any)[key]));
+
+    this.titleID = formatTitleId(this.titleIDRaw);
+    this.masterKeyRevision = getMasterKeyStr(this.masterKeyRevisionRaw);
+    this.extension = extname(this.filepath);
+    this.filename = basename(this.filepath, this.extension);
+    this.filenameWithExt = basename(this.filepath);
+    this.totalSize = fileSize(this.totalSizeBytes);
+    this.usedSize = fileSize(this.usedSizeBytes);
+    this.isTrimmed = this.usedSizeBytes === this.totalSizeBytes;
+    this.cartSize = hexToGbStr(this.rawCartSize);
   }
 
-  public extension = () => extname(this.filepath);
-  public filename = () => basename(this.filepath, this.extension());
-  public filenameWithExt = () => basename(this.filepath);
+  public fromRelease(release: Release) {
+    const {
+      name,
+      group,
+      serial,
+      firmware,
+      card,
+      region,
+      languages,
+      id
+    } = release;
 
-  public totalSize = (useSI = true) => fileSize(this.totalSizeBytes, useSI);
-  public usedSize = (useSI = true) => fileSize(this.usedSizeBytes, useSI);
-  public isTrimmed = () => this.usedSizeBytes === this.totalSizeBytes;
-  public cartSize = () => hexToGbStr(this.rawCartSize);
-
-  public titleID = () => formatTitleId(this.titleIDRaw);
-  public masterKeyRevision = () => getMasterKeyStr(this.masterKeyRevisionRaw);
+    this.assign({
+      group,
+      serial,
+      firmware,
+      region,
+      gameName: name,
+      carttype: card,
+      sceneLanguages: languages.split(","),
+      sceneID: parseInt(id),
+      version: firmware.toLowerCase()
+    });
+  }
 
   public toString() {
     return ` XCI Info:
     File Path: ${this.filepath}
-    Filename: ${this.filename()}
-    Total Size: ${this.totalSize()}
-    Used Size: ${this.usedSize()}
-    Cart Size: ${this.cartSize()}
-    Is Trimmed: ${this.isTrimmed()}
-    Title ID: ${this.titleID()}
-    MasterKey Rev: ${this.masterKeyRevision()}
+    Filename: ${this.filename}
+    Total Size: ${this.totalSize}
+    Used Size: ${this.usedSize}
+    Cart Size: ${this.cartSize}
+    Is Trimmed: ${this.isTrimmed}
+    Title ID: ${this.titleID}
+    MasterKey Rev: ${this.masterKeyRevision}
     SDK Version: ${this.sdkVersion}
-    Version: ${this.version}`;
+    Version: ${this.version}
+    Languages: [${this.languages}]
+    Game Revision: ${this.gameRevision}
+    Game Name: ${this.gameName}
+    Developer: ${this.developer}`;
   }
 }

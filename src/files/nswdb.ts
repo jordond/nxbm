@@ -24,11 +24,12 @@ function findGameFromDB(
   db: Release[],
   { titleID, version }: File
 ): Release | undefined {
-  return db.find(
-    release =>
-      release.titleid === titleID() &&
-      release.firmware.toLowerCase() === version
-  );
+  const findFunc = (release: Release, useVersion: boolean = true) =>
+    release.titleid === titleID &&
+    (!useVersion || release.firmware.toLowerCase() === version);
+
+  const found = db.find(x => findFunc(x));
+  return found ? found : db.find(x => findFunc(x, false));
 }
 
 export async function getGameDatabase(

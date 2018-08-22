@@ -42,7 +42,7 @@ export function unzip(file: string, destination: string) {
 }
 
 export function findFilesByName(folder: string, name: string) {
-  return glob(resolve(folder, `*${name}`));
+  return glob(resolve(folder, `*${name}*`));
 }
 
 export async function findFirstFileByName(folder: string, name: string) {

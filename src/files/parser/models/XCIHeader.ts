@@ -1,5 +1,5 @@
-import { read64LEFloat } from "../../util/buffer";
-import { hexToGbStr } from "../../util/parser";
+import { read64LEFloat } from "../../../util/buffer";
+import { hexToGbStr } from "../../../util/parser";
 
 export class XCIHeader {
   public magic: string;

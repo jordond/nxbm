@@ -1,21 +1,31 @@
 import BlueBird, { map as mapPromise } from "bluebird";
-import { open, remove, stat } from "fs-extra";
+import { emptyDir, move, open, pathExists, remove, stat } from "fs-extra";
 
-import { join } from "path";
-import { readByByte, readNBytes, readWriteByNBytes } from "../../util/buffer";
+import { join, resolve } from "path";
+import { getCacheDir } from "../../config";
+import {
+  openReadFile,
+  readByByte,
+  readNBytes,
+  readWriteByNBytes,
+  takeBytes
+} from "../../util/buffer";
 import { findFirstFileByName } from "../../util/filesystem";
 import { create0toNArray } from "../../util/misc";
-import { unpackSection0 } from "../hactool";
+import { unpackRomFs, unpackSection0 } from "../hactool";
 import { readRawKeyFile } from "../keys";
 import { getGameDatabase } from "../nswdb";
 import { CNMTEntry } from "./models/CNMTEntry";
 import { CNMTHeader } from "./models/CNMTHeader";
-import { File } from "./models/File";
+import { File, IFile } from "./models/File";
 import { FSEntry } from "./models/FSEntry";
 import { FSHeader } from "./models/FSHeader";
+import { getLangAt, LANGUAGES, NUMBER_OF_LANGUAGES } from "./models/languages";
+import { NACPData } from "./models/NACPData";
+import { NACPString } from "./models/NACPString";
+import { XCIHeader } from "./models/XCIHeader";
 import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
 import { findVersion } from "./version";
-import { XCIHeader } from "./XCIHeader";
 
 const FILE =
   "/Users/jordondehoog/Downloads/switchsd/0003 - ARMS (World) (En,Ja,Fr,De,Es,It,Nl,Ru) [Trimmed].xci";
@@ -30,9 +40,12 @@ async function testParseAndGrab(path: string) {
   const release = db.find(game);
   if (release) {
     console.log(`Found release`);
+    game.fromRelease(release);
   } else {
-    console.log(`Unable to find release... ${game.filename()}`);
+    console.log(`Unable to find release... ${game.filename}`);
   }
+
+  console.log(JSON.stringify(game, null, 2));
 }
 
 testParseAndGrab(FILE);
@@ -82,13 +95,21 @@ export async function parseXCI(path: string): Promise<File> {
   const details = getNCADetails(secureDetails);
   const ncaHeader = await decryptNCAHeader(FILE, headerKey, details.offset);
   xciData.assign({
-    titleIDRaw: ncaHeader.titleID,
+    titleIDRaw: ncaHeader.rawTitleID,
     sdkVersion: ncaHeader.formatSDKVersion(),
     masterKeyRevisionRaw: ncaHeader.masterKeyRev
   });
 
   // Get detailed information containe in secure partition
-  await getNCATarget(fd, secureDetails);
+  const filteredDetails = secureDetails.filter(
+    detail => detail.size < 0x4e20000
+  );
+  const extraInfo = await gatherExtraInfo(
+    fd,
+    filteredDetails,
+    ncaHeader.titleId()
+  );
+  xciData.assign(extraInfo);
 
   // Get the version number
   const updateHFS0 = hsf0Entries.find(entry => entry.name === "update");
@@ -175,39 +196,31 @@ function calcSecureOffset(
   );
 }
 
-// TODO
-// async function getDetailedInformation(fd: number, secureDetails: Details) {
-//   //  Iterate through each `secureDetails` to gather a list of NCA targets
-// }
+async function gatherExtraInfo(
+  fd: number,
+  secureDetails: Details,
+  titleId: string
+): Promise<Partial<IFile>> {
+  const details = secureDetails.find(item => item.name.includes(".cnmt.nca"));
 
-async function getNCATarget(fd: number, secureDetails: Details) {
-  const cmntDetails = secureDetails
-    .filter(item => item.size < 0x4e20000)
-    .find(item => item.name.includes(".cnmt.nca"));
-
-  if (!cmntDetails) {
+  if (!details) {
     console.log("Could not find cmnt.nca");
-    return;
+    return {};
   }
 
-  await readWriteByNBytes(
-    fd,
-    8192,
-    cmntDetails.size,
-    join(TEMP_META_OUT, "section0"),
-    cmntDetails.offset
-  );
+  const { size, offset } = details;
+  const outFile = join(TEMP_META_OUT, "secion0");
+  const outDir = `${outFile}-data`;
 
-  const unpackDir = join(TEMP_META_OUT, "section0-data");
+  await readWriteByNBytes(fd, 8192, size, outFile, offset);
 
   try {
-    await unpackSection0(join(TEMP_META_OUT, "section0"), unpackDir);
+    await unpackSection0(outFile, outDir);
   } catch (error) {
     console.error(error);
   }
 
-  const cnmtPath = await findFirstFileByName(unpackDir, ".cnmt");
-  let success = false;
+  const cnmtPath = await findFirstFileByName(outDir, ".cnmt");
   if (cnmtPath) {
     const cnmtFd = await open(cnmtPath, "r");
     const buffer = await readNBytes(cnmtFd, 32);
@@ -215,15 +228,14 @@ async function getNCATarget(fd: number, secureDetails: Details) {
     const cnmtHeader = new CNMTHeader(buffer);
     const ncaTarget = await findNCATarget(cnmtFd, cnmtHeader);
     if (ncaTarget) {
-      console.log(ncaTarget.toString());
+      return processCNMTEntry(fd, secureDetails, ncaTarget, titleId);
     }
-    success = true;
   } else {
     console.error("not found");
   }
 
   remove(TEMP_META_OUT);
-  return success;
+  return {};
 }
 
 async function findNCATarget(cnmtFd: number, header: CNMTHeader) {
@@ -238,4 +250,136 @@ async function findNCATarget(cnmtFd: number, header: CNMTHeader) {
   }
 
   return null;
+}
+
+async function processCNMTEntry(
+  fd: number,
+  secureDetails: Details,
+  ncaEntry: CNMTEntry,
+  titleId: string
+): Promise<Partial<IFile>> {
+  const details = secureDetails.find(x => ncaEntry.ncaID().includes(x.name));
+  if (!details) {
+    console.log("match not found");
+    return {};
+  }
+
+  const { size, offset } = details;
+  const outFile = join(TEMP_META_OUT, "romfs");
+  const outDir = `${outFile}-data`;
+
+  await emptyDir(TEMP_META_OUT);
+
+  await readWriteByNBytes(fd, 8192, size, outFile, offset);
+
+  try {
+    await unpackRomFs(outFile, outDir);
+  } catch (error) {
+    console.error(error);
+  }
+
+  const nacpPath = await findFirstFileByName(outDir, "control.nacp");
+  if (!nacpPath) {
+    remove(TEMP_META_OUT);
+    return {};
+  }
+
+  const buffer = await openReadFile(nacpPath);
+  const result = await getLanguageInfo(buffer, outDir, titleId);
+
+  await remove(TEMP_META_OUT);
+  return result;
+}
+
+async function getLanguageInfo(
+  rawNacp: Buffer,
+  unpackDir: string,
+  titleId: string
+): Promise<Partial<IFile>> {
+  // Get version
+  const { version: gameRevision, productId: productCode } = new NACPData(
+    takeBytes(rawNacp, 0x3000).take(0x1000)
+  );
+
+  // Get Nacp Strings
+  const nacpStrings = create0toNArray(NUMBER_OF_LANGUAGES)
+    .map(
+      index =>
+        new NACPString(
+          takeBytes(rawNacp)
+            .skip(index * 0x300)
+            .take(0x300)
+        )
+    )
+    .filter(nacp => nacp.check);
+
+  // Get the game name and developer
+  const nacpName = nacpStrings.find(x => x.name !== "");
+  const nacpDev = nacpStrings.find(x => x.developer !== "");
+
+  // Get the language and region data
+  const promises = nacpStrings.map((_, index) =>
+    createLanguageFilename(index, unpackDir, titleId)
+  );
+
+  const filenames = await Promise.all(promises);
+  const languages = await moveLanguageFiles(filenames);
+
+  // Merge it all together
+  return {
+    gameRevision,
+    productCode,
+    ...languages,
+    gameName: nacpName ? nacpName.name : "?",
+    developer: nacpDev ? nacpDev.developer : "?"
+  };
+}
+
+interface LanguageIconData {
+  input: string;
+  out: string;
+  language: string;
+}
+
+async function createLanguageFilename(
+  index: number,
+  unpackDir: string,
+  titleId: string
+): Promise<LanguageIconData> {
+  const genInput = (x: string) =>
+    resolve(unpackDir, `icon_${x.replace(/ /g, "")}.dat`);
+
+  const shouldReplaceTai =
+    index === 13 && (await pathExists(genInput(LANGUAGES.TAIWANESE)));
+  const lang = (shouldReplaceTai
+    ? LANGUAGES.TRADITIONAL_CHINESE
+    : getLangAt(index)
+  ).replace(/ /g, "");
+
+  return {
+    input: genInput(lang),
+    out: join(getCacheDir(), "icons", titleId, `icon_${titleId}_${lang}.bmp`),
+    language: getLangAt(index)
+  };
+}
+
+async function moveLanguageFiles(paths: LanguageIconData[]) {
+  const results: Partial<IFile> = {
+    regionIcon: {},
+    languages: []
+  };
+  for (const { input, out, language } of paths) {
+    try {
+      if (await pathExists(input)) {
+        await move(input, out, { overwrite: true });
+        results.regionIcon![language] = out;
+        results.languages!.push(language);
+      }
+    } catch (error) {
+      console.error(`couldnt move`);
+      console.error(error);
+    }
+  }
+
+  return results;
 }
