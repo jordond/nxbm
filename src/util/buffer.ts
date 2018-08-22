@@ -13,7 +13,7 @@ export function copyBuffer(
   length?: number
 ): Buffer {
   const takeLength = length ? start + length : buffer.length;
-  const newBuffer = Buffer.alloc(takeLength);
+  const newBuffer = Buffer.alloc(length || buffer.length);
   buffer.copy(newBuffer, 0, start, takeLength);
   return newBuffer;
 }
@@ -30,7 +30,8 @@ export function takeBytes() {
       return factory;
     },
     take(length: number) {
-      return copyBuffer(options.buffer!, options.skip || 0, length);
+      const skip = options.skip || 0;
+      return copyBuffer(options.buffer!, skip, length);
     }
   };
 
@@ -97,6 +98,7 @@ export function readWriteByNBytes(
     let pos = 0;
     let remainingBytes = totalBytesToRead;
     let readBytes = 0;
+    let totalBytes = 0;
 
     try {
       const outputFd = await ensureOpenWrite(outputPath);
@@ -111,7 +113,9 @@ export function readWriteByNBytes(
         readBytes = bytesRead;
         pos += sectorLength;
         remainingBytes -= bytesRead;
+        totalBytes += bytesRead;
       } while (readBytes > 0 && remainingBytes > 0);
+      finish(totalBytes);
     } catch (error) {
       reject(error);
     }

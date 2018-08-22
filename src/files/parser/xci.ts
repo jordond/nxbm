@@ -1,9 +1,15 @@
 import BlueBird, { map as mapPromise } from "bluebird";
-import { open, stat } from "fs-extra";
+import { open, remove, stat } from "fs-extra";
 
+import { join } from "path";
 import { readByByte, readNBytes, readWriteByNBytes } from "../../util/buffer";
+import { findFirstFileByName } from "../../util/filesystem";
+import { create0toNArray } from "../../util/misc";
+import { unpackSection0 } from "../hactool";
 import { readRawKeyFile } from "../keys";
 import { getGameDatabase } from "../nswdb";
+import { CNMTEntry } from "./models/CNMTEntry";
+import { CNMTHeader } from "./models/CNMTHeader";
 import { File } from "./models/File";
 import { FSEntry } from "./models/FSEntry";
 import { FSHeader } from "./models/FSHeader";
@@ -14,8 +20,8 @@ import { XCIHeader } from "./XCIHeader";
 const FILE =
   "/Users/jordondehoog/Downloads/switchsd/0003 - ARMS (World) (En,Ja,Fr,De,Es,It,Nl,Ru) [Trimmed].xci";
 
-const KEYS_PATH = "/Users/jordondehoog/dev/nxbm/tmp/data/keys.txt";
-const TEMP_META_OUT = "/Users/jordondehoog/dev/nxbm/tmp/meta";
+const KEYS_PATH = "/Users/jordondehoog/dev/nxbm/tmp/data/keys";
+const TEMP_META_OUT = "/Users/jordondehoog/dev/nxbm/tmp/data/meta";
 
 async function testParseAndGrab(path: string) {
   const game = await parseXCI(path);
@@ -82,7 +88,7 @@ export async function parseXCI(path: string): Promise<File> {
   });
 
   // Get detailed information containe in secure partition
-  await gatherNCATargets(fd, secureDetails);
+  await getNCATarget(fd, secureDetails);
 
   // Get the version number
   const updateHFS0 = hsf0Entries.find(entry => entry.name === "update");
@@ -174,20 +180,62 @@ function calcSecureOffset(
 //   //  Iterate through each `secureDetails` to gather a list of NCA targets
 // }
 
-async function gatherNCATargets(fd: number, secureDetails: Details) {
-  const details = secureDetails.filter(detail => detail.size < 0x4e20000);
+async function getNCATarget(fd: number, secureDetails: Details) {
+  const cmntDetails = secureDetails
+    .filter(item => item.size < 0x4e20000)
+    .find(item => item.name.includes(".cnmt.nca"));
 
-  // TODO
-  // Temporary
+  if (!cmntDetails) {
+    console.log("Could not find cmnt.nca");
+    return;
+  }
+
   await readWriteByNBytes(
     fd,
     8192,
-    details[0].size,
-    TEMP_META_OUT,
-    details[0].offset
+    cmntDetails.size,
+    join(TEMP_META_OUT, "section0"),
+    cmntDetails.offset
   );
 
-  // mapPromise(details, async (item, index) => {
+  const unpackDir = join(TEMP_META_OUT, "section0-data");
 
-  // })
+  try {
+    await unpackSection0(join(TEMP_META_OUT, "section0"), unpackDir);
+  } catch (error) {
+    console.error(error);
+  }
+
+  const cnmtPath = await findFirstFileByName(unpackDir, ".cnmt");
+  let success = false;
+  if (cnmtPath) {
+    const cnmtFd = await open(cnmtPath, "r");
+    const buffer = await readNBytes(cnmtFd, 32);
+
+    const cnmtHeader = new CNMTHeader(buffer);
+    const ncaTarget = await findNCATarget(cnmtFd, cnmtHeader);
+    if (ncaTarget) {
+      console.log(ncaTarget.toString());
+    }
+    success = true;
+  } else {
+    console.error("not found");
+  }
+
+  remove(TEMP_META_OUT);
+  return success;
+}
+
+async function findNCATarget(cnmtFd: number, header: CNMTHeader) {
+  const readLength = 56;
+  const initialPosition = header.offset + 32;
+  for (const count of create0toNArray(header.contentCount)) {
+    const position = initialPosition + (count === 0 ? 0 : count * readLength);
+    const entry = new CNMTEntry(await readNBytes(cnmtFd, readLength, position));
+    if (entry.isTypeContent()) {
+      return entry;
+    }
+  }
+
+  return null;
 }
