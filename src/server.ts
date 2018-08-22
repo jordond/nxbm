@@ -40,8 +40,7 @@ export async function start(config: IConfig) {
     await server.start();
     log.info(`Server running on ${config.host}:${config.port}`);
   } catch (error) {
-    log.error("Unable to start server...\n", error, () =>
-      setTimeout(() => process.exit(1), 2000)
-    );
+    log.error("Unable to start server...\n");
+    throw error;
   }
 }

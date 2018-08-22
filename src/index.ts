@@ -6,6 +6,6 @@ bootstrap()
   .then(config => start(config))
   .catch(error => {
     const log = create();
-    log.error("Something went really wrong! App is exiting.");
-    log.error(error);
+    log.error("Due to the following error, the app is exiting.");
+    log.error(error, () => setTimeout(() => process.exit(1), 2000));
   });
