@@ -10,17 +10,6 @@ import { XCIHeader } from "./models/XCIHeader";
 import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
 import { findVersion } from "./version";
 
-async function test() {
-  const game = await parseXCI(
-    "/Users/jordondehoog/Downloads/switchsd/0003 - ARMS (World) (En,Ja,Fr,De,Es,It,Nl,Ru) [Trimmed].xci",
-    "AEAAB1CA08ADF9BEF12991F369E3C567D6881E4E4A6A47A51F6E4877062D542D"
-  );
-
-  console.log(JSON.stringify(game, null, 2));
-}
-
-test();
-
 export async function parseXCI(
   xciPath: string,
   headerKey: string,

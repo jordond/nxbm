@@ -72,7 +72,7 @@ async function createLanguageFilename(
 
   return {
     input: genInput(lang),
-    out: join(getCacheDir(), "icons", titleId, `icon_${titleId}_${lang}.bmp`),
+    out: join(getCacheDir(), "icons", titleId, `icon_${lang}.bmp`),
     language: getLangAt(index)
   };
 }
