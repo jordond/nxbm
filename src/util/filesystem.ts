@@ -1,7 +1,7 @@
 import { createReadStream, ensureDir, ensureFile, open } from "fs-extra";
 import * as originalGlob from "glob";
 import { tmpdir } from "os";
-import { extname, join, resolve } from "path";
+import { extname, resolve } from "path";
 import { Extract } from "unzipper";
 import { promisify } from "util";
 
@@ -23,7 +23,7 @@ export function ensureOpenWrite(path: string) {
 }
 
 export function tempDir(): string {
-  return join(tmpdir(), "nxbm");
+  return resolve(tmpdir(), "nxbm");
 }
 
 export function unzip(file: string, destination: string) {

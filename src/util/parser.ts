@@ -42,5 +42,5 @@ export function fileSize(bytes: number, si: boolean = true) {
 }
 
 export function formatTitleId(titleID: number): string {
-  return titleID ? `0${titleID.toString(16).toUpperCase()}` : "N/A";
+  return titleID ? `0${titleID.toString(16).toUpperCase()}` : "";
 }
