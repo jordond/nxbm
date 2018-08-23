@@ -84,7 +84,11 @@ export class File implements IFile {
     this.assign(opts);
   }
 
-  public assign(opts: Partial<IFile>) {
+  public assign(opts?: Partial<IFile>): File {
+    if (!opts) {
+      return this;
+    }
+
     Object.keys(opts).forEach(key => ((this as any)[key] = (opts as any)[key]));
 
     this.titleID = formatTitleId(this.titleIDRaw);
@@ -96,9 +100,15 @@ export class File implements IFile {
     this.usedSize = fileSize(this.usedSizeBytes);
     this.isTrimmed = this.usedSizeBytes === this.totalSizeBytes;
     this.cartSize = hexToGbStr(this.rawCartSize);
+
+    return this;
   }
 
-  public fromRelease(release: Release) {
+  public assignRelease(release?: Release) {
+    if (!release) {
+      return this;
+    }
+
     const {
       name,
       group,
@@ -121,6 +131,8 @@ export class File implements IFile {
       sceneID: parseInt(id),
       version: firmware.toLowerCase()
     });
+
+    return this;
   }
 
   public toString() {

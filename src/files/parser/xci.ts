@@ -78,7 +78,6 @@ export async function parseXCI(
   const updateEntries = await getHFS0Entries(fd, updateHeader, hfs0Size);
   xciData.version = findVersion(updateEntries.map(x => x.name));
 
-  console.log(xciData.toString());
   return xciData;
 }
 
