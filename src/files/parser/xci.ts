@@ -50,8 +50,8 @@ export async function parseXCI(
   const secureDetails = await getSecureHFS0Details(fd, secureHFS0, hfs0Size);
 
   // Decrypt the NCA header
-  const details = getNCADetails(secureDetails);
-  const ncaHeader = await decryptNCAHeader(xciPath, headerKey, details.offset);
+  const { offset } = getNCADetails(secureDetails);
+  const ncaHeader = await decryptNCAHeader(xciPath, headerKey, offset, cleanup);
   xciData.assign({
     titleIDRaw: ncaHeader.rawTitleID,
     sdkVersion: ncaHeader.formatSDKVersion(),

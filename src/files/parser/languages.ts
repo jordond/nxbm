@@ -1,7 +1,9 @@
 import { move, pathExists } from "fs-extra";
-import { join, resolve } from "path";
+import { basename, join, resolve } from "path";
 
+import { mapSeries } from "bluebird";
 import { getCacheDir } from "../../config";
+import { findFilesByName } from "../../util/filesystem";
 import { IFile } from "./models/File";
 import { NACPString } from "./models/NACPString";
 
@@ -40,13 +42,29 @@ export async function getLanguageData(
   unpackDir: string,
   titleId: string
 ) {
+  // Get a list of icon filepaths
+  const iconPaths = await findFilesByName(unpackDir, "icon_*.dat");
+
+  // Create list of languages: [AmericanEnglish,Spanish, etc]
+  const languages: LanguageIconData[] = iconPaths.map(path => ({
+    input: path,
+    language: getLanguageFromFilePath(path),
+    out: ""
+  }));
+
+  // Generate input and output paths for each language
+
+  // Generate region icon: {[language]: "filepath/to/icon.bmp"}
+  // and languages: ["American English", "Spanish"]
+
   // Get the language and region data
-  const promises = nacpStrings.map((_, index) =>
+  const languageDetails = await mapSeries(nacpStrings, (_, index) =>
     createLanguageFilename(index, unpackDir, titleId)
   );
+}
 
-  const filenames = await Promise.all(promises);
-  return moveLanguageFiles(filenames);
+function getLanguageFromFilePath(filePath: string): string {
+  return basename(filePath, ".dat").replace("icon_", "");
 }
 
 export interface LanguageIconData {
@@ -88,6 +106,8 @@ async function moveLanguageFiles(paths: LanguageIconData[]) {
         await move(input, out, { overwrite: true });
         results.regionIcon![language] = out;
         results.languages!.push(language);
+      } else {
+        console.log(`doesnt exist: ${input}`);
       }
     } catch (error) {
       console.error(`couldnt move`);

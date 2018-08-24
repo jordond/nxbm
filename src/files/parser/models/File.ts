@@ -96,8 +96,8 @@ export class File implements IFile {
     this.extension = extname(this.filepath);
     this.filename = basename(this.filepath, this.extension);
     this.filenameWithExt = basename(this.filepath);
-    this.totalSize = fileSize(this.totalSizeBytes);
-    this.usedSize = fileSize(this.usedSizeBytes);
+    this.totalSize = fileSize(this.totalSizeBytes, false);
+    this.usedSize = fileSize(this.usedSizeBytes, false);
     this.isTrimmed = this.usedSizeBytes === this.totalSizeBytes;
     this.cartSize = hexToGbStr(this.rawCartSize);
 

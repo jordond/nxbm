@@ -23,22 +23,30 @@ export function getNCADetails(details: Details): Detail {
 export async function decryptNCAHeader(
   filePath: string,
   key: string,
-  offset: number
+  offset: number,
+  cleanUp: boolean
 ) {
   try {
     const encrypted = await openReadNBytes(filePath, 3072, offset);
 
-    const tempPath = resolve(tmpdir(), "nxbm");
-    const inputPath = join(tempPath, `e-${basename(filePath)}`);
+    const tempPath = resolve(
+      tmpdir(),
+      "nxbm",
+      "decrypt-nca",
+      basename(filePath)
+    );
+    const inputPath = join(tempPath, `encrypted`);
     await outputFile(inputPath, encrypted);
 
-    const output = join(tempPath, `d-${basename(filePath)}`);
+    const output = join(tempPath, `decrpted`);
     await decrypt({ key, inputPath, output });
 
     const decrypted = await readNBytes(await open(output, "r"), 3072);
     const ncaHeader = new NCAHeader(decrypted);
 
-    await remove(tempPath);
+    if (cleanUp) {
+      await remove(tempPath);
+    }
 
     return ncaHeader;
   } catch (error) {
@@ -54,4 +62,8 @@ export interface Detail {
   size: number;
   name: string;
   offset: number;
+}
+
+export interface CNMTDetail extends Detail {
+  path: string;
 }

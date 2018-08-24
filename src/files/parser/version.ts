@@ -1,7 +1,24 @@
-/**
- * Taken from:
- * https://github.com/gibaBR/Switch-Backup-Manager/blob/master/Switch%20Backup%20Manager/Consts.cs
- */
+import * as compare from "compare-semver";
+
+export function compareGameRevision(oldVer: string, newVer: string): string {
+  if (oldVer && !newVer) {
+    return oldVer;
+  }
+
+  if (newVer && !oldVer) {
+    return newVer;
+  }
+
+  if (!oldVer && !newVer) {
+    return "";
+  }
+
+  try {
+    return compare.max([oldVer, newVer]);
+  } catch (error) {
+    return "";
+  }
+}
 
 export function findVersion(files: string[]): string {
   return findVersionByFiles(files) || findVersionByCount(files) || "unknown";

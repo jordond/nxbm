@@ -46,6 +46,9 @@ export function findFilesByName(folder: string, name: string) {
 }
 
 export async function findFirstFileByName(folder: string, name: string) {
+  if (folder === "") {
+    return "";
+  }
   const results = await findFilesByName(folder, name);
   return results.length ? results[0] : "";
 }

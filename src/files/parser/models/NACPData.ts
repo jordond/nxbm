@@ -12,19 +12,17 @@ export class NACPData {
       .toString()
       .replace(/\0/g, "");
 
-    const rawId = takeBytes()
+    this.productId = takeBytes()
       .skip(0xa8)
       .from(bytes)
       .take(8)
       .toString()
       .replace(/\0/g, "");
-
-    this.productId = rawId || "N/A";
   }
 
   public toString() {
     return `NACP - Data
-    Version: ${this.version}
-    Prod: ${this.productId}`;
+    Version: ${this.version || "N/A"}
+    Prod: ${this.productId || "N/A"}`;
   }
 }

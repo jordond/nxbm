@@ -25,6 +25,7 @@
     "bluebird": "^3.5.1",
     "boom": "^7.2.0",
     "chokidar": "^2.0.4",
+    "compare-semver": "^1.1.0",
     "convict": "^4.3.2",
     "cross-env": "^5.2.0",
     "fs-extra": "^6.0.1",
