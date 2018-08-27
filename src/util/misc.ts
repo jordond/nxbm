@@ -38,3 +38,16 @@ export function create1toNArray(length: number): number[] {
 export function isWindows(): boolean {
   return platform() === "win32";
 }
+
+export interface AnyObject {
+  [key: string]: any;
+}
+
+export function removeDuplicates<T>(target: T[], prop: string) {
+  return target.filter(
+    (obj, index) =>
+      target
+        .map(mapObj => (mapObj as any)[prop])
+        .indexOf((obj as any)[prop]) === index
+  );
+}

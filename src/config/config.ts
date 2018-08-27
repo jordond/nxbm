@@ -1,8 +1,8 @@
 import * as convict from "convict";
-import { outputJson } from "fs-extra";
 import { join, resolve } from "path";
 
 import { create } from "../logger";
+import { outputFormattedJSON } from "../util/filesystem";
 import { IConfig, schema } from "./schema";
 
 const config = convict(schema);
@@ -74,11 +74,10 @@ export async function saveConfig(data?: IConfig) {
     };
 
     // Save the config file
-    await outputJson(
-      configPath(),
-      { ...config.getProperties(), ...paths },
-      { spaces: 2 }
-    );
+    await outputFormattedJSON(configPath(), {
+      ...config.getProperties(),
+      ...paths
+    });
   } catch (error) {
     log.error("Unable to save config");
     log.error(`Error -> ${error.message}`);

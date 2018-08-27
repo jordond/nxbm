@@ -64,6 +64,12 @@ export interface Detail {
   offset: number;
 }
 
+export interface DetailName {
+  name: string;
+  size?: number;
+  offset?: number;
+}
+
 export interface CNMTDetail extends Detail {
   path: string;
 }

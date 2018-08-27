@@ -1,7 +1,7 @@
 import { openReadFile, takeBytes } from "../../util/buffer";
 import { findFirstFileByName } from "../../util/filesystem";
 import { create0toNArray } from "../../util/misc";
-import { getLanguageData, NUMBER_OF_LANGUAGES } from "./languages";
+import { NUMBER_OF_LANGUAGES } from "./languages";
 import { IFile } from "./models/File";
 import { NACPData } from "./models/NACPData";
 import { NACPString } from "./models/NACPString";
@@ -17,9 +17,7 @@ export async function getNACPFromRomFS(romFSDir: string): Promise<Buffer> {
 }
 
 export async function getInfoFromNACP(
-  rawNacp: Buffer,
-  unpackDir: string,
-  titleId: string
+  rawNacp: Buffer
 ): Promise<Partial<IFile>> {
   const { version: gameRevision, productId: productCode } = new NACPData(
     takeBytes(rawNacp, 0x3000).take(0x1000)
@@ -36,7 +34,6 @@ export async function getInfoFromNACP(
     )
     .filter(nacp => nacp.check);
 
-  const languages = await getLanguageData(nacpStrings, unpackDir, titleId);
   const nacpName = nacpStrings.find(x => x.name !== "");
   const nacpDev = nacpStrings.find(x => x.developer !== "");
 

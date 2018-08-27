@@ -135,6 +135,14 @@ export class File implements IFile {
     return this;
   }
 
+  public id(): string {
+    return `${this.titleID}-${this.gameRevision}`;
+  }
+
+  public displayName(): string {
+    return `${this.gameName}:${this.id()}`;
+  }
+
   public toString() {
     return ` XCI Info:
     File Path: ${this.filepath}

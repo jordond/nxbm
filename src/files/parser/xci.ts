@@ -10,9 +10,28 @@ import { XCIHeader } from "./models/XCIHeader";
 import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
 import { findVersion } from "./version";
 
+export async function isXCI(path: string) {
+  try {
+    const fd = await open(path, "r");
+    const header = new XCIHeader(await readNBytes(fd, 61440));
+    return header.magic === "HEAD";
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * Parse a given XCI file
+ * @param xciPath Path to the XCI file
+ * @param headerKey Header key to decrypt NCA
+ * @param outputDir Directory to store the icons
+ * @param cleanup Cleanup temporary files
+ * @throws
+ */
 export async function parseXCI(
   xciPath: string,
   headerKey: string,
+  outputDir: string,
   cleanup: boolean = true
 ): Promise<File> {
   const fd = await open(xciPath, "r");
@@ -66,6 +85,7 @@ export async function parseXCI(
     fd,
     filteredDetails,
     ncaHeader.titleId(),
+    outputDir,
     cleanup
   );
   xciData.assign(extraInfo);

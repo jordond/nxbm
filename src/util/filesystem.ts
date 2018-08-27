@@ -1,4 +1,10 @@
-import { createReadStream, ensureDir, ensureFile, open } from "fs-extra";
+import {
+  createReadStream,
+  ensureDir,
+  ensureFile,
+  open,
+  outputJSON
+} from "fs-extra";
 import * as originalGlob from "glob";
 import { tmpdir } from "os";
 import { extname, resolve } from "path";
@@ -51,4 +57,8 @@ export async function findFirstFileByName(folder: string, name: string) {
   }
   const results = await findFilesByName(folder, name);
   return results.length ? results[0] : "";
+}
+
+export function outputFormattedJSON(path: string, data: any) {
+  return outputJSON(path, data, { spaces: 2 });
 }

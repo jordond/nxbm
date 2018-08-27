@@ -21,7 +21,7 @@ export async function runHactool(
   { path, keys, cwd }: HactoolOptions
 ) {
   const log = create("hactool:command");
-  log.debug(`Options:\n${format({ command, ...{ path, keys, cwd } })}`);
+  log.silly(`Options:\n${format({ command, ...{ path, keys, cwd } })}`);
 
   const resolvedPath = resolve(path);
   const resolvedKeys = resolve(keys);
@@ -38,7 +38,7 @@ export async function runHactool(
   const fullCommand = `${resolvedPath} -k ${resolvedKeys} ${command}`;
 
   try {
-    log.debug(`Executing:\n${fullCommand}`);
+    log.silly(`Executing:\n${fullCommand}`);
     const { stdout, stderr } = await exec(fullCommand, {
       windowsHide: true,
       ...execOpts
@@ -81,8 +81,8 @@ async function doCommand(name: string, input: string, outputDir: string) {
 
   await ensureDir(resolvedOut);
 
-  log.verbose(`Unpacking ${name} -> ${resolvedIn}`);
-  log.verbose(`to -> ${resolvedOut}`);
+  log.silly(`Unpacking ${name} -> ${resolvedIn}`);
+  log.silly(`to -> ${resolvedOut}`);
 
   const command = `--${name}dir=${resolvedOut} ${resolvedIn}`;
   const result = await createHactool({
@@ -90,7 +90,7 @@ async function doCommand(name: string, input: string, outputDir: string) {
     keys: getConfig().paths!.keys
   }).run(command);
 
-  log.verbose(`unpack ${name} result -> ${result}`);
+  log.silly(`unpack ${name} result -> ${result}`);
 
   return result;
 }

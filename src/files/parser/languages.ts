@@ -1,13 +1,11 @@
 import { move, pathExists } from "fs-extra";
-import { basename, join, resolve } from "path";
+import { basename, join } from "path";
 
-import { mapSeries } from "bluebird";
-import { getCacheDir } from "../../config";
+import { map } from "bluebird";
 import { findFilesByName } from "../../util/filesystem";
-import { IFile } from "./models/File";
-import { NACPString } from "./models/NACPString";
+import { removeDuplicates } from "../../util/misc";
 
-export enum LANGUAGES {
+export enum LANGUAGE {
   AMERICAN_ENGLISH = "American English",
   BRITISH_ENGLISH = "British English",
   JAPANESE = "Japanese",
@@ -23,97 +21,108 @@ export enum LANGUAGES {
   KOREAN = "Korean",
   TAIWANESE = "Taiwanese", // This is Taiwanese but their titles comes in Traditional Chinese (http://blipretro.com/notes-on-the-taiwanese-nintendo-switch/)
   TRADITIONAL_CHINESE = "Traditional Chinese",
-  UNKNOWN = "???"
+  SIMPLIFIED_CHINESE = "Simplified Chinese",
+  UNKNOWN = "?"
 }
 
-export const NUMBER_OF_LANGUAGES = Object.keys(LANGUAGES).length;
+export const NUMBER_OF_LANGUAGES = Object.keys(LANGUAGE).length;
 
-export const LANGUAGES_ARRAY: string[] = Object.values(LANGUAGES);
+export const LANGUAGES_ARRAY: string[] = Object.values(LANGUAGE);
 
-export function getLangAt(index: number) {
-  if (index < LANGUAGES_ARRAY.length) {
-    return LANGUAGES_ARRAY[index];
-  }
-  return "";
-}
-
-export async function getLanguageData(
-  nacpStrings: NACPString[],
-  unpackDir: string,
-  titleId: string
-) {
-  // Get a list of icon filepaths
-  const iconPaths = await findFilesByName(unpackDir, "icon_*.dat");
-
-  // Create list of languages: [AmericanEnglish,Spanish, etc]
-  const languages: LanguageIconData[] = iconPaths.map(path => ({
-    input: path,
-    language: getLanguageFromFilePath(path),
-    out: ""
-  }));
-
-  // Generate input and output paths for each language
-
-  // Generate region icon: {[language]: "filepath/to/icon.bmp"}
-  // and languages: ["American English", "Spanish"]
-
-  // Get the language and region data
-  const languageDetails = await mapSeries(nacpStrings, (_, index) =>
-    createLanguageFilename(index, unpackDir, titleId)
-  );
-}
-
-function getLanguageFromFilePath(filePath: string): string {
-  return basename(filePath, ".dat").replace("icon_", "");
-}
+export const LANGUAGE_MAP = generateLanguageMap();
 
 export interface LanguageIconData {
-  input: string;
-  out: string;
+  iconPath: string;
   language: string;
 }
 
-async function createLanguageFilename(
-  index: number,
-  unpackDir: string,
-  titleId: string
-): Promise<LanguageIconData> {
-  const genInput = (x: string) =>
-    resolve(unpackDir, `icon_${x.replace(/ /g, "")}.dat`);
-
-  const shouldReplaceTai =
-    index === 13 && (await pathExists(genInput(LANGUAGES.TAIWANESE)));
-  const lang = (shouldReplaceTai
-    ? LANGUAGES.TRADITIONAL_CHINESE
-    : getLangAt(index)
-  ).replace(/ /g, "");
-
-  return {
-    input: genInput(lang),
-    out: join(getCacheDir(), "icons", titleId, `icon_${lang}.bmp`),
-    language: getLangAt(index)
-  };
+export function findLanguageFromPath(path: string): LANGUAGE {
+  const foundStringIndex = LANGUAGE_MAP[getLanguageFromFilePath(path)];
+  return foundStringIndex >= 0
+    ? getLanguageAt(foundStringIndex)
+    : LANGUAGE.UNKNOWN;
 }
 
-async function moveLanguageFiles(paths: LanguageIconData[]) {
-  const results: Partial<IFile> = {
-    regionIcon: {},
-    languages: []
-  };
-  for (const { input, out, language } of paths) {
+/**
+ * Get the game icons and languages
+ *
+ * @param romFSDir Directory path to where the romFS was unpacked
+ * @param titleId TitleID of the current game
+ */
+export async function getRomFSLanguageAndIcons(
+  romFSDir: string
+): Promise<LanguageIconData[]> {
+  const iconPaths = await findFilesByName(romFSDir, "icon_*.dat");
+
+  return iconPaths.map(path => ({
+    iconPath: path,
+    language: findLanguageFromPath(path)
+  }));
+}
+
+export function getUniqueLanguages(
+  left: LanguageIconData[],
+  right: LanguageIconData[]
+) {
+  return removeDuplicates<LanguageIconData>([...left, ...right], "language");
+}
+
+export interface MoveIconOptions {
+  input: string;
+  output: string;
+}
+
+export function createMoveIconOptions(
+  icons: string[],
+  outDir: string,
+  titleId: string
+): MoveIconOptions[] {
+  return icons.map(icon => ({
+    input: icon,
+    output: createIconFilename(titleId, outDir, icon)
+  }));
+}
+
+export async function moveLanguageFiles(icons: MoveIconOptions[]) {
+  return map(icons, async ({ input, output }) => {
     try {
       if (await pathExists(input)) {
-        await move(input, out, { overwrite: true });
-        results.regionIcon![language] = out;
-        results.languages!.push(language);
-      } else {
-        console.log(`doesnt exist: ${input}`);
+        await move(input, output, { overwrite: true });
+        return output;
       }
+
+      console.log(`doesnt exist: ${input}`);
     } catch (error) {
       console.error(`couldnt move`);
       console.error(error);
     }
-  }
 
-  return results;
+    return "";
+  }).filter(moved => moved !== "");
+}
+
+export function getLanguageFromFilePath(filePath: string): string {
+  return basename(filePath)
+    .replace(/\.(dat|bmp)/, "")
+    .replace("icon_", "");
+}
+
+function createIconFilename(titleId: string, outDir: string, iconPath: string) {
+  return join(
+    outDir,
+    "icons",
+    titleId,
+    `icon_${getLanguageFromFilePath(iconPath)}.bmp`
+  );
+}
+
+function generateLanguageMap(): { [lang: string]: number } {
+  return LANGUAGES_ARRAY.map(x => x.replace(/ /g, "")).reduce(
+    (prev, curr, index) => ({ ...prev, [curr]: index }),
+    {}
+  );
+}
+
+function getLanguageAt(index: number): LANGUAGE {
+  return LANGUAGES_ARRAY[index] as LANGUAGE;
 }

@@ -2,31 +2,57 @@ import { join } from "path";
 
 import { readWriteByNBytes } from "../../util/buffer";
 import { unpackRomFs, unpackSection0 } from "../hactool";
-import { Detail } from "./secure";
+import { Detail, DetailName } from "./secure";
+
+const APPEND_TO_FILE = "-data";
 
 export enum UnpackTypes {
   SECTION0 = "section0",
   ROMFS = "romfs"
 }
 
-export async function getCNMTDirs(fd: number, detail: Detail, metaDir: string) {
-  return unpackFile(UnpackTypes.SECTION0, fd, detail, metaDir);
+export function genRomFSDir(metaDir: string, name: DetailName) {
+  const file = generateUnpackFile(UnpackTypes.ROMFS, metaDir, name);
+  return `${file}${APPEND_TO_FILE}`;
 }
 
-export async function getRomFSDir(fd: number, detail: Detail, metaDir: string) {
-  return unpackFile(UnpackTypes.ROMFS, fd, detail, metaDir);
+export function genSection0Dir(metaDir: string, name: DetailName) {
+  const file = generateUnpackFile(UnpackTypes.SECTION0, metaDir, name);
+  return `${file}${APPEND_TO_FILE}`;
+}
+
+export async function unpackCNMTSection0(
+  fd: number,
+  detail: Detail,
+  section0Dir: string
+) {
+  return unpackFile(UnpackTypes.SECTION0, fd, detail, section0Dir);
+}
+
+export async function unpackCNMTRomFS(
+  fd: number,
+  detail: Detail,
+  romFSDir: string
+) {
+  return unpackFile(UnpackTypes.ROMFS, fd, detail, romFSDir);
+}
+
+function generateUnpackFile(
+  type: UnpackTypes,
+  metaDir: string,
+  { name }: DetailName
+) {
+  const outRoot = join(metaDir, name);
+  return join(outRoot, type);
 }
 
 async function unpackFile(
   type: UnpackTypes,
   fd: number,
-  { size, offset, name }: Detail,
-  metaDir: string
+  { size, offset }: Detail,
+  outDir: string
 ) {
-  const outRoot = join(metaDir, name);
-  const outFile = join(outRoot, type);
-  const outDir = `${outFile}-data`;
-
+  const outFile = outDir.replace(APPEND_TO_FILE, "");
   await readWriteByNBytes(fd, 8192, size, outFile, offset);
 
   try {
