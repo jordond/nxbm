@@ -1,9 +1,10 @@
 import axios from "axios";
-import { outputJson, readJson } from "fs-extra";
+import { readJson } from "fs-extra";
 import { resolve } from "path";
 
 import { INSWDBOptions } from "../config";
 import { create } from "../logger";
+import { outputFormattedJSON } from "../util/filesystem";
 import { format, olderThan, prettyDateTime, youngerThan } from "../util/misc";
 import { parseXml } from "../util/xmlToJson";
 import { NSWDBCache, ParsedXml, Release } from "./nswdb.types";
@@ -32,7 +33,7 @@ function findGameFromDB(
   return found ? found : db.find(x => findFunc(x, false));
 }
 
-export async function getGameDatabase(
+export async function getNSWDB(
   dataDir: string,
   { force = false, refreshInterval = STALE_HOURS }: INSWDBOptions = {}
 ) {
@@ -78,7 +79,20 @@ async function getXmlGamesDatabase(
   ) {
     log.info("Cached DB doesn't exist, or is too old.");
     log.info("Downloading a fresh copy of the NSWDB");
-    return startDownloadAndSaveResult(path);
+    try {
+      return startDownloadAndSaveResult(path);
+    } catch (error) {
+      if (cached.releases!.length) {
+        log.info("Failed to download new DB, using old version");
+        log.verbose(error);
+      } else {
+        log.error(
+          "Unable to download or find a nswdb! Parsing of files will be incomplete"
+        );
+        log.error(error);
+        return { releases: [] };
+      }
+    }
   }
 
   return cached;
@@ -164,7 +178,7 @@ async function saveDBJsonFile(
       releases: data
     };
 
-    await outputJson(path, output, { spaces: 2 });
+    await outputFormattedJSON(path, output);
     log.info(`Saved NSWDB to ${path}`);
     return output;
   } catch (error) {
