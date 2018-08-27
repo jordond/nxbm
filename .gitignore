@@ -4,6 +4,8 @@ out/
 docs/
 cliargs.js
 
+*.pyc
+
 lib-cov
 *.seed
 *.log
