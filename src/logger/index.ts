@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { LoggerInstance, LoggerOptions, transports } from "winston";
+import { Logger, LoggerInstance, LoggerOptions, transports } from "winston";
 
 import { getConfig, IConfig } from "../config";
 import { LogLevel } from "./ILogger";
