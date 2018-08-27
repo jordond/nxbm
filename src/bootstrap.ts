@@ -9,6 +9,7 @@ import {
   validateConfig
 } from "./config";
 import { ensureHactool, getKeys, getReleasesDB, startScanner } from "./files";
+import { getGameDB } from "./files/games/db";
 import { create } from "./logger";
 import { format } from "./util/misc";
 
@@ -19,14 +20,17 @@ export default async function bootstrap() {
   await initData(config);
   await initConfig(config);
 
-  // Files
+  initSecondary(config);
+
+  return config;
+}
+
+async function initSecondary(config: IConfig) {
   await initKeys(config);
   await initHactool(config);
   await initFolderScanner(config);
 
   await saveConfig();
-
-  return config;
 }
 
 async function initData({ paths }: IConfig) {
@@ -113,6 +117,7 @@ async function initHactool({
 
 async function initFolderScanner({ backups }: IConfig) {
   await getReleasesDB(backups.nswdb);
+  await getGameDB();
   await startScanner(backups);
 }
 

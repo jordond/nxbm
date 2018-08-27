@@ -1,9 +1,10 @@
 import axios from "axios";
-import { outputFile, outputJSON, pathExists, readFile } from "fs-extra";
+import { outputFile, pathExists, readFile } from "fs-extra";
 import { resolve } from "path";
 
 import { getConfig } from "../config";
 import { create } from "../logger";
+import { outputFormattedJSON } from "../util/filesystem";
 import { format } from "../util/misc";
 import { underscoreToCamel } from "../util/string";
 
@@ -87,10 +88,16 @@ async function keysExist(path: string, download: boolean) {
   return true;
 }
 
+let keyCache: Keys;
+
 export async function getKeys(
   keysPath: string = getConfig().paths!.keys,
   shouldDownload: boolean = false
 ): Promise<Keys | undefined> {
+  if (keyCache) {
+    return keyCache;
+  }
+
   const log = create("Keys");
 
   if (!(await keysExist(keysPath, shouldDownload))) {
@@ -108,7 +115,7 @@ export async function getKeys(
     }
 
     log.debug(`Using the following keys:\n${format(keys)}`);
-
+    keyCache = keys;
     return keys;
   } catch (error) {
     log.error("Unable to find usable key file");
@@ -142,5 +149,5 @@ export async function readRawKeyFile(path: string) {
 }
 
 export async function saveKeys(path: string, keys: Keys) {
-  return outputJSON(resolve(path, KEYS_FILENAME), keys);
+  return outputFormattedJSON(resolve(path, KEYS_FILENAME), keys);
 }

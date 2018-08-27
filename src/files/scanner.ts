@@ -5,6 +5,7 @@ import { join, resolve } from "path";
 
 import { IBackupConfig } from "../config";
 import { create } from "../logger";
+import { addFile, removeFile } from "./games/manager";
 
 const log = create("Scanner");
 
@@ -49,8 +50,8 @@ function scan(
 
     chokidar
       .watch(watchPaths, { persistent })
-      .on("add", file => log.debug(`add -> ${file}`))
-      .on("unlink", file => log.debug(`remove -> ${file}`))
+      .on("add", (file: string) => addFile(file))
+      .on("unlink", (file: string) => removeFile(file))
       .on("ready", () => done());
   });
 }
