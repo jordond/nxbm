@@ -28,6 +28,7 @@ export async function start(config: IConfig) {
 
   await server.register({ options, plugin: require("good") });
 
+  log.info(`Adding ${routes.length} routes`);
   routes.forEach(({ method, path }) =>
     log.debug(`Adding -> ${method} - ${path}`)
   );
@@ -39,8 +40,7 @@ export async function start(config: IConfig) {
     await server.start();
     log.info(`Server running on ${config.host}:${config.port}`);
   } catch (error) {
-    log.error("Unable to start server...\n", error, () =>
-      setTimeout(() => process.exit(1), 2000)
-    );
+    log.error("Unable to start server...\n");
+    throw error;
   }
 }
