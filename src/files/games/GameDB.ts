@@ -1,6 +1,7 @@
 import { filter } from "bluebird";
 import { pathExists } from "fs-extra";
 import { basename } from "path";
+
 import { create } from "../../logger";
 import { File } from "../parser/models/File";
 import { getGameDBPath, loadGameDB, saveGameDB } from "./db";
@@ -37,16 +38,15 @@ export class GameDB implements IGameDB {
     return this.xci.find(xci => xci.id() === game.id());
   }
 
-  public findByFileName(fileName: string) {
-    this.log.debug("Searching DB for game matching");
-    this.log.debug(fileName);
+  public findByFileName(filename: string) {
+    this.log.debug(`Searching DB for game matching: ${filename}`);
 
-    let found = this.xci.find(xci => xci.filepath === fileName);
+    let found = this.xci.find(xci => xci.filepath === filename);
     if (!found) {
       this.log.debug(
-        `Searching for just the filename -> ${basename(fileName)}`
+        `Searching for just the filename -> ${basename(filename)}`
       );
-      found = this.xci.find(xci => xci.filename === basename(fileName));
+      found = this.xci.find(xci => xci.filename === basename(filename));
     }
 
     return found;

@@ -1,5 +1,6 @@
 import { Schema } from "convict";
 import { resolve } from "path";
+
 import { ILogConfig, LogLevel } from "../logger/ILogger";
 
 const root = resolve(__dirname, "../");

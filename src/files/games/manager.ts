@@ -1,5 +1,6 @@
 import { basename } from "path";
 
+import { pathExists } from "fs-extra";
 import { getDataDir } from "../../config";
 import { create } from "../../logger";
 import { getKeys } from "../keys";
@@ -11,14 +12,19 @@ const TAG = "games";
 
 export async function addFile(filePath: string) {
   const log = create(`${TAG}:add`);
-  const file = await parseFile(filePath);
-  if (!file) {
-    log.error(`Failed to parse ${basename(filePath)}`);
-    return false;
-  }
 
   const db = await getGameDB();
-  const exists = db.find(file);
+
+  let file = db.findByFileName(filePath);
+  if (!file || !(await pathExists(file.filepath))) {
+    file = await parseFile(filePath);
+    if (!file) {
+      log.error(`Failed to parse ${basename(filePath)}`);
+      return false;
+    }
+  }
+
+  const exists = file ? file : db.find(file);
   if (exists) {
     log.info(`Skipping ${exists.displayName()}, already found in database`);
     return exists;
@@ -43,7 +49,7 @@ export async function removeFile(filePath: string) {
   }
 }
 
-async function parseFile(filePath: string): Promise<File | null> {
+async function parseFile(filePath: string): Promise<File | undefined> {
   const log = create(`${TAG}:${basename(filePath)}`);
 
   log.debug("Checking if file is an xci...");
@@ -57,7 +63,7 @@ async function parseFile(filePath: string): Promise<File | null> {
       log.error(error);
     }
 
-    return null;
+    return;
   }
 
   // TODO
@@ -65,15 +71,14 @@ async function parseFile(filePath: string): Promise<File | null> {
 
   log.warn(`Is an unsupported file type!`);
   log.warn("Currently only XCI files are supported!");
-  return null;
 }
 
-async function parseXCIFile(filePath: string): Promise<File | null> {
+async function parseXCIFile(filePath: string): Promise<File | undefined> {
   const log = create(`${TAG}:parse`);
   const keys = await getKeys();
   if (!keys) {
     log.error("Unable to find decryption keys, unable to parse XCI");
-    return null;
+    return;
   }
 
   log.verbose(`Parsing ${filePath}`);
@@ -85,6 +90,4 @@ async function parseXCIFile(filePath: string): Promise<File | null> {
   } catch (error) {
     log.error(error);
   }
-
-  return null;
 }

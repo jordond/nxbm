@@ -119,6 +119,7 @@ async function initFileScanner({ backups }: IConfig) {
   await getReleasesDB(backups.nswdb);
   const db = await getGameDB();
   if (backups.pruneMissing && db.xci.length) {
+    genLogger("scanner").info("Pruning database of missing files");
     await db.prune();
   }
   await startScanner(backups);
