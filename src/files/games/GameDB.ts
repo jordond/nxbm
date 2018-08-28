@@ -1,3 +1,5 @@
+import { filter } from "bluebird";
+import { pathExists } from "fs-extra";
 import { basename } from "path";
 import { create } from "../../logger";
 import { File } from "../parser/models/File";
@@ -62,5 +64,22 @@ export class GameDB implements IGameDB {
   public remove(game: File) {
     this.log.verbose(`Deleting ${game.displayName()}`);
     this.xci = this.xci.filter(xci => xci.id() !== game.id());
+  }
+
+  // TODO - Add option to disable removing missing files?
+  public async prune() {
+    const existingFiles = await filter(this.xci, async (xci: File) => {
+      this.log.debug(`Checking if ${xci.displayName()} exists`);
+      const exists = await pathExists(xci.filepath);
+      if (!exists) {
+        this.log.info(`${xci.displayName()} could not be located, removing`);
+      }
+      return exists;
+    });
+
+    if (existingFiles.length !== this.xci.length) {
+      this.xci = existingFiles;
+      this.save();
+    }
   }
 }

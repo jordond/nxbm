@@ -28,7 +28,7 @@ export default async function bootstrap() {
 async function initSecondary(config: IConfig) {
   await initKeys(config);
   await initHactool(config);
-  await initFolderScanner(config);
+  await initFileScanner(config);
 
   await saveConfig();
 }
@@ -115,9 +115,12 @@ async function initHactool({
   }
 }
 
-async function initFolderScanner({ backups }: IConfig) {
+async function initFileScanner({ backups }: IConfig) {
   await getReleasesDB(backups.nswdb);
-  await getGameDB();
+  const db = await getGameDB();
+  if (backups.pruneMissing && db.xci.length) {
+    await db.prune();
+  }
   await startScanner(backups);
 }
 
