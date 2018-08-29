@@ -15,6 +15,8 @@
   - ~~When adding a new game from folder scanning, ensure its not in the blacklist~~
 - Sockets
   - Socket communication for events, (add, delete, parse, etc)
+- thegamesdb - Scrape information from here instead of nintendo
+- Switch `GameDB` to have a list of `Game[]` instead of `xci: Game[], nsp: Game[]`
 
 ## Config structure
 
@@ -44,14 +46,14 @@
 
 - Endpoints return `Game` or `Game[]`
   - Check if missing or in the blacklist before sending to user
-- `GET : /games`
-  - List all games from all folders
-- `GET : /games/{titleid}`
-  - List all revisions for titleid
-- `GET : /games/{titleid}/latest`
-  - Get newest revision for titleid
-- `GET : /games/{titleid}/{revision}`
-  - Get specific revision for title id
+- ~~`GET : /games`~~
+  ~~- List all games from all folders~~
+- ~~`GET : /games/{titleid}`~~
+  - ~~List all revisions for titleid~~
+- ~~`GET : /games/{titleid}/latest`~~
+  - ~~ Get newest revision for titleid~~
+- ~~`GET : /games/{titleid}/{revision}`~~
+  - ~~Get specific revision for title id~~
 - `DELETE : /games/{titleid}/{revision}`
 - `DELETE : /games/{titleid}/latest`
   - Delete game from db (or mark as deleted?)
