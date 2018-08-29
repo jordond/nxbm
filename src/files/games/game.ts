@@ -50,6 +50,11 @@ export class GameDB implements IGameDB {
     return this.xcis.find(({ file }) => file.id() === game.id());
   }
 
+  public findByID(titleID: string) {
+    this.log.debug(`Searching DB for id: ${titleID}`);
+    return this.xcis.filter(xci => xci.file.titleID === titleID);
+  }
+
   public findByFileName(filename: string) {
     this.log.debug(`Searching DB for game matching: ${filename}`);
 
@@ -80,6 +85,16 @@ export class GameDB implements IGameDB {
     this.xcis.push(game);
 
     return game;
+  }
+
+  public markMissing(game: Game) {
+    this.log.verbose(`Marking ${game.file.displayName()} as missing`);
+    const found = this.xcis.find(({ file }) => file.id() === game.file.id());
+    if (found) {
+      found.missing = true;
+      return true;
+    }
+    return false;
   }
 
   public remove(game: Game) {

@@ -1,18 +1,38 @@
 import { ServerRoute } from "hapi";
 
-import { getGameDB } from "../../files/games/db";
-import { Methods } from "../../util/hapiRoute";
+import { DELETE, GET } from "../../util/hapiRoute";
+import {
+  deleteGameByTitleID,
+  getAllGames,
+  getAllGamesByTitleID,
+  getGameByTitleID
+} from "./games.handler";
 
-// TODO - Appears sceneLanguages is broken!
-const routes: ServerRoute[] = [
+export const queryParams = {
+  deleteGame: {
+    hardDelete: "hardDelete"
+  }
+};
+
+export const routes: ServerRoute[] = [
   {
-    method: Methods.GET,
+    method: GET,
     path: "/games",
-    handler: async (_, r) => {
-      const db = await getGameDB();
-      return { xcis: db.xcis };
-    }
+    handler: getAllGames
+  },
+  {
+    method: GET,
+    path: "/games/{titleid}",
+    handler: getAllGamesByTitleID
+  },
+  {
+    method: GET,
+    path: "/games/{titleid}/revision/{revision?}",
+    handler: getGameByTitleID
+  },
+  {
+    method: DELETE,
+    path: "/games/{titleid}/revision/{revision?}",
+    handler: deleteGameByTitleID
   }
 ];
-
-export default routes;

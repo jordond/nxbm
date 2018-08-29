@@ -1,11 +1,21 @@
-import { ServerRoute } from "hapi";
+import { Lifecycle, Request, ResponseToolkit, ServerRoute } from "hapi";
 import { normalize } from "path";
 
-import games from "./games/games.routes";
+import { GameDB } from "../files/games/game";
+import games from "./games";
+import scanner from "./scanner";
 
 export interface IApiRoute extends ServerRoute {
   prefix?: string;
 }
+
+export type DBRouteHandler = (
+  params: {
+    request: Request;
+    r: ResponseToolkit;
+    db: GameDB;
+  }
+) => Lifecycle.ReturnValue;
 
 // Redirect to the api for now
 const rootRoutes: ServerRoute[] = [
@@ -24,7 +34,7 @@ const rootRoutes: ServerRoute[] = [
 /**
  * Add Routes here
  */
-const routes: IApiRoute[] = [...games];
+const routes: IApiRoute[] = [...games(), ...scanner()];
 
 const apiRoutes: ServerRoute[] = routes.map(
   ({ prefix = "/api/", ...route }: IApiRoute) => {

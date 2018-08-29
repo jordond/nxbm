@@ -2,7 +2,7 @@ import axios from "axios";
 import { readJson } from "fs-extra";
 import { resolve } from "path";
 
-import { INSWDBOptions } from "../config";
+import { getDataDir, INSWDBOptions } from "../config";
 import { create } from "../logger";
 import { outputFormattedJSON } from "../util/filesystem";
 import { format, olderThan, prettyDateTime, youngerThan } from "../util/misc";
@@ -34,7 +34,7 @@ function findGameFromDB(
 }
 
 export async function getNSWDB(
-  dataDir: string,
+  dataDir: string = getDataDir(),
   { force = false, refreshInterval = STALE_HOURS }: INSWDBOptions = {}
 ) {
   const { updatedAt, releases } = cache;

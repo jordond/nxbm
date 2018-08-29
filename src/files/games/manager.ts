@@ -2,11 +2,14 @@ import { basename } from "path";
 
 import { getDataDir } from "../../config";
 import { create } from "../../logger";
+import { safeRemove } from "../../util/filesystem";
 import { getKeys } from "../keys";
+import { getNSWDB } from "../nswdb";
 import { isXCI, parseXCI } from "../parser";
 import { File } from "../parser/models/File";
-import { isBlacklisted } from "./blacklist";
+import { addToBlacklist, isBlacklisted } from "./blacklist";
 import { getGameDB } from "./db";
+import { Game, GameDB } from "./game";
 
 const TAG = "games";
 
@@ -30,6 +33,9 @@ export async function addFile(filePath: string) {
         return;
       }
 
+      const nswdb = await getNSWDB();
+      parsed.assignRelease(nswdb.find(parsed));
+
       const game = await db.add(parsed);
       log.info(`Added ${parsed.displayName()}`);
       db.save();
@@ -41,18 +47,38 @@ export async function addFile(filePath: string) {
   return found;
 }
 
-export async function removeFile(filePath: string) {
+export async function removeFile(
+  db: GameDB,
+  game: Game,
+  hardDelete: boolean = false
+) {
   const log = create(`${TAG}:remove`);
+
+  db.remove(game);
+  db.save();
+  addToBlacklist(game.file);
+
+  log.info(`Removed ${game.file.displayName()}`);
+  if (!hardDelete) {
+    return true;
+  }
+
+  log.info(`Deleting ${game.file.displayName()} from the disk`);
+  return safeRemove(game.file.filepath);
+}
+
+export async function markFileAsMissing(filePath: string) {
+  const log = create(`${TAG}:missing`);
 
   const db = await getGameDB();
   const found = await db.findByFileName(filePath);
   if (found) {
-    log.info(`Removed ${found.file.displayName()}`);
-    db.remove(found);
-    db.save();
-  } else {
-    log.warn(`Failed to remove ${filePath}, could not find a matching game`);
+    log.info(`${found.file.displayName()} has gone missing!`);
+    return db.markMissing(found);
   }
+
+  log.debug(`File must have been deleted by the user`);
+  return false;
 }
 
 async function parseFile(filePath: string): Promise<File | undefined> {

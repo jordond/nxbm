@@ -3,13 +3,15 @@ import {
   ensureDir,
   ensureFile,
   open,
-  outputJSON
+  outputJSON,
+  remove
 } from "fs-extra";
 import * as originalGlob from "glob";
 import { tmpdir } from "os";
 import { extname, resolve } from "path";
 import { Extract } from "unzipper";
 import { promisify } from "util";
+import { create } from "../logger";
 
 const glob = promisify(originalGlob);
 
@@ -61,4 +63,24 @@ export async function findFirstFileByName(folder: string, name: string) {
 
 export function outputFormattedJSON(path: string, data: any) {
   return outputJSON(path, data, { spaces: 2 });
+}
+
+export async function safeRemove(path: string, throws: boolean = false) {
+  const log = create("filesystem:remove");
+  try {
+    log.verbose(`Deleting ${path}`);
+    await remove(path);
+
+    log.verbose(`Successfully deleted ${path}`);
+    return true;
+  } catch (error) {
+    log.error(`Unable to delete ${path}`);
+    log.error(error);
+
+    if (throws) {
+      throw error;
+    }
+  }
+
+  return false;
 }

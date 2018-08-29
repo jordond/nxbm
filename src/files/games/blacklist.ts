@@ -13,6 +13,7 @@ export interface Blacklist {
   filepath: string;
   titleid: string;
   revision: string;
+  added: Date;
 }
 
 let blacklist: Blacklist[];
@@ -25,6 +26,26 @@ export async function getBlacklist() {
   log.info(`Loaded the blacklist with ${blacklist.length} entries`);
 
   return blacklist;
+}
+
+export function addToBlacklist(file: File) {
+  log.verbose(`Adding ${file.displayName()} to the blacklist`);
+
+  if (isBlacklisted(file)) {
+    log.verbose(`File is already blacklisted`);
+    return false;
+  }
+
+  blacklist.push({
+    filepath: file.filepath,
+    titleid: file.titleID,
+    revision: file.gameRevision,
+    added: new Date()
+  });
+
+  saveBlacklist();
+
+  return true;
 }
 
 export function isBlacklisted(file: File) {
@@ -66,7 +87,7 @@ export async function loadBlacklist(): Promise<Blacklist[]> {
   return [];
 }
 
-export async function saveGameDB(data: Blacklist[] = blacklist) {
+export async function saveBlacklist(data: Blacklist[] = blacklist) {
   const path = getBlacklistPath();
   log.verbose(`Attempting to save the blacklist to ${path}`);
   try {

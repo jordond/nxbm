@@ -1,5 +1,4 @@
 import {
-  Lifecycle,
   Request,
   ResponseToolkit,
   RouteOptionsPreAllOptions,
@@ -8,13 +7,13 @@ import {
 
 import { noop } from "./misc";
 
-export function applyPreRequest(
+export function applyPreRequest<T>(
   pre: RouteOptionsPreAllOptions[],
   routes: ServerRoute[],
   modifyHandler: (
     request: Request,
     r: ResponseToolkit,
-    handler: Lifecycle.Method
+    handler: T
   ) => void = noop
 ): ServerRoute[] {
   return routes.map(route => ({
@@ -24,15 +23,22 @@ export function applyPreRequest(
       pre
     },
     handler: (request: Request, r: ResponseToolkit) => {
-      return modifyHandler(request, r, route.handler as Lifecycle.Method);
+      return modifyHandler(request, r, route.handler as T);
     }
   }));
 }
 
-export enum Methods {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  PATCH = "PATCH",
-  DELETE = "DELETE"
-}
+export const GET = "GET";
+export const POST = "POST";
+export const PUT = "PUT";
+export const PATCH = "PATCH";
+export const DELETE = "DELETE";
+
+// tslint:disable-next-line:variable-name
+export const Methods = {
+  GET,
+  POST,
+  PUT,
+  PATCH,
+  DELETE
+};
