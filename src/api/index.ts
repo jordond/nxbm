@@ -1,6 +1,8 @@
 import { ServerRoute } from "hapi";
 import { normalize } from "path";
 
+import games from "./games/games.routes";
+
 export interface IApiRoute extends ServerRoute {
   prefix?: string;
 }
@@ -19,7 +21,10 @@ const rootRoutes: ServerRoute[] = [
   }
 ];
 
-const routes: IApiRoute[] = [];
+/**
+ * Add Routes here
+ */
+const routes: IApiRoute[] = [...games];
 
 const apiRoutes: ServerRoute[] = routes.map(
   ({ prefix = "/api/", ...route }: IApiRoute) => {

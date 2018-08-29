@@ -9,6 +9,7 @@ import {
   validateConfig
 } from "./config";
 import { ensureHactool, getKeys, getReleasesDB, startScanner } from "./files";
+import { getBlacklist } from "./files/games/blacklist";
 import { getGameDB } from "./files/games/db";
 import { create } from "./logger";
 import { format } from "./util/misc";
@@ -117,11 +118,11 @@ async function initHactool({
 
 async function initFileScanner({ backups }: IConfig) {
   await getReleasesDB(backups.nswdb);
+  await getBlacklist();
+
   const db = await getGameDB();
-  if (backups.pruneMissing && db.xci.length) {
-    genLogger("scanner").info("Pruning database of missing files");
-    await db.prune();
-  }
+  await db.check(backups.removeBlacklisted);
+
   await startScanner(backups);
 }
 

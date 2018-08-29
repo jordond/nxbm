@@ -29,7 +29,7 @@ export interface IBackupConfig {
   nswdb: INSWDBOptions;
   autoInstallHactool: boolean;
   downloadKeys: boolean;
-  pruneMissing: boolean;
+  removeBlacklisted: boolean;
 }
 
 export interface INSWDBOptions {
@@ -148,10 +148,10 @@ export const schema: Schema<any> = {
       default: false,
       arg: "downloadKeys"
     },
-    pruneMissing: {
-      doc: "Prune missing files found in the db",
+    removeBlacklisted: {
+      doc: "Remove blacklisted files found in the db",
       format: Boolean,
-      default: true
+      default: false
     }
   }
 };

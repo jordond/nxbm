@@ -1,11 +1,11 @@
 import { basename } from "path";
 
-import { pathExists } from "fs-extra";
 import { getDataDir } from "../../config";
 import { create } from "../../logger";
 import { getKeys } from "../keys";
 import { isXCI, parseXCI } from "../parser";
 import { File } from "../parser/models/File";
+import { isBlacklisted } from "./blacklist";
 import { getGameDB } from "./db";
 
 const TAG = "games";
@@ -14,34 +14,40 @@ export async function addFile(filePath: string) {
   const log = create(`${TAG}:add`);
 
   const db = await getGameDB();
+  let found = db.findByFileName(filePath);
 
-  let file = db.findByFileName(filePath);
-  if (!file || !(await pathExists(file.filepath))) {
-    file = await parseFile(filePath);
-    if (!file) {
-      log.error(`Failed to parse ${basename(filePath)}`);
-      return false;
+  if (!found) {
+    const parsed = await parseFile(filePath);
+    if (!parsed) {
+      return;
+    }
+
+    found = db.find(parsed);
+    if (!found) {
+      const ignored = await isBlacklisted(parsed);
+      if (ignored) {
+        log.info(`${parsed.displayName()} is on the blacklist, skipping`);
+        return;
+      }
+
+      const game = await db.add(parsed);
+      log.info(`Added ${parsed.displayName()}`);
+      db.save();
+      return game;
     }
   }
 
-  const exists = file ? file : db.find(file);
-  if (exists) {
-    log.info(`Skipping ${exists.displayName()}, already found in database`);
-    return exists;
-  }
-
-  db.add(file);
-  log.info(`Added ${file.displayName()}`);
-  db.save();
+  log.info(`Skipping ${found.file.displayName()}, already found in database`);
+  return found;
 }
 
 export async function removeFile(filePath: string) {
   const log = create(`${TAG}:remove`);
 
   const db = await getGameDB();
-  const found = db.findByFileName(filePath);
+  const found = await db.findByFileName(filePath);
   if (found) {
-    log.info(`Removed ${found.displayName()}`);
+    log.info(`Removed ${found.file.displayName()}`);
     db.remove(found);
     db.save();
   } else {
@@ -66,9 +72,6 @@ async function parseFile(filePath: string): Promise<File | undefined> {
     return;
   }
 
-  // TODO
-  // Check if is NSP
-
   log.warn(`Is an unsupported file type!`);
   log.warn("Currently only XCI files are supported!");
 }
@@ -88,6 +91,7 @@ async function parseXCIFile(filePath: string): Promise<File | undefined> {
 
     return file;
   } catch (error) {
+    log.error(`Unable to parse ${filePath}`);
     log.error(error);
   }
 }
