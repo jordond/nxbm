@@ -51,3 +51,7 @@ export function removeDuplicates<T>(target: T[], prop: string) {
         .indexOf((obj as any)[prop]) === index
   );
 }
+
+export function flatten(arr: any[]) {
+  return arr.reduce((acc: any, val: any) => acc.concat(val), []);
+}

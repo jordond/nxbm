@@ -2,8 +2,7 @@ import { Lifecycle, Request, ResponseToolkit, ServerRoute } from "hapi";
 import { normalize } from "path";
 
 import { GameDB } from "../files/games/game";
-import games from "./games";
-import scanner from "./scanner";
+import routes from "./routes";
 
 export interface IApiRoute extends ServerRoute {
   prefix?: string;
@@ -30,11 +29,6 @@ const rootRoutes: ServerRoute[] = [
     handler: (_, r) => r.response("nxbm API")
   }
 ];
-
-/**
- * Add Routes here
- */
-const routes: IApiRoute[] = [...games(), ...scanner()];
 
 const apiRoutes: ServerRoute[] = routes.map(
   ({ prefix = "/api/", ...route }: IApiRoute) => {

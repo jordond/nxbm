@@ -1,3 +1,1 @@
-import { routes } from "./scanner.routes";
-
-export default () => routes;
+export { routes as scanner } from "./scanner.routes";

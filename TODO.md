@@ -5,7 +5,7 @@
   - ~~titleid and revision~~
   - ~~icons~~
 - Parse NSP
-- Prune db of missing files
+- ~~Prune db of missing files~~
   - ~~If a file is missing on startup (ex not detected by the folder scanner)~~
   - ~~Mark it as 'missing' (property on the `Game`?)~~
   - Still return it with API calls, but UI should grey it out
@@ -54,11 +54,11 @@
   - ~~ Get newest revision for titleid~~
 - ~~`GET : /games/{titleid}/{revision}`~~
   - ~~Get specific revision for title id~~
-- `DELETE : /games/{titleid}/{revision}`
-- `DELETE : /games/{titleid}/latest`
-  - Delete game from db (or mark as deleted?)
-  - Add to blacklist (or add blacklist property to db)
-  - optionally delete the file from disk
+- ~~`DELETE : /games/{titleid}/{revision}`~~
+- ~~`DELETE : /games/{titleid}/latest`~~
+  - ~~Delete game from db (or mark as deleted?)~~
+  - ~~Add to blacklist (or add blacklist property to db)~~
+  - ~~optionally delete the file from disk~~
 - NOTE
   - Also need to be able to get the icons for each game, from the datadir
 - Optional?
@@ -90,6 +90,12 @@
 - `DELETE : /paths/{id}`
   - Stop scanning this path
   - requires restarting scanner
+
+## Config (mvp)
+
+- `GET : /config`
+- `PUT : /config`
+  - Validate payload then save config
 
 ## Niceties
 
