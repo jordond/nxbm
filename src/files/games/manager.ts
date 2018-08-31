@@ -34,7 +34,15 @@ export async function addFile(filePath: string) {
       }
 
       const nswdb = await getNSWDB();
-      parsed.assignRelease(nswdb.find(parsed));
+      const release = nswdb.find(parsed);
+      if (release) {
+        log.info(`Found a match in the scene db: ${release.releasename}`);
+        parsed.assignRelease(release);
+      } else {
+        log.info(
+          `Unable to find a matching game in the scene db: ${parsed.displayName()}`
+        );
+      }
 
       const game = await db.add(parsed);
       log.info(`Added ${parsed.displayName()}`);

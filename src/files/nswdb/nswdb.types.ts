@@ -1,4 +1,6 @@
-import { File } from "./parser/models/File";
+import { File } from "../parser/models/File";
+
+// TODO move to a d.ts file
 
 export interface Release {
   id: string;

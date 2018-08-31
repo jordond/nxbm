@@ -6,6 +6,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,
+    "lib": ["es2018", "es2017"],
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

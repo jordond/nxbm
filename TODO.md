@@ -17,6 +17,10 @@
   - Socket communication for events, (add, delete, parse, etc)
 - thegamesdb - Scrape information from here instead of nintendo
 - Switch `GameDB` to have a list of `Game[]` instead of `xci: Game[], nsp: Game[]`
+- Update Config to use `Partial<>` instead of always optional
+- Add `cleanup` to the config file, to stop deleting of hactool temp files
+- On startup, even if file is already in the DB, check to see if it has the SCENE information set
+- Use NEDB or some other type of json db for the games, probably not great to just write to a json file, not thread safe
 
 ## Config structure
 
@@ -93,9 +97,9 @@
 
 ## Config (mvp)
 
-- `GET : /config`
-- `PUT : /config`
-  - Validate payload then save config
+- ~~`GET : /config`~~
+- ~~`PUT : /config`~~
+  - ~~Validate payload then save config~~
 
 ## Niceties
 

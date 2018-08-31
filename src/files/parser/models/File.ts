@@ -1,6 +1,6 @@
 import { basename, extname } from "path";
 import { fileSize, formatTitleId, hexToGbStr } from "../../../util/parser";
-import { Release } from "../../nswdb.types";
+import { Release } from "../../nswdb/nswdb.types";
 import { getMasterKeyStr } from "../masterkey";
 
 export interface IFile {
@@ -78,7 +78,7 @@ export class File implements IFile {
   public isTrimmed: boolean = false;
   public cartSize: string = "";
 
-  public release?: Release;
+  public releaseDataSet: boolean = false;
 
   constructor(opts: Partial<IFile> = {}) {
     this.assign(opts);
@@ -131,6 +131,8 @@ export class File implements IFile {
       sceneID: parseInt(id),
       version: firmware.toLowerCase()
     });
+
+    this.releaseDataSet = true;
 
     return this;
   }

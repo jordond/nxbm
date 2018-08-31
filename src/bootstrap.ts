@@ -4,13 +4,17 @@ import { join, resolve } from "path";
 import {
   configPath,
   getConfig,
+  getDataDir,
   IConfig,
   saveConfig,
   validateConfig
 } from "./config";
-import { ensureHactool, getKeys, getReleasesDB, startScanner } from "./files";
+import { ensureHactool, getKeys, startScanner } from "./files";
+import { getEShopDB } from "./files/eshopdb";
 import { getBlacklist } from "./files/games/blacklist";
 import { getGameDB } from "./files/games/db";
+import { getNSWDB } from "./files/nswdb";
+import { getTGDB } from "./files/thegamesdb";
 import { create } from "./logger";
 import { format } from "./util/misc";
 
@@ -117,7 +121,14 @@ async function initHactool({
 }
 
 async function initFileScanner({ backups }: IConfig) {
-  await getReleasesDB(backups.nswdb);
+  const { nswdb } = backups;
+
+  // TODO - move to different function
+  // Scrape info for added files
+  getTGDB();
+  getEShopDB();
+
+  await getNSWDB(getDataDir(), nswdb);
   await getBlacklist();
 
   const db = await getGameDB();

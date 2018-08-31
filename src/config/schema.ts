@@ -7,6 +7,7 @@ const root = resolve(__dirname, "../");
 
 // TODO
 // Change usage of this to a Partial<>
+// Move to d.ts file
 export interface IConfig {
   env?: string;
   host?: string;
@@ -27,6 +28,8 @@ export interface IBackupConfig {
   watch: boolean;
   recursive: boolean;
   nswdb: INSWDBOptions;
+  tgdb: ITGDBOptions;
+  eshop: EShopDBOptions;
   autoInstallHactool: boolean;
   downloadKeys: boolean;
   removeBlacklisted: boolean;
@@ -35,6 +38,16 @@ export interface IBackupConfig {
 export interface INSWDBOptions {
   force?: boolean;
   refreshInterval?: number;
+}
+
+export interface ITGDBOptions {
+  refreshInterval: number;
+  apikey: string;
+}
+
+export interface EShopDBOptions {
+  refreshInterval: number;
+  // TODO - choose different regions to download from, current is US
 }
 
 export const schema: Schema<any> = {
@@ -131,8 +144,27 @@ export const schema: Schema<any> = {
         doc: "Refresh NSWDB after interval (in hours)",
         format: Number,
         default: 24,
-        env: "NSWDB_INTERVAL",
         arg: "nswdbInterval"
+      }
+    },
+    tgdb: {
+      refreshInterval: {
+        doc: "Hours to refresh thegamesdb database",
+        format: Number,
+        default: 24 * 7
+      },
+      apikey: {
+        doc:
+          "Api key for using thegamesdb.net, if not supplied a default one will be used.  But may be rate limited as there is a monthly limit",
+        format: String,
+        default: ""
+      }
+    },
+    eshop: {
+      refreshInterval: {
+        doc: "Hours to refresh the eshop database",
+        format: Number,
+        default: 24 * 1
       }
     },
     autoInstallHactool: {
