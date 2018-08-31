@@ -1,7 +1,7 @@
 import { internal, notFound } from "boom";
 import { max } from "compare-semver";
 import { DBRouteHandler } from "../";
-import { Game } from "../../files/games/game";
+import { Game } from "../../files/games/gamedb";
 import { removeFile } from "../../files/games/manager";
 import { hasQuery } from "../../util/hapiExt";
 import { queryParams } from "./games.routes";

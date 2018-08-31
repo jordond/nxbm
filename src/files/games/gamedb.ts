@@ -6,7 +6,7 @@ import { create } from "../../logger";
 import { File } from "../parser/models/File";
 import { isBlacklisted } from "./blacklist";
 import { getGameDBPath, loadGameDB, saveGameDB } from "./db";
-import { Game } from "./game";
+import { Game } from "./gamedb";
 
 export interface Game {
   file: File;

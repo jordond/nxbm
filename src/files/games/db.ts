@@ -5,7 +5,7 @@ import { getDataDir } from "../../config";
 import { create } from "../../logger";
 import { outputFormattedJSON } from "../../util/filesystem";
 import { File } from "../parser/models/File";
-import { GameDB, IGameDB } from "./game";
+import { GameDB, IGameDB } from "./gamedb";
 
 const DB_FILENAME = "gamedb.json";
 const log = create("games:db");

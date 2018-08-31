@@ -9,7 +9,7 @@ import { isXCI, parseXCI } from "../parser";
 import { File } from "../parser/models/File";
 import { addToBlacklist, isBlacklisted } from "./blacklist";
 import { getGameDB } from "./db";
-import { Game, GameDB } from "./game";
+import { Game, GameDB } from "./gamedb";
 
 const TAG = "games";
 

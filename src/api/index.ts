@@ -1,7 +1,7 @@
 import { Lifecycle, Request, ResponseToolkit, ServerRoute } from "hapi";
 import { normalize } from "path";
 
-import { GameDB } from "../files/games/game";
+import { GameDB } from "../files/games/gamedb";
 import routes from "./routes";
 
 export interface IApiRoute extends ServerRoute {
