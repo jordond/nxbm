@@ -11,7 +11,7 @@
     "commit": "git-cz",
     "lint": "tslint --project tsconfig.json --fix src/**/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist && rm node_modules/python-shell/index.ts",
     "build": "tsc",
     "postbuild": "cpx 'src/**/*.py' dist",
     "dev": "nodemon src/index.ts -- --root=./tmp --level=debug",
