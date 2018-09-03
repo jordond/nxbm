@@ -17,5 +17,5 @@ export async function getEShopDB({
   log.debug("Init EShopDB");
   cachedDb = new EShopDB();
   cachedDb.setOutputDir(dataDir);
-  return cachedDb.initDb();
+  return cachedDb.initDb(force);
 }

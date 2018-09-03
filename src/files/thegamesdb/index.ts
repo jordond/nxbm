@@ -16,5 +16,5 @@ export async function getTGDB({
 
   log.debug("Init TGDB");
   cachedDb.setOutputDir(dataDir);
-  return cachedDb.initDb();
+  return cachedDb.initDb(force);
 }
