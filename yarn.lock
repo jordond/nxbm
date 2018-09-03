@@ -121,12 +121,6 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/podium/-/podium-1.0.0.tgz#bfaa2151be2b1d6109cc69f7faa9dac2cba3bb20"
 
-"@types/python-shell@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@types/python-shell/-/python-shell-0.4.1.tgz#5eac2cf408e31ed8f870b30eeab1128d11a932ed"
-  dependencies:
-    "@types/events" "*"
-
 "@types/shot@*":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@types/shot/-/shot-3.4.0.tgz#459477c5187d3ebd303660ab099e7e9e0f3b656f"
@@ -2988,9 +2982,9 @@ punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
-python-shell@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-0.5.0.tgz#461983bafd092010bc2760c365b13e7d50aab231"
+python-shell@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-1.0.2.tgz#6770cb3f748682f5154f6354b4661e9b4bfa29b8"
 
 q@^1.5.0:
   version "1.5.1"
