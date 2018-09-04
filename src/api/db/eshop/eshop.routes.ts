@@ -20,7 +20,7 @@ export const routes: ServerRoute[] = [
   },
   {
     method: GET,
-    path: "/db/eshop/{game}",
+    path: "/db/eshop/{title}",
     handler: getEShopGame
   }
 ];

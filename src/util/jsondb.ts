@@ -55,6 +55,14 @@ export abstract class AutoDownloadJsonDB<T> {
     );
   }
 
+  public getData(): T[] {
+    if (this.db && this.db.data) {
+      return this.db.data;
+    }
+
+    return [];
+  }
+
   public async initDb(force: boolean = false) {
     await this.getJsonDB(force);
 
