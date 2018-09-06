@@ -9,8 +9,10 @@ import {
 import * as originalGlob from "glob";
 import { tmpdir } from "os";
 import { extname, resolve } from "path";
+import * as recursiveReaddir from "recursive-readdir";
 import { Extract } from "unzipper";
 import { promisify } from "util";
+
 import { create } from "../logger";
 
 const glob = promisify(originalGlob);
@@ -83,4 +85,8 @@ export async function safeRemove(path: string, throws: boolean = false) {
   }
 
   return false;
+}
+
+export function getFileTree(path: string) {
+  return recursiveReaddir(resolve(path));
 }

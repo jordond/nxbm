@@ -15,9 +15,6 @@ export interface IFile {
   sdkVersion: string;
   rawCartSize: number;
   masterKeyRevisionRaw: number;
-  regionIcon: {
-    [key: string]: string;
-  };
   languages: string[];
   sceneLanguages: string[];
   group: string;
@@ -35,6 +32,14 @@ export interface IFile {
   numberOfPlayers: string;
   categories: string[];
   ESRB: number;
+  media: FileMedia;
+}
+
+export interface FileMedia {
+  icons?: {
+    [key: string]: string;
+  };
+  artwork?: TGDBGameImages;
 }
 
 export class File implements IFile {
@@ -49,7 +54,6 @@ export class File implements IFile {
   public sdkVersion = "";
   public rawCartSize = 0;
   public masterKeyRevisionRaw = -1;
-  public regionIcon = {};
   public languages = [];
   public sceneLanguages = [];
   public group = "";
@@ -67,6 +71,10 @@ export class File implements IFile {
   public numberOfPlayers = "";
   public categories = [];
   public ESRB = 0;
+  public media = {
+    icons: {},
+    artwork: {}
+  };
 
   public titleID: string = "";
   public masterKeyRevision: string = "";

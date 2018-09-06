@@ -1,4 +1,5 @@
 import { emptyDir } from "fs-extra";
+
 import bootstrap from "./bootstrap";
 import { create } from "./logger";
 import { start } from "./server";

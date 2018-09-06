@@ -10,4 +10,4 @@ import { scanner } from "./scanner";
  */
 const routes: IApiRoute[][] = [config, games, scanner, db];
 
-export default flatten(routes);
+export default flatten<IApiRoute>(routes);

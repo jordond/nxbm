@@ -57,9 +57,13 @@ interface DownloadResult {
 }
 
 interface TGDBGame extends TGDBApiGame {
-  images: {
-    [side: string]: {
-      [size: string]: string;
-    };
-  };
+  images: TGDBGameImages;
+}
+
+interface TGDBGameImages {
+  [side: string]: TGDBGameImageSide;
+}
+
+interface TGDBGameImageSide {
+  [size: string]: string;
 }

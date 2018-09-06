@@ -28,6 +28,10 @@ export function getCacheDir() {
   return resolve(getDataDir(), "cache");
 }
 
+export function getMediaDir() {
+  return resolve(getDataDir(), "media");
+}
+
 export function getConfig() {
   if (!cachedConfig) {
     cachedConfig = loadConfig();
@@ -37,7 +41,7 @@ export function getConfig() {
 }
 
 export function validateConfig(convictConfig: convict.Config<any> = config) {
-  convictConfig.validate({ allowed: "strict" });
+  convictConfig.validate(/* { allowed: "strict" } */);
 }
 
 export function updateConfig(data: Partial<IConfig>) {

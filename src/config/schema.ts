@@ -33,6 +33,8 @@ export interface IBackupConfig {
   autoInstallHactool: boolean;
   downloadKeys: boolean;
   removeBlacklisted: boolean;
+  getDetailedInfo: boolean;
+  downloadGameMedia: boolean;
 }
 
 export interface INSWDBOptions {
@@ -184,6 +186,16 @@ export const schema: Schema<any> = {
       doc: "Remove blacklisted files found in the db",
       format: Boolean,
       default: false
+    },
+    getDetailedInfo: {
+      doc: "Gather extra information from the eshop and thegamesdb",
+      format: Boolean,
+      default: true
+    },
+    downloadGameMedia: {
+      doc: "Download images for each games",
+      format: Boolean,
+      default: true
     }
   }
 };

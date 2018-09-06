@@ -2,6 +2,8 @@ import { getDataDir } from "../../config";
 import { create } from "../../logger";
 import { TGDB } from "./tgdb";
 
+export * from "./media";
+
 const cachedDb = new TGDB();
 
 export async function getTGDB({

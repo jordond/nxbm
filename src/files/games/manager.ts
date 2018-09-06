@@ -1,6 +1,6 @@
 import { basename } from "path";
 
-import { getDataDir } from "../../config";
+import { getMediaDir } from "../../config";
 import { create } from "../../logger";
 import { safeRemove } from "../../util/filesystem";
 import { getKeys } from "../keys";
@@ -120,7 +120,7 @@ async function parseXCIFile(filePath: string): Promise<File | undefined> {
 
   log.verbose(`Parsing ${filePath}`);
   try {
-    const file = await parseXCI(filePath, keys.headerKey, getDataDir());
+    const file = await parseXCI(filePath, keys.headerKey, getMediaDir());
     log.verbose(`Successfully parsed ${file.displayName()}`);
 
     return file;

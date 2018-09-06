@@ -1,7 +1,7 @@
 import { resolve } from "path";
 import { Logger, LoggerInstance, LoggerOptions, transports } from "winston";
 
-import { getConfig, IConfig } from "../config";
+import { getConfig, getDataDir, IConfig } from "../config";
 import { LogLevel } from "./ILogger";
 
 const { Console, File } = transports;
@@ -38,7 +38,7 @@ export function create(
       }),
       new File({
         ...common,
-        filename: resolve(config.paths!.data, FILENAME),
+        filename: resolve(getDataDir(), FILENAME),
         maxSize: 50 * 1024,
         maxFiles: 5,
         json: true
