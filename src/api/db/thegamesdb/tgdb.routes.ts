@@ -1,26 +1,22 @@
 import { ServerRoute } from "hapi";
 
 import { GET, POST } from "../../../util/hapiRoute";
-import {
-  getEShopDBHandler,
-  getEShopGame,
-  postRefreshDB
-} from "./eshop.handler";
+import { getTGDBGame, getTGDBHandler, postRefreshDB } from "./tgdb.handler";
 
 export const routes: ServerRoute[] = [
   {
     method: GET,
-    path: "/db/eshop",
-    handler: getEShopDBHandler
+    path: "/db/tgdb",
+    handler: getTGDBHandler
   },
   {
     method: POST,
-    path: "/db/eshop",
+    path: "/db/tgdb",
     handler: postRefreshDB
   },
   {
     method: GET,
-    path: "/db/eshop/{title}/{lucky?}",
-    handler: getEShopGame
+    path: "/db/tgdb/{title}/{lucky?}",
+    handler: getTGDBGame
   }
 ];

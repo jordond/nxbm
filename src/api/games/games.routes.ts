@@ -5,7 +5,8 @@ import {
   deleteGameByTitleID,
   getAllGames,
   getAllGamesByTitleID,
-  getGameByTitleID
+  getGameByTitleID,
+  getMediaLinks
 } from "./games.handler";
 
 export const queryParams = {
@@ -29,6 +30,11 @@ export const routes: ServerRoute[] = [
     method: GET,
     path: "/games/{titleid}/revision/{revision?}",
     handler: getGameByTitleID
+  },
+  {
+    method: GET,
+    path: "/games/{titleid}/media",
+    handler: getMediaLinks
   },
   {
     method: DELETE,

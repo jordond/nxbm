@@ -19,12 +19,13 @@ export const postRefreshDB: Lifecycle.Method = async () => {
   return true;
 };
 
-export const getEShopGame: Lifecycle.Method = async request => {
+export const getEShopGame: Lifecycle.Method = async ({
+  params: { title, lucky },
+  query
+}) => {
   const eshop = await getEShopDB();
-  const title = request.params.title;
-  const match = eshop
-    .getData()
-    .find(item => new RegExp(title, "gi").test(item.title));
+  const thresh = (query as any).thresh;
+  const match = lucky ? eshop.find(title) : eshop.findMany(title, thresh);
 
   if (match) {
     return match;

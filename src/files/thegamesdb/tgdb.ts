@@ -23,6 +23,9 @@ export class TGDB extends AutoDownloadJsonDB<TGDBGame> {
   public onGetRefreshInterval() {
     return getConfig().backups.tgdb.refreshInterval;
   }
+  protected getSearchKey(): string[] {
+    return ["game_title"];
+  }
 
   protected async onDownloadNewDB(): Promise<TGDBGame[]> {
     const apikey = getConfig().backups.tgdb.apikey || DEFAULT_API_KEY;

@@ -52,6 +52,6 @@ export function removeDuplicates<T>(target: T[], prop: string) {
   );
 }
 
-export function flatten(arr: any[]) {
+export function flatten<T>(arr: any[]): T[] {
   return arr.reduce((acc: any, val: any) => acc.concat(val), []);
 }

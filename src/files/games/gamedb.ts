@@ -87,6 +87,22 @@ export class GameDB implements IGameDB {
     return game;
   }
 
+  public async update(file: File) {
+    this.log.verbose(`Updating ${file.displayName()}`);
+
+    const found = this.find(file);
+    if (!found) {
+      this.add(file);
+    }
+
+    this.xcis = this.xcis.map(xci => {
+      if (xci.file.titleID === file.titleID) {
+        xci.file = file;
+      }
+      return xci;
+    });
+  }
+
   public markMissing(game: Game) {
     this.log.verbose(`Marking ${game.file.displayName()} as missing`);
     const found = this.xcis.find(({ file }) => file.id() === game.file.id());

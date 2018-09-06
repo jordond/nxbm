@@ -6,6 +6,7 @@ import { getDataDir } from "../config";
 import { create } from "../logger";
 import { outputFormattedJSON } from "../util/filesystem";
 import { olderThan, prettyDateTime } from "../util/misc";
+import { findMultiple, findSingle } from "./fuzzy";
 
 const STALE_HOURS = 24;
 
@@ -55,6 +56,20 @@ export abstract class AutoDownloadJsonDB<T> {
     );
   }
 
+  public find(search: string, threshold?: number): T | undefined {
+    return findSingle(this.getData(), search, {
+      threshold,
+      keys: this.getSearchKey()
+    });
+  }
+
+  public findMany(search: string, threshold?: number): T[] {
+    return findMultiple(this.getData(), search, {
+      threshold,
+      keys: this.getSearchKey()
+    });
+  }
+
   public getData(): T[] {
     if (this.db && this.db.data) {
       return this.db.data;
@@ -82,6 +97,8 @@ export abstract class AutoDownloadJsonDB<T> {
   }
 
   protected abstract onDownloadNewDB(): Promise<T[]>;
+
+  protected abstract getSearchKey(): string[];
 
   private getRefreshInterval() {
     return this.refreshInterval || this.onGetRefreshInterval() || STALE_HOURS;
