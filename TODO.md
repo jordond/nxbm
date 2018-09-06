@@ -22,6 +22,8 @@
 - On startup, even if file is already in the DB, check to see if it has the SCENE information set
 - Use NEDB or some other type of json db for the games, probably not great to just write to a json file, not thread safe
 
+- Change `Game` to `File` and vice-versa
+
 ## Config structure
 
 - Watch folders:
