@@ -1,7 +1,6 @@
 import { getGamesAmerica } from "nintendo-switch-eshop";
 
 import { getConfig } from "../../config";
-import { findMultiple, findSingle } from "../../util/fuzzy";
 import {
   AutoDownloadJsonDB,
   AutoDownloadJsonDBOptions
@@ -10,17 +9,6 @@ import {
 export class EShopDB extends AutoDownloadJsonDB<GameUS> {
   constructor(opts?: AutoDownloadJsonDBOptions) {
     super("eshopdb", opts);
-  }
-
-  public find(gameTitle: string): GameUS | undefined {
-    return findSingle(this.getData(), gameTitle, { keys: ["title"] });
-  }
-
-  public findMany(gameTitle: string, threshold?: number): GameUS[] {
-    return findMultiple(this.getData(), gameTitle, {
-      threshold,
-      keys: ["title"]
-    });
   }
 
   public onGetRefreshInterval() {

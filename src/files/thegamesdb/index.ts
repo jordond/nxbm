@@ -1,5 +1,6 @@
 import { getDataDir } from "../../config";
 import { create } from "../../logger";
+import { getGameDB } from "../games/db";
 import { File } from "../parser/models/File";
 import { TGDB } from "./tgdb";
 
@@ -22,10 +23,15 @@ export async function getTGDB({
   return cachedDb.initDb(force);
 }
 
-// TODO - NEeds to get the info for a file
-// use a tight match, and if it cant find it the user must interviene
-// set threshold of 0.01?
-export async function getTGDBInfo(file: File) {
+export async function getTGDBInfo(file: File, threshold: number = 0.01) {
   const tgdb = await getTGDB();
-  tgdb.find(file.gameName);
+  const match = tgdb.find(file.gameName, 0.01);
+
+  if (!match) return false;
+
+  const db = await getGameDB();
+  file.assignTGDB(match);
+  db.update(file);
+  db.save();
+  return true;
 }

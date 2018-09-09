@@ -80,6 +80,7 @@ export class File implements IFile {
     icons: {},
     artwork: {}
   };
+  public eshop?: GameUS = undefined;
 
   public titleID: string = "";
   public masterKeyRevision: string = "";

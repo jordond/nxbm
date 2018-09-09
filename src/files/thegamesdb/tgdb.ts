@@ -23,6 +23,7 @@ export class TGDB extends AutoDownloadJsonDB<TGDBGame> {
   public onGetRefreshInterval() {
     return getConfig().backups.tgdb.refreshInterval;
   }
+
   protected getSearchKey(): string[] {
     return ["game_title"];
   }
