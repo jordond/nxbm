@@ -1,12 +1,13 @@
 import { basename } from "path";
 
-import { getMediaDir } from "../../config";
+import { getConfig, getMediaDir } from "../../config";
 import { create } from "../../logger";
 import { safeRemove } from "../../util/filesystem";
 import { getKeys } from "../keys";
 import { getNSWDB } from "../nswdb";
 import { isXCI, parseXCI } from "../parser";
 import { File } from "../parser/models/File";
+import { downloadGameMedia } from "../thegamesdb";
 import { addToBlacklist, isBlacklisted } from "./blacklist";
 import { getGameDB } from "./db";
 import { Game, GameDB } from "./gamedb";
@@ -25,6 +26,7 @@ export async function addFile(filePath: string) {
       return;
     }
 
+    // Check if game doesn't exist in the game database
     found = db.find(parsed);
     if (!found) {
       const ignored = await isBlacklisted(parsed);
@@ -33,16 +35,13 @@ export async function addFile(filePath: string) {
         return;
       }
 
-      const nswdb = await getNSWDB();
-      const release = nswdb.find(parsed);
-      if (release) {
-        log.info(`Found a match in the scene db: ${release.releasename}`);
-        parsed.assignRelease(release);
-      } else {
-        log.info(
-          `Unable to find a matching game in the scene db: ${parsed.displayName()}`
-        );
+      await getNSWDBInfo(parsed);
+
+      if (getConfig().backups.downloadGameMedia) {
+        await getGameMedia(parsed);
       }
+
+      await getEshopInfo(parsed);
 
       const game = await db.add(parsed);
       log.info(`Added ${parsed.displayName()}`);
@@ -128,4 +127,34 @@ async function parseXCIFile(filePath: string): Promise<File | undefined> {
     log.error(`Unable to parse ${filePath}`);
     log.error(error);
   }
+}
+
+async function getNSWDBInfo(file: File) {
+  const log = create(`${TAG}:nswdb`);
+  const nswdb = await getNSWDB();
+  const release = nswdb.find(file.titleID);
+  if (release) {
+    log.info(`Found a match in the scene db: ${release.releasename}`);
+    file.assignRelease(release);
+  } else {
+    log.info(
+      `Unable to find a matching game in the scene db: ${file.displayName()}`
+    );
+  }
+}
+
+async function getGameMedia(file: File) {
+  const log = create(`${TAG}:tgdb:${file.titleID}`);
+  log.info(`Attempting to download media for ${file.gameName}`);
+
+  const result = await downloadGameMedia(file, 0.01);
+  if (!result) {
+    log.warn(`Unable to find a match for ${file.gameName}`);
+  } else {
+    log.info("Successfully downloaded media");
+  }
+}
+
+async function getEshopInfo(file: File) {
+  // const log = create(`${TAG}:eshop`);
 }

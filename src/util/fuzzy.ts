@@ -21,9 +21,13 @@ export interface FuseResult {
   [name: string]: any;
 }
 
-export function matchString(list: any[], search: string, options: FuseOptions) {
+export function matchString<T>(
+  list: any[],
+  search: string,
+  options: FuseOptions
+) {
   const fuse = new Fuse(list, { ...defaultOptions, ...options });
-  return fuse.search(search);
+  return fuse.search<T>(search);
 }
 
 export function findSingle<T>(list: T[], search: string, options: FuseOptions) {

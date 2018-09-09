@@ -27,12 +27,15 @@ export interface IFile {
   contentType: string;
   version: string;
   description: string;
+  rating: string;
+  youtube: string;
   publisher: string;
   releaseDate: string;
   numberOfPlayers: string;
   categories: string[];
   ESRB: number;
   media: FileMedia;
+  eshop?: GameUS;
 }
 
 export interface FileMedia {
@@ -66,6 +69,8 @@ export class File implements IFile {
   public contentType = "";
   public version = "";
   public description = "";
+  public rating = "";
+  public youtube = "";
   public publisher = "";
   public releaseDate = "";
   public numberOfPlayers = "";
@@ -143,6 +148,14 @@ export class File implements IFile {
     this.releaseDataSet = true;
 
     return this;
+  }
+
+  public assignTGDB(data: TGDBGame) {
+    this.numberOfPlayers = data.players.toString();
+    this.releaseDate = data.release_date;
+    this.description = data.overview;
+    this.rating = data.rating;
+    this.youtube = data.youtube;
   }
 
   public id(): string {
