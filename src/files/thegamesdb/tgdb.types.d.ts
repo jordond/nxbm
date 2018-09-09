@@ -40,6 +40,7 @@ interface TGDBApiGame {
   overview: string;
   rating: string;
   youtube: string;
+  players: number;
 }
 
 interface TGDBApiImage {

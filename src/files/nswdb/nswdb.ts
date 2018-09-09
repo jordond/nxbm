@@ -7,7 +7,6 @@ import {
 } from "../../util/jsondb";
 import { format } from "../../util/misc";
 import { parseXml } from "../../util/xmlToJson";
-import { File } from "../parser/models/File";
 import { ParsedXml, Release } from "./nswdb.types";
 
 const NSWDB_URL = "http://nswdb.com/xml.php";
@@ -17,17 +16,8 @@ export class NSWDB extends AutoDownloadJsonDB<Release> {
     super("nswdb", opts);
   }
 
-  public find({ titleID, version }: File): Release | undefined {
-    if (!this.db) {
-      return;
-    }
-
-    const findFunc = (release: Release, useVersion: boolean = true) =>
-      release.titleid === titleID &&
-      (!useVersion || release.firmware.toLowerCase() === version);
-
-    const found = this.db.data.find(x => findFunc(x));
-    return found ? found : this.db.data.find(x => findFunc(x, false));
+  protected getSearchKey(): string[] {
+    return ["titleid"];
   }
 
   protected onGetRefreshInterval() {
