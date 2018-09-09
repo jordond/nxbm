@@ -4,12 +4,16 @@ import { join, resolve } from "path";
 import {
   configPath,
   getConfig,
+  getDataDir,
   IConfig,
   saveConfig,
   validateConfig
 } from "./config";
-import { ensureHactool, getKeys, getReleasesDB, startScanner } from "./files";
+import { ensureHactool, getKeys, startScanner } from "./files";
+import { getBlacklist } from "./files/games/blacklist";
 import { getGameDB } from "./files/games/db";
+import { getNSWDB } from "./files/nswdb";
+import { downloadMissingMedia, getTGDB } from "./files/thegamesdb";
 import { create } from "./logger";
 import { format } from "./util/misc";
 
@@ -28,7 +32,9 @@ export default async function bootstrap() {
 async function initSecondary(config: IConfig) {
   await initKeys(config);
   await initHactool(config);
-  await initFolderScanner(config);
+  await initFileScanner(config);
+
+  initExtraInformation(config);
 
   await saveConfig();
 }
@@ -115,12 +121,43 @@ async function initHactool({
   }
 }
 
-async function initFolderScanner({ backups }: IConfig) {
-  await getReleasesDB(backups.nswdb);
-  await getGameDB();
+async function initFileScanner({ backups }: IConfig) {
+  const { nswdb } = backups;
+
+  await getNSWDB(getDataDir(), nswdb);
+  await getBlacklist();
+
+  const db = await getGameDB();
+  await db.check(backups.removeBlacklisted);
+
   await startScanner(backups);
 }
 
 function genLogger(tag: string) {
   return create(`Bootstrap:${tag}`);
+}
+
+async function initExtraInformation({ backups }: IConfig) {
+  const log = genLogger("extra");
+  await getTGDB();
+
+  if (backups.getDetailedInfo) {
+    log.info("Gettings extra information about games");
+    await getMissingDetails();
+  }
+
+  if (backups.downloadGameMedia) {
+    log.info("Downloading missing media for games");
+    getMissingMedia();
+  }
+}
+
+async function getMissingDetails() {
+  // noop
+  return true;
+}
+
+async function getMissingMedia() {
+  const gamesdb = await getGameDB();
+  downloadMissingMedia(gamesdb.xcis);
 }

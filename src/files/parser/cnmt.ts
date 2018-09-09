@@ -106,14 +106,15 @@ async function gatherExtraInfoImpl(
   const iconPaths = createMoveIconOptions(icons, outputDir, titleId);
   const movedIcons = await moveLanguageFiles(iconPaths);
   if (movedIcons.length) {
-    file.regionIcon = movedIcons.reduce(
+    const iconMap = movedIcons.reduce(
       (prev, curr) => ({
         ...prev,
         [findLanguageFromPath(curr)]: curr.replace(`${outputDir}${sep}`, "")
       }),
       {}
     );
-    file.languages = Object.keys(file.regionIcon);
+    file.languages = Object.keys(iconMap);
+    file.media = { icons: iconMap };
   }
 
   return file;

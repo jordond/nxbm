@@ -1,9 +1,20 @@
-import { ServerRoute } from "hapi";
+import { Lifecycle, Request, ResponseToolkit, ServerRoute } from "hapi";
 import { normalize } from "path";
+
+import { GameDB } from "../files/games/gamedb";
+import routes from "./routes";
 
 export interface IApiRoute extends ServerRoute {
   prefix?: string;
 }
+
+export type DBRouteHandler = (
+  params: {
+    request: Request;
+    r: ResponseToolkit;
+    db: GameDB;
+  }
+) => Lifecycle.ReturnValue;
 
 // Redirect to the api for now
 const rootRoutes: ServerRoute[] = [
@@ -18,8 +29,6 @@ const rootRoutes: ServerRoute[] = [
     handler: (_, r) => r.response("nxbm API")
   }
 ];
-
-const routes: IApiRoute[] = [];
 
 const apiRoutes: ServerRoute[] = routes.map(
   ({ prefix = "/api/", ...route }: IApiRoute) => {

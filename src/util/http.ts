@@ -1,5 +1,6 @@
 import axios, { AxiosPromise } from "axios";
-import { createWriteStream } from "fs";
+import { createWriteStream, ensureDir } from "fs-extra";
+import { dirname } from "path";
 
 export function getJSON(url: string): AxiosPromise {
   return axios.get(url, {
@@ -12,6 +13,7 @@ export function getJSON(url: string): AxiosPromise {
 export async function downloadFile(url: string, output: string) {
   const { data } = await axios.get(url, { responseType: "stream" });
 
+  await ensureDir(dirname(output));
   data.pipe(createWriteStream(output));
 
   return new Promise((resolve, reject) => {

@@ -23,8 +23,5 @@
     "interface-name": false
   },
   "excludes": ["node_modules", "./src/polyfills"],
-  "cliOptions": {
-    "exclude": ["tsfl"]
-  },
   "rulesDirectory": []
 }

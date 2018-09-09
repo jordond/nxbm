@@ -1,49 +1,95 @@
 import { basename } from "path";
 
-import { getDataDir } from "../../config";
+import { getMediaDir } from "../../config";
 import { create } from "../../logger";
+import { safeRemove } from "../../util/filesystem";
 import { getKeys } from "../keys";
+import { getNSWDB } from "../nswdb";
 import { isXCI, parseXCI } from "../parser";
 import { File } from "../parser/models/File";
+import { addToBlacklist, isBlacklisted } from "./blacklist";
 import { getGameDB } from "./db";
+import { Game, GameDB } from "./gamedb";
 
 const TAG = "games";
 
 export async function addFile(filePath: string) {
   const log = create(`${TAG}:add`);
-  const file = await parseFile(filePath);
-  if (!file) {
-    log.error(`Failed to parse ${basename(filePath)}`);
-    return false;
-  }
 
   const db = await getGameDB();
-  const exists = db.find(file);
-  if (exists) {
-    log.info(`Skipping ${exists.displayName()}, already found in database`);
-    return exists;
+  let found = db.findByFileName(filePath);
+
+  if (!found) {
+    const parsed = await parseFile(filePath);
+    if (!parsed) {
+      return;
+    }
+
+    found = db.find(parsed);
+    if (!found) {
+      const ignored = await isBlacklisted(parsed);
+      if (ignored) {
+        log.info(`${parsed.displayName()} is on the blacklist, skipping`);
+        return;
+      }
+
+      const nswdb = await getNSWDB();
+      const release = nswdb.find(parsed);
+      if (release) {
+        log.info(`Found a match in the scene db: ${release.releasename}`);
+        parsed.assignRelease(release);
+      } else {
+        log.info(
+          `Unable to find a matching game in the scene db: ${parsed.displayName()}`
+        );
+      }
+
+      const game = await db.add(parsed);
+      log.info(`Added ${parsed.displayName()}`);
+      db.save();
+      return game;
+    }
   }
 
-  db.add(file);
-  log.info(`Added ${file.displayName()}`);
-  db.save();
+  log.info(`Skipping ${found.file.displayName()}, already found in database`);
+  return found;
 }
 
-export async function removeFile(filePath: string) {
+export async function removeFile(
+  db: GameDB,
+  game: Game,
+  hardDelete: boolean = false
+) {
   const log = create(`${TAG}:remove`);
 
-  const db = await getGameDB();
-  const found = db.findByFileName(filePath);
-  if (found) {
-    log.info(`Removed ${found.displayName()}`);
-    db.remove(found);
-    db.save();
-  } else {
-    log.warn(`Failed to remove ${filePath}, could not find a matching game`);
+  db.remove(game);
+  db.save();
+  addToBlacklist(game.file);
+
+  log.info(`Removed ${game.file.displayName()}`);
+  if (!hardDelete) {
+    return true;
   }
+
+  log.info(`Deleting ${game.file.displayName()} from the disk`);
+  return safeRemove(game.file.filepath);
 }
 
-async function parseFile(filePath: string): Promise<File | null> {
+export async function markFileAsMissing(filePath: string) {
+  const log = create(`${TAG}:missing`);
+
+  const db = await getGameDB();
+  const found = await db.findByFileName(filePath);
+  if (found) {
+    log.info(`${found.file.displayName()} has gone missing!`);
+    return db.markMissing(found);
+  }
+
+  log.debug(`File must have been deleted by the user`);
+  return false;
+}
+
+async function parseFile(filePath: string): Promise<File | undefined> {
   const log = create(`${TAG}:${basename(filePath)}`);
 
   log.debug("Checking if file is an xci...");
@@ -57,34 +103,29 @@ async function parseFile(filePath: string): Promise<File | null> {
       log.error(error);
     }
 
-    return null;
+    return;
   }
-
-  // TODO
-  // Check if is NSP
 
   log.warn(`Is an unsupported file type!`);
   log.warn("Currently only XCI files are supported!");
-  return null;
 }
 
-async function parseXCIFile(filePath: string): Promise<File | null> {
+async function parseXCIFile(filePath: string): Promise<File | undefined> {
   const log = create(`${TAG}:parse`);
   const keys = await getKeys();
   if (!keys) {
     log.error("Unable to find decryption keys, unable to parse XCI");
-    return null;
+    return;
   }
 
   log.verbose(`Parsing ${filePath}`);
   try {
-    const file = await parseXCI(filePath, keys.headerKey, getDataDir());
+    const file = await parseXCI(filePath, keys.headerKey, getMediaDir());
     log.verbose(`Successfully parsed ${file.displayName()}`);
 
     return file;
   } catch (error) {
+    log.error(`Unable to parse ${filePath}`);
     log.error(error);
   }
-
-  return null;
 }
