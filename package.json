@@ -39,7 +39,7 @@
     "int64-buffer": "^0.1.10",
     "nintendo-switch-eshop": "^1.1.3",
     "node-fetch": "^2.2.0",
-    "python-shell": "^1.0.3",
+    "python-shell": "^1.0.4",
     "recursive-readdir": "^2.2.2",
     "unzipper": "^0.9.3",
     "winston": "2.4.4",
