@@ -32,12 +32,14 @@ export function matchString<T>(
 
 export function findSingle<T>(list: T[], search: string, options: FuseOptions) {
   const log = create("fuzzy");
-  const { score, ...result } = matchString(
-    list,
-    search,
-    options
-  )[0] as FuseResult;
+  const matches = matchString(list, search, options) as FuseResult[];
 
+  if (!matches[0]) {
+    log.debug(`No matches found`);
+    return;
+  }
+
+  const { score, ...result } = matches[0];
   const thresh = options.threshold || 0.05;
   log.debug(
     `Search ${search} had a scrore of ${score}  with thresh of ${thresh}`

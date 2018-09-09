@@ -3,12 +3,12 @@ import { basename } from "path";
 import { getConfig, getMediaDir } from "../../config";
 import { create } from "../../logger";
 import { safeRemove } from "../../util/filesystem";
-import { getEshopInfo } from "../eshopdb";
+import { getEshopInfoForFile, getTGDBInfoForFile } from "../info";
 import { getKeys } from "../keys";
 import { getNSWDB } from "../nswdb";
 import { isXCI, parseXCI } from "../parser";
 import { File } from "../parser/models/File";
-import { downloadGameMedia, getTGDBInfo } from "../thegamesdb";
+import { downloadGameMedia } from "../thegamesdb";
 import { addToBlacklist, isBlacklisted } from "./blacklist";
 import { getGameDB } from "./db";
 import { Game, GameDB } from "./gamedb";
@@ -157,29 +157,5 @@ async function getGameMedia(file: File) {
     log.warn(`Unable to find a match for ${file.gameName}`);
   } else {
     log.info("Successfully downloaded media");
-  }
-}
-
-async function getTGDBInfoForFile(file: File) {
-  const log = create(`${TAG}:tgdb:${file.titleID}`);
-  try {
-    log.verbose(`Gathering extra info from thegamesdb`);
-    const result = await getTGDBInfo(file, 0.01);
-    log.verbose(result ? "Successfully gathered info" : "Failed to get info");
-  } catch (error) {
-    log.error("Failed to get tgdb info");
-    log.error(error);
-  }
-}
-
-async function getEshopInfoForFile(file: File) {
-  const log = create(`${TAG}:eshop:${file.gameName}`);
-  try {
-    log.verbose(`Gathering extra info from eshop`);
-    const result = await getEshopInfo(file, 0.01);
-    log.verbose(result ? "Successfully gathered info" : "Failed to get info");
-  } catch (error) {
-    log.error("Failed to get eshop info");
-    log.error(error);
   }
 }

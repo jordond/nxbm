@@ -4,29 +4,34 @@ import { getGameDB } from "../games/db";
 import { File } from "../parser/models/File";
 import { EShopDB } from "./eshopdb";
 
-let cachedDb: EShopDB;
+const cachedDb = new EShopDB();
 
 export async function getEShopDB({
   force = false,
   dataDir = getDataDir()
 }: Partial<DBOptions> = {}) {
   const log = create("eshopdb:init");
-  if (cachedDb && !force && !cachedDb.isOutdated()) {
+  if (!force && !cachedDb.isOutdated()) {
     log.debug("Using cached version of EShopDB");
     return cachedDb;
   }
 
   log.debug("Init EShopDB");
-  cachedDb = new EShopDB();
   cachedDb.setOutputDir(dataDir);
   return cachedDb.initDb(force);
 }
 
 export async function getEshopInfo(file: File, threshold: number = 0.01) {
   const eshop = await getEShopDB();
-  const match = eshop.find(file.gameName, 0.01);
+  const match = eshop.find(file.gameName, threshold);
 
-  if (!match) return false;
+  if (!match) {
+    create("eshop").warn(
+      `Unable to find a close enough match for ${file.gameName}`
+    );
+
+    return false;
+  }
 
   const db = await getGameDB();
   file.eshop = match;

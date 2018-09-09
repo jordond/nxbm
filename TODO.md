@@ -7,11 +7,9 @@
   - Still return it with API calls, but UI should grey it out
 - Sockets
   - Socket communication for events, (add, delete, parse, etc)
-- thegamesdb - Scrape information from here instead of nintendo
 - Switch `GameDB` to have a list of `Game[]` instead of `xci: Game[], nsp: Game[]`
 - Update Config to use `Partial<>` instead of always optional
 - Add `cleanup` to the config file, to stop deleting of hactool temp files
-- On startup, even if file is already in the DB, check to see if it has the SCENE information set
 - Use NEDB or some other type of json db for the games, probably not great to just write to a json file, not thread safe
 
 - Change `Game` to `File` and vice-versa

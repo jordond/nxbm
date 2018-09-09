@@ -25,9 +25,14 @@ export async function getTGDB({
 
 export async function getTGDBInfo(file: File, threshold: number = 0.01) {
   const tgdb = await getTGDB();
-  const match = tgdb.find(file.gameName, 0.01);
+  const match = tgdb.find(file.gameName, threshold);
 
-  if (!match) return false;
+  if (!match) {
+    create("tgdb").warn(
+      `Unable to find a close enough match for ${file.gameName}`
+    );
+    return false;
+  }
 
   const db = await getGameDB();
   file.assignTGDB(match);

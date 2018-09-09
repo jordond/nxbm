@@ -12,6 +12,7 @@ import {
 import { ensureHactool, getKeys, startScanner } from "./files";
 import { getBlacklist } from "./files/games/blacklist";
 import { getGameDB } from "./files/games/db";
+import { getMissingDetailedInfo } from "./files/info";
 import { getNSWDB } from "./files/nswdb";
 import { downloadMissingMedia, getTGDB } from "./files/thegamesdb";
 import { create } from "./logger";
@@ -153,11 +154,19 @@ async function initExtraInformation({ backups }: IConfig) {
 }
 
 async function getMissingDetails() {
-  // noop
-  return true;
+  try {
+    const gamesdb = await getGameDB();
+    await getMissingDetailedInfo(gamesdb.xcis);
+  } catch (error) {
+    create("boostrap:info").error("Failed to get missing details", error);
+  }
 }
 
 async function getMissingMedia() {
-  const gamesdb = await getGameDB();
-  downloadMissingMedia(gamesdb.xcis);
+  try {
+    const gamesdb = await getGameDB();
+    downloadMissingMedia(gamesdb.xcis);
+  } catch (error) {
+    create("boostrap:media").error("Failed to get missing media", error);
+  }
 }
