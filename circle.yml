@@ -17,14 +17,11 @@ jobs:
             - yarn-packages-master
             - yarn-packages-
       - run:
-          name: Install greenkeeper
-          command: yarn global add greenkeeper-lockfile@1
-      - run:
           name: Install Dependencies
           command: yarn install
       - run:
           name: Update Lockfile
-          command: greenkeeper-lockfile-update
+          command: npx greenkeeper-lockfile update
       - save_cache:
           name: Save Yarn Package Cache
           key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -34,4 +31,4 @@ jobs:
       - run: yarn build
       - run:
           name: Upload Lockfile
-          command: greenkeeper-lockfile-upload
+          command: npx greenkeeper-lockfile upload
