@@ -14,7 +14,7 @@
   "scripts": {
     "precommit": "lint-staged",
     "commit": "git-cz",
-    "build": "lerna run build --parallel",
+    "build": "lerna run build",
     "build:api": "npm run build -- --scope @nxbm/api",
     "build:web": "npm run build -- --scope @nxbm/web",
     "lint": "lerna run lint --parallel",
