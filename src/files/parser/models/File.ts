@@ -1,6 +1,6 @@
 import { basename, extname } from "path";
 import { fileSize, formatTitleId, hexToGbStr } from "../../../util/parser";
-import { Release } from "../../nswdb.types";
+import { Release } from "../../nswdb/nswdb.types";
 import { getMasterKeyStr } from "../masterkey";
 
 export interface IFile {
@@ -15,9 +15,6 @@ export interface IFile {
   sdkVersion: string;
   rawCartSize: number;
   masterKeyRevisionRaw: number;
-  regionIcon: {
-    [key: string]: string;
-  };
   languages: string[];
   sceneLanguages: string[];
   group: string;
@@ -30,11 +27,22 @@ export interface IFile {
   contentType: string;
   version: string;
   description: string;
+  rating: string;
+  youtube: string;
   publisher: string;
   releaseDate: string;
   numberOfPlayers: string;
   categories: string[];
   ESRB: number;
+  media: FileMedia;
+  eshop?: GameUS;
+}
+
+export interface FileMedia {
+  icons?: {
+    [key: string]: string;
+  };
+  artwork?: TGDBGameImages;
 }
 
 export class File implements IFile {
@@ -49,7 +57,6 @@ export class File implements IFile {
   public sdkVersion = "";
   public rawCartSize = 0;
   public masterKeyRevisionRaw = -1;
-  public regionIcon = {};
   public languages = [];
   public sceneLanguages = [];
   public group = "";
@@ -62,11 +69,18 @@ export class File implements IFile {
   public contentType = "";
   public version = "";
   public description = "";
+  public rating = "";
+  public youtube = "";
   public publisher = "";
   public releaseDate = "";
   public numberOfPlayers = "";
   public categories = [];
   public ESRB = 0;
+  public media = {
+    icons: {},
+    artwork: {}
+  };
+  public eshop?: GameUS = undefined;
 
   public titleID: string = "";
   public masterKeyRevision: string = "";
@@ -78,7 +92,7 @@ export class File implements IFile {
   public isTrimmed: boolean = false;
   public cartSize: string = "";
 
-  public release?: Release;
+  public releaseDataSet: boolean = false;
 
   constructor(opts: Partial<IFile> = {}) {
     this.assign(opts);
@@ -132,7 +146,17 @@ export class File implements IFile {
       version: firmware.toLowerCase()
     });
 
+    this.releaseDataSet = true;
+
     return this;
+  }
+
+  public assignTGDB(data: TGDBGame) {
+    this.numberOfPlayers = data.players.toString();
+    this.releaseDate = data.release_date;
+    this.description = data.overview;
+    this.rating = data.rating;
+    this.youtube = data.youtube;
   }
 
   public id(): string {

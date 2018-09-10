@@ -8,7 +8,8 @@
       "program": "${workspaceRoot}/node_modules/ts-node/dist/bin.js",
       "args": ["--files", "--no-cache", "${workspaceRoot}/src/index.ts", "--level=debug", "--root=./tmp"],
       "cwd": "${workspaceRoot}",
-      "protocol": "inspector"
+      "protocol": "inspector",
+      "smartStep": true
     },
     {
       "name": "Server-dist",

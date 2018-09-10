@@ -3,11 +3,17 @@ import * as chokidar from "chokidar";
 import { pathExists } from "fs-extra";
 import { join, resolve } from "path";
 
-import { IBackupConfig } from "../config";
+import { getConfig, IBackupConfig } from "../config";
 import { create } from "../logger";
-import { addFile, removeFile } from "./games/manager";
+import { addFile, markFileAsMissing } from "./games/manager";
 
 const log = create("Scanner");
+
+let scannerInstance: chokidar.FSWatcher | null;
+
+export function scannerIsActive() {
+  return scannerInstance !== null;
+}
 
 export async function startScanner({
   folders,
@@ -31,8 +37,35 @@ export async function startScanner({
 
   log.info(`${watch ? "Watching" : "Scanning"} ${existing.length} folders`);
 
-  await scan(existing, watch, recursive);
-  log.info(`${watch ? "Scanner is active" : "Scanning completed"}`);
+  try {
+    await scan(existing, watch, recursive);
+    log.info(`${watch ? "Scanner is active" : "Scanning completed"}`);
+  } catch (error) {
+    log.error("Error starting scanner");
+    log.error(error);
+    return false;
+  }
+
+  return true;
+}
+
+export async function restartScanner(
+  opts: IBackupConfig = getConfig().backups
+) {
+  log.info("Restarting scanner...");
+  stopScanner();
+  return startScanner(opts);
+}
+
+export async function stopScanner() {
+  if (scannerInstance) {
+    log.info("Stopping scanner...");
+    scannerInstance.close();
+    scannerInstance = null;
+    return true;
+  }
+
+  return false;
 }
 
 function scan(
@@ -40,7 +73,7 @@ function scan(
   persistent: boolean = true,
   recursive: boolean = true
 ): Promise<void> {
-  return new Promise(done => {
+  return new Promise((done, reject) => {
     const watchPaths = paths.map(x =>
       join(x, `${recursive ? "**/" : ""}*.(xci|nsp)`)
     );
@@ -48,11 +81,20 @@ function scan(
       log.verbose(`${persistent ? "Watching" : "Scanning"}  -> ${x}`)
     );
 
-    chokidar
+    const instance = chokidar
       .watch(watchPaths, { persistent })
       .on("add", (file: string) => addFile(file))
-      .on("unlink", (file: string) => removeFile(file))
-      .on("ready", () => done());
+      .on("unlink", (file: string) => markFileAsMissing(file))
+      .on("ready", () => done())
+      .on("error", error => {
+        log.error("Scanner encountered an error");
+        log.error(error);
+        reject();
+      });
+
+    if (persistent) {
+      scannerInstance = instance;
+    }
   });
 }
 

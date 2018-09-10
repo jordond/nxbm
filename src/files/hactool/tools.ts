@@ -5,8 +5,8 @@ import { promisify } from "util";
 
 import { getConfig } from "../../config";
 import { create } from "../../logger";
-import { downloadFile, getJSON } from "../../util/axios";
 import { tempDir, unzip } from "../../util/filesystem";
+import { downloadFile, getJSON } from "../../util/http";
 import { isWindows } from "../../util/misc";
 
 const exec = promisify(tmpExec);

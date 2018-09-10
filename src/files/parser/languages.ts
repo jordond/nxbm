@@ -110,8 +110,8 @@ export function getLanguageFromFilePath(filePath: string): string {
 function createIconFilename(titleId: string, outDir: string, iconPath: string) {
   return join(
     outDir,
-    "icons",
     titleId,
+    "icons",
     `icon_${getLanguageFromFilePath(iconPath)}.bmp`
   );
 }

@@ -20,26 +20,16 @@ export function configPath() {
 
 let cachedConfig: IConfig;
 
-export function loadConfig(): IConfig {
-  try {
-    config.loadFile(configPath());
-  } catch (error) {
-    // No existing config, load defaults
-  }
-
-  if (!config.get("paths.keys")) {
-    config.set("paths.keys", join(config.get("paths.data"), "keys"));
-  }
-
-  return config.getProperties() as IConfig;
-}
-
 export function getDataDir() {
   return getConfig().paths!.data;
 }
 
 export function getCacheDir() {
   return resolve(getDataDir(), "cache");
+}
+
+export function getMediaDir() {
+  return resolve(getDataDir(), "media");
 }
 
 export function getConfig() {
@@ -50,14 +40,24 @@ export function getConfig() {
   return cachedConfig;
 }
 
-export function validateConfig() {
-  config.validate({ allowed: "strict" });
+export function validateConfig(convictConfig: convict.Config<any> = config) {
+  convictConfig.validate(/* { allowed: "strict" } */);
+}
+
+export function updateConfig(data: Partial<IConfig>) {
+  const mergedConfig = { ...getConfig(), ...data };
+  const newConfig = convict(schema);
+
+  newConfig.load(mergedConfig);
+  validateConfig(newConfig);
+
+  return newConfig.getProperties();
 }
 
 export async function saveConfig(data?: IConfig) {
   const log = create("Config");
   log.info(`Saving config`);
-  log.debug(`-> ${configPath()}`);
+  log.verbose(`-> ${configPath()}`);
 
   try {
     if (data) {
@@ -78,8 +78,26 @@ export async function saveConfig(data?: IConfig) {
       ...config.getProperties(),
       ...paths
     });
+
+    cachedConfig = config.getProperties();
+    return true;
   } catch (error) {
     log.error("Unable to save config");
     log.error(`Error -> ${error.message}`);
+    return false;
   }
+}
+
+function loadConfig(): IConfig {
+  try {
+    config.loadFile(configPath());
+  } catch (error) {
+    // No existing config, load defaults
+  }
+
+  if (!config.get("paths.keys")) {
+    config.set("paths.keys", join(config.get("paths.data"), "keys"));
+  }
+
+  return config.getProperties() as IConfig;
 }
