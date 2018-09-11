@@ -1,14 +1,13 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
     <h3>Test</h3>
     <p>Is loading: {{ loading }}</p>
-    <div>{{result}}</div>
+    <div>
+      <div v-for="item in result.xcis" v-bind:key="item.file.titleid">
+        {{item.file.gameName}}
+        <br />
+      </div>
+    </div>
 
   </div>
 </template>
@@ -16,6 +15,7 @@
 <script lang="ts">
 import { Game } from "@nxbm/api";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import fetch from "node-fetch";
 
 @Component
 export default class HelloWorld extends Vue {
@@ -24,8 +24,16 @@ export default class HelloWorld extends Vue {
   private loading: boolean = false;
   private result: Game[] = [];
 
-  public fetchData() {
+  public created() {
+    this.fetchData();
+  }
+
+  public async fetchData() {
     this.loading = true;
+    const result = await fetch("http://localhost:9999/api/games");
+    const test = (await result.json()) as Game[];
+    this.loading = false;
+    this.result = test;
   }
 }
 </script>

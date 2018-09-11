@@ -9,7 +9,7 @@ const log = create("API");
 
 export async function start(config: IConfig) {
   const { port, host } = config;
-  const server = new Server({ port, host });
+  const server = new Server({ port, host, routes: { cors: true } });
 
   const goodWinstonOptions = {
     levels: {
