@@ -12,6 +12,8 @@ import { getGameDB } from "../../files/games/db";
 import { applyPreRequest } from "../../util/hapiRoute";
 import { routes } from "./games.routes";
 
+export { GameRoutes } from "./games.routes";
+
 const ASSIGN_DB = "GAMES_DB";
 const prerequest: RouteOptionsPreAllOptions[] = [
   {

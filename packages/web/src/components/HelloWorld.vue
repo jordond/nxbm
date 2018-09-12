@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { Game } from "@nxbm/api";
+import { games } from "@nxbm/api-client";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import fetch from "node-fetch";
 
@@ -30,10 +31,10 @@ export default class HelloWorld extends Vue {
 
   public async fetchData() {
     this.loading = true;
-    const result = await fetch("http://localhost:9999/api/games");
-    const test = (await result.json()) as Game[];
+
+    const result = await games.getAllGames();
     this.loading = false;
-    this.result = test;
+    this.result = result.xcis;
   }
 }
 </script>

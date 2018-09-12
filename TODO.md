@@ -13,6 +13,14 @@
 - Use NEDB or some other type of json db for the games, probably not great to just write to a json file, not thread safe
 
 - Change `Game` to `File` and vice-versa
+- For each API endpoint
+
+  - In the `routes` file create an interface for all endpoints
+  - In the `handler` file create a class that implements the interface
+  - For the client create a wrapper to call each endpoint, adhering to the interface
+    - Maybe make this a seperate package
+
+- Have a "first run", that generates a config file the user can use to edit
 
 ## Config structure
 

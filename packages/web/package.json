@@ -18,7 +18,9 @@
   },
   "devDependencies": {
     "@nxbm/api": "^0.0.0",
+    "@nxbm/api-client": "^0.0.0",
     "@types/jest": "^23.1.4",
+    "@types/node": "10.9.4",
     "@vue/cli-plugin-babel": "^3.0.1",
     "@vue/cli-plugin-e2e-cypress": "^3.0.1",
     "@vue/cli-plugin-typescript": "^3.0.1",
@@ -31,6 +33,16 @@
     "sass-loader": "^7.0.1",
     "ts-jest": "^23.0.0",
     "typescript": "^3.0.1",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "yorkie": "^2.0.0"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "packages/web/**/*.{ts,vue}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
   }
 }

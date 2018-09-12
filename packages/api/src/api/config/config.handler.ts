@@ -1,5 +1,5 @@
 import { badRequest, internal } from "boom";
-import { Lifecycle, Request, ResponseToolkit } from "hapi";
+import { Lifecycle, Request } from "hapi";
 
 import { getConfig, IConfig, saveConfig, updateConfig } from "../../config";
 import { create } from "../../logger";
@@ -14,8 +14,7 @@ export function getAppConfig(): Lifecycle.ReturnValue {
 }
 
 export async function putUpdateConfig(
-  request: Request,
-  r: ResponseToolkit
+  request: Request
 ): Promise<Lifecycle.ReturnValue> {
   const log = create("api:config:update");
 

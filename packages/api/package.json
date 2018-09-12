@@ -2,7 +2,8 @@
   "name": "@nxbm/api",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/lib.js",
+  "main": "dist/index.js",
+  "bin": "dist/bin.js",
   "engines": {
     "node": ">=8.11.1"
   },
@@ -14,8 +15,9 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "postbuild": "cpx 'src/**/*.py' dist",
-    "dev": "nodemon src/bin.ts -- --root=../../tmp --level=debug",
-    "dev:debug": "nodemon --inspect=5858 src/bin.ts -- --root=../../tmp --level=debug",
+    "dev": "tsc-watch --onSuccess \"node dist/bin.js --root=../../tmp --level=debug\" ",
+    "dev:watch": "tsc -w",
+    "dev:start": "nodemon src/bin.ts -- --root=../../tmp --level=debug",
     "prestart": "yarn build",
     "start": "cross-env HOST=0.0.0.0 node dist/"
   },
@@ -40,6 +42,7 @@
     "python-shell": "^1.0.4",
     "recursive-readdir": "^2.2.2",
     "unzipper": "^0.9.3",
+    "url-join": "^4.0.0",
     "winston": "2.4.4",
     "xml2js": "^0.4.19"
   },
@@ -51,16 +54,18 @@
     "@types/fs-extra": "^5.0.4",
     "@types/glob": "^5.0.35",
     "@types/hapi": "^17.0.18",
-    "@types/node": "^10.9.2",
+    "@types/node": "10.9.4",
     "@types/node-fetch": "^2.1.2",
     "@types/recursive-readdir": "^2.2.0",
     "@types/unzipper": "^0.9.0",
+    "@types/url-join": "^0.8.2",
     "@types/winston": "^2.4.4",
     "@types/xml2js": "^0.4.3",
     "cpx": "^1.5.0",
     "nodemon": "^1.18.3",
     "rimraf": "^2.6.2",
     "ts-node": "^7.0.1",
+    "tsc-watch": "^1.0.27",
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.10.0",
     "tslint-config-prettier": "^1.15.0",
@@ -72,9 +77,9 @@
     "restartable": "rs",
     "verbose": false,
     "watch": [
-      "src"
+      "dist"
     ],
-    "ext": "ts",
+    "ext": "js",
     "ignore": [
       "src/**/*.spec.ts"
     ],

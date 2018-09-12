@@ -15,10 +15,10 @@
     "precommit": "lint-staged",
     "commit": "git-cz",
     "build": "lerna run build",
-    "build:api": "npm run build -- --scope @nxbm/api",
+    "build:server": "npm run build -- --scope @nxbm/api",
     "build:web": "npm run build -- --scope @nxbm/web",
-    "lint": "lerna run lint --parallel",
-    "dev": "lerna run dev serve --parallel"
+    "lint": "lerna run lint",
+    "dev": "lerna run dev"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
@@ -35,13 +35,11 @@
   },
   "lint-staged": {
     "packages/api/{src,test}/**/*.ts": [
-      "prettier --write",
       "tslint --project packages/api/tsconfig.json --fix",
       "git add"
     ],
-    "packages/web/**/*.{ts,vue}": [
+    "packages/**/*.{ts,vue,json}": [
       "prettier --write",
-      "lerna run lint --scope @nxbm/web",
       "git add"
     ]
   },
