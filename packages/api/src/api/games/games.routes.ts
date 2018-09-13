@@ -1,6 +1,6 @@
+import { Game } from "@nxbm/types";
 import { ServerRoute } from "hapi";
 
-import { Game } from "../../files";
 import { DELETE, GET } from "../../util/hapiRoute";
 import { Route } from "../route";
 import {

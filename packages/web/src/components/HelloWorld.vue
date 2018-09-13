@@ -13,10 +13,9 @@
 </template>
 
 <script lang="ts">
-import { Game } from "@nxbm/api";
 import { games } from "@nxbm/api-client";
+import { Game } from "@nxbm/types";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import fetch from "node-fetch";
 
 @Component
 export default class HelloWorld extends Vue {

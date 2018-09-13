@@ -5,5 +5,6 @@
     "dist/**/*.js": true
   },
   "editor.formatOnSave": true,
-  "tslint.autoFixOnSave": true
+  "tslint.autoFixOnSave": true,
+  "eslint.enable": false
 }

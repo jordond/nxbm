@@ -1,6 +1,6 @@
 {
   "name": "@nxbm/web",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "vue-cli-service serve",
@@ -17,8 +17,9 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@nxbm/api": "^0.0.0",
     "@nxbm/api-client": "^0.0.0",
+    "@nxbm/tslint-rules": "^0.0.0",
+    "@nxbm/types": "^0.0.0",
     "@types/jest": "^23.1.4",
     "@types/node": "10.9.4",
     "@vue/cli-plugin-babel": "^3.0.1",

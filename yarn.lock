@@ -5225,7 +5225,7 @@ hapi-good-winston@^2.0.1:
     json-stringify-safe "^5.0.1"
     winston ">=2.x <3.x"
 
-hapi@>=17.x, hapi@^17.5.3:
+hapi@>=17.x, hapi@^17.5.3, hapi@^17.5.4:
   version "17.5.4"
   resolved "https://registry.yarnpkg.com/hapi/-/hapi-17.5.4.tgz#f3c1070f9ee398d9c6ad8ebc5abf180f13914f3c"
   dependencies:
