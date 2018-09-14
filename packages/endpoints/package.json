@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Endpoint for the nxbm api",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
     "lint": "tslint --project ./ --fix -t codeFrame",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "tsc",
+    "build": "webpack --mode  development",
     "dev": "tsc -w"
   },
   "dependencies": {
@@ -25,7 +25,10 @@
     "@nxbm/types": "^0.0.0",
     "hapi": "^17.5.4",
     "rimraf": "^2.6.1",
+    "ts-loader": "^5.1.0",
     "tslint": "^5.8.0",
-    "typescript": "^3.0.3"
+    "typescript": "^3.0.3",
+    "webpack": "^4.19.0",
+    "webpack-cli": "^3.1.0"
   }
 }

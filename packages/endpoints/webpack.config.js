@@ -10,7 +10,7 @@ module.exports = {
     libraryTarget: "commonjs"
   },
   resolve: {
-    extensions: [".ts", ".js"]
+    extensions: [".ts", "js"]
   },
   module: {
     rules: [{ test: /\.ts/, loader: "ts-loader" }]

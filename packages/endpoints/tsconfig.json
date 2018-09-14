@@ -1,9 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "target": "esnext",
     "module": "commonjs",
-    "outDir": "dist/",
-    "declarationDir": "dist/"
+    "outDir": "dist/lib",
+    "declarationDir": "dist/types"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
