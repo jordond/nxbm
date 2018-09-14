@@ -1,0 +1,26 @@
+{
+  "name": "@nxbm/types",
+  "version": "0.0.0",
+  "description": "Shared custom types",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jordond/nxbm"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "tslint --project ./ --fix -t codeFrame",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "devDependencies": {
+    "@nxbm/tslint-rules": "^0.0.0",
+    "rimraf": "^2.6.1",
+    "tslint": "^5.8.0",
+    "typescript": "^3.0.3"
+  }
+}

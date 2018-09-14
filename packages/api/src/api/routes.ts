@@ -2,7 +2,7 @@ import { IApiRoute } from ".";
 import { flatten } from "../util/misc";
 import { config } from "./config";
 import { db } from "./db";
-import { games } from "./games";
+import games from "./endpoints/games";
 import { scanner } from "./scanner";
 
 /**
@@ -10,4 +10,4 @@ import { scanner } from "./scanner";
  */
 const routes: IApiRoute[][] = [config, games, scanner, db];
 
-export default flatten<IApiRoute>(routes);
+export default flatten<IApiRoute>(routes).map(({ url, ...rest }: any) => rest);

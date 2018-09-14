@@ -1,0 +1,16 @@
+{
+  "name": "@nxbm/tslint-rules",
+  "version": "0.0.0",
+  "description": "Shared TSLint rules for all packages",
+  "main": "tslint.json",
+  "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jordond/nxbm"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "tslint-config-airbnb": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0"
+  }
+}

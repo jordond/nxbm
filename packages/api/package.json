@@ -22,6 +22,7 @@
     "start": "cross-env HOST=0.0.0.0 node dist/"
   },
   "dependencies": {
+    "@nxbm/endpoints": "^0.0.0",
     "axios": "^0.18.0",
     "bluebird": "^3.5.1",
     "boom": "^7.2.0",
@@ -69,8 +70,6 @@
     "ts-node": "^7.0.1",
     "tsc-watch": "^1.0.27",
     "tslint": "^5.11.0",
-    "tslint-config-airbnb": "^5.10.0",
-    "tslint-config-prettier": "^1.15.0",
     "typescript": "^3.0.1"
   },
   "typings": "dist/types/index.d.ts",

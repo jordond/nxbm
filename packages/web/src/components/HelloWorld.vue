@@ -19,8 +19,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class HelloWorld extends Vue {
-  @Prop()
-  private msg!: string;
+  @Prop() private msg!: string;
   private loading: boolean = false;
   private result: Game[] = [];
 
@@ -28,12 +27,19 @@ export default class HelloWorld extends Vue {
     this.fetchData();
   }
 
-  public async fetchData() {
+  public fetchData() {
     this.loading = true;
 
-    const result = await games.getAllGames();
-    this.loading = false;
-    this.result = result.xcis;
+    games
+      .getAllGames()
+      .then(x => {
+        this.loading = false;
+        this.result = x.xcis;
+      })
+      .catch(err => {
+        console.log("ERROR");
+        console.error(err);
+      });
   }
 }
 </script>

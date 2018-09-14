@@ -1,21 +1,12 @@
-import { Lifecycle, Request, ResponseToolkit, ServerRoute } from "hapi";
+import { API_ROOT } from "@nxbm/endpoints";
+import { ServerRoute } from "hapi";
 import { join } from "path";
 
-import { GameDB } from "../files/games/gamedb";
-import { API_ROOT } from "./route";
 import routes from "./routes";
 
 export interface IApiRoute extends ServerRoute {
   prefix?: string;
 }
-
-export type DBRouteHandler = (
-  params: {
-    request: Request;
-    r: ResponseToolkit;
-    db: GameDB;
-  }
-) => Lifecycle.ReturnValue;
 
 // Redirect to the api for now
 const rootRoutes: ServerRoute[] = [

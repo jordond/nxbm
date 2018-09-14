@@ -1,0 +1,27 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-config-airbnb",
+    "tslint-config-prettier"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-console": false,
+    "import-name": false,
+    "object-literal-sort-keys": false,
+    "radix": false,
+    "no-implicit-dependencies": [true, "dev"],
+    "strict-boolean-expressions": false,
+    "no-unused-expression": [true, "allow-fast-null-checks"],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore"
+    ],
+    "interface-name": false
+  },
+  "excludes": ["node_modules", "./src/polyfills"],
+  "rulesDirectory": []
+}

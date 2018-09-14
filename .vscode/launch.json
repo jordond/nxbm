@@ -20,6 +20,18 @@
       "protocol": "inspector"
     },
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Web: Chrome",
+      "url": "http://localhost:8081",
+      "webRoot": "${workspaceFolder}/packages/web/src",
+      "breakOnLoad": true,
+      "smartStep": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./src/*": "${webRoot}/*"
+      }
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach",
