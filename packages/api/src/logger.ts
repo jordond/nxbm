@@ -1,8 +1,8 @@
+import { IConfig, LogLevel } from "@nxbm/types";
 import { resolve } from "path";
 import { Logger, LoggerInstance, LoggerOptions, transports } from "winston";
 
-import { getConfig, getDataDir, IConfig } from "../config";
-import { LogLevel } from "./ILogger";
+import { getConfig, getDataDir } from "./config";
 
 const { Console, File } = transports;
 

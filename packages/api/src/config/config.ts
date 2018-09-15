@@ -1,9 +1,9 @@
+import { IConfig, schema } from "@nxbm/types";
 import * as convict from "convict";
 import { join, resolve } from "path";
 
 import { create } from "../logger";
 import { outputFormattedJSON } from "../util/filesystem";
-import { IConfig, schema } from "./schema";
 
 const config = convict(schema);
 

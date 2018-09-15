@@ -1,9 +1,10 @@
+import { IBackupConfig } from "@nxbm/types";
 import { filter } from "bluebird";
 import * as chokidar from "chokidar";
 import { pathExists } from "fs-extra";
 import { join, resolve } from "path";
 
-import { getConfig, IBackupConfig } from "../config";
+import { getConfig } from "../config";
 import { create } from "../logger";
 import { addFile, markFileAsMissing } from "./games/manager";
 

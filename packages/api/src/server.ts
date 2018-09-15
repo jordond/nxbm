@@ -1,8 +1,8 @@
+import { IConfig } from "@nxbm/types";
 import { Server } from "hapi";
 import goodWinston from "hapi-good-winston";
 
 import routes from "./api";
-import { IConfig } from "./config";
 import { create } from "./logger";
 
 const log = create("API");

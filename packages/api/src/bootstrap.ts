@@ -1,3 +1,4 @@
+import { IConfig } from "@nxbm/types";
 import { mkdirp } from "fs-extra";
 import { join, resolve } from "path";
 
@@ -5,7 +6,6 @@ import {
   configPath,
   getConfig,
   getDataDir,
-  IConfig,
   saveConfig,
   validateConfig
 } from "./config";

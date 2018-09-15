@@ -1,56 +1,9 @@
 import { Schema } from "convict";
 import { resolve } from "path";
 
-import { ILogConfig, LogLevel } from "../logger/ILogger";
+import { LogLevel } from "./logger";
 
 const root = resolve(__dirname, "../");
-
-// TODO
-// Change usage of this to a Partial<>
-// Move to d.ts file
-export interface IConfig {
-  env?: string;
-  host?: string;
-  port?: number;
-  paths?: IPaths;
-  logger?: ILogConfig;
-  backups: IBackupConfig;
-}
-
-export interface IPaths {
-  root: string;
-  data: string;
-  keys: string;
-}
-
-export interface IBackupConfig {
-  folders: string[];
-  watch: boolean;
-  recursive: boolean;
-  nswdb: INSWDBOptions;
-  tgdb: ITGDBOptions;
-  eshop: EShopDBOptions;
-  autoInstallHactool: boolean;
-  downloadKeys: boolean;
-  removeBlacklisted: boolean;
-  getDetailedInfo: boolean;
-  downloadGameMedia: boolean;
-}
-
-export interface INSWDBOptions {
-  force?: boolean;
-  refreshInterval?: number;
-}
-
-export interface ITGDBOptions {
-  refreshInterval: number;
-  apikey: string;
-}
-
-export interface EShopDBOptions {
-  refreshInterval: number;
-  // TODO - choose different regions to download from, current is US
-}
 
 export const schema: Schema<any> = {
   env: {

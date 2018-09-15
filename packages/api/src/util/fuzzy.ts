@@ -1,4 +1,5 @@
 import * as Fuse from "fuse.js";
+
 import { create } from "../logger";
 
 const defaultOptions: Fuse.FuseOptions = {

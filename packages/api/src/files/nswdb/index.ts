@@ -1,4 +1,6 @@
-import { getDataDir, INSWDBOptions } from "../../config";
+import { INSWDBOptions } from "@nxbm/types";
+
+import { getDataDir } from "../../config";
 import { create } from "../../logger";
 import { NSWDB } from "./nswdb";
 

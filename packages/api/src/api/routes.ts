@@ -1,7 +1,7 @@
 import { IApiRoute } from ".";
 import { flatten } from "../util/misc";
-import { config } from "./config";
 import { db } from "./db";
+import config from "./endpoints/config";
 import games from "./endpoints/games";
 import { scanner } from "./scanner";
 
