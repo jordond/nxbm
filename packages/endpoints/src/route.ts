@@ -1,5 +1,5 @@
 import { Lifecycle, ServerRoute } from "hapi";
-import urljoin from "url-join";
+import * as urljoin from "url-join";
 
 export const API_ROOT = "/api";
 
@@ -9,6 +9,5 @@ export interface Endpoint extends ServerRoute {
 }
 
 export abstract class Route {
-  protected joinUrl = (...paths: any[]) =>
-    urljoin(API_ROOT, ...paths);
+  protected joinUrl = (...paths: any[]) => urljoin(API_ROOT, ...paths);
 }

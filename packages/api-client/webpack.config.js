@@ -4,6 +4,7 @@ const package = require("./package.json");
 module.exports = {
   entry: "./src/index.ts",
   devtool: "source-map",
+  mode: "development",
   output: {
     path: resolve("./"),
     filename: package.main,

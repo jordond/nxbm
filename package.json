@@ -14,13 +14,16 @@
   "scripts": {
     "precommit": "lint-staged",
     "commit": "git-cz",
+    "clean": "lerna run clean",
+    "clean:all": "npm run clean && lerna clean --yes",
+    "nuke": "npm run clean:all && rimraf node_modules",
     "bootstrap": "lerna bootstrap",
     "do": "./tools/run.sh",
     "build": "lerna run build",
     "build:server": "npm run build -- --scope @nxbm/api",
     "build:web": "npm run build -- --scope @nxbm/web",
     "lint": "lerna run lint",
-    "dev": "lerna run dev"
+    "dev": "lerna run dev --stream --parallel"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
@@ -28,7 +31,8 @@
     "husky": "^0.14.3",
     "lint-staged": "^7.2.2",
     "lerna": "^3.1.4",
-    "prettier": "^1.14.2"
+    "prettier": "^1.14.2",
+    "rimraf": "^2.6.1"
   },
   "husky": {
     "hooks": {

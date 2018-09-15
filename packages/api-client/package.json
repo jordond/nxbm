@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "description": "",
   "main": "dist/index.js",
+  "browser": "dist/index.js",
+  "module": "dist/lib",
   "types": "dist/types/index.d.ts",
   "sideEffects": false,
   "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
@@ -18,7 +20,9 @@
     "lint": "tslint --project ./ --fix -t codeFrame",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "tsc && webpack --mode development"
+    "build": "tsc && webpack --mode production",
+    "webpack:watch": "webpack -w --display-error-details --color --display-exclude --hide-modules",
+    "dev": "concurrently \"tsc -w\" \"npm run webpack:watch\""
   },
   "dependencies": {
     "axios": "^0.18.0"
@@ -27,6 +31,7 @@
     "@nxbm/endpoints": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
+    "concurrently": "^4.0.1",
     "rimraf": "^2.6.1",
     "ts-loader": "^5.1.0",
     "ts-node": "^7.0.0",

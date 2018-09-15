@@ -44,7 +44,11 @@ async function initData({ paths }: IConfig) {
   try {
     await mkdirp(resolve(paths!.data));
   } catch (error) {
-    create().error(`Unable to create data directory ${paths!.data}`);
+    const log = create();
+    log.error(`Unable to create data directory ${paths!.data}`);
+    log.error(
+      "Make sure the data directory specified in the config is valid, and has write access."
+    );
     throw error;
   }
 

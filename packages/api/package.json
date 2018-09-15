@@ -12,7 +12,8 @@
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "rimraf dist",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
     "build": "tsc",
     "postbuild": "cpx 'src/**/*.py' dist",
     "dev": "tsc-watch --onSuccess \"node dist/bin.js --root=../../tmp --level=debug\" ",

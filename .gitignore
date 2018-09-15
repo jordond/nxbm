@@ -4,7 +4,7 @@ out/
 docs/
 cliargs.js
 data
-
+.cache
 *.pyc
 
 lib-cov
