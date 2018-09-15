@@ -1,5 +1,6 @@
+import { TGDBRoutes } from "@nxbm/endpoints";
 import { internal, notFound } from "boom";
-import { Lifecycle } from "hapi";
+import { Lifecycle, ServerRoute } from "hapi";
 
 import { getTGDB } from "../../../files/thegamesdb";
 
@@ -10,7 +11,7 @@ export const getTGDBHandler: Lifecycle.Method = async () => {
     return db;
   }
 
-  return internal("Unable to get the thegamesdb database");
+  throw internal("Unable to get the thegamesdb database");
 };
 
 export const postRefreshDB: Lifecycle.Method = async () => {
@@ -24,12 +25,19 @@ export const getTGDBGame: Lifecycle.Method = async ({
   query
 }) => {
   const tgdb = await getTGDB();
-  const thresh = (query as any).thresh;
+  const thresh = (query as any)[TGDBRoutes.QueryParams.thresh];
   const match = lucky ? tgdb.find(title) : tgdb.findMany(title, thresh);
 
   if (match) {
     return match;
   }
 
-  return notFound(`Unable to find title matching ${title}`);
+  throw notFound(`Unable to find title matching ${title}`);
 };
+
+const routes = { ...TGDBRoutes.Endpoints };
+routes.getDatabase.handler = getTGDBHandler;
+routes.postRefreshDatabase.handler = postRefreshDB;
+routes.getGameFromDB.handler = getTGDBGame;
+
+export default Object.values(routes) as ServerRoute[];

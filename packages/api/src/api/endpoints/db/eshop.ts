@@ -1,6 +1,7 @@
 import { internal, notFound } from "boom";
-import { Lifecycle } from "hapi";
+import { Lifecycle, ServerRoute } from "hapi";
 
+import { EShopRoutes } from "@nxbm/endpoints";
 import { getEShopDB } from "../../../files/eshopdb";
 
 export const getEShopDBHandler: Lifecycle.Method = async () => {
@@ -10,7 +11,7 @@ export const getEShopDBHandler: Lifecycle.Method = async () => {
     return db;
   }
 
-  return internal("Unable to get the eshop database");
+  throw internal("Unable to get the eshop database");
 };
 
 export const postRefreshDB: Lifecycle.Method = async () => {
@@ -24,12 +25,19 @@ export const getEShopGame: Lifecycle.Method = async ({
   query
 }) => {
   const eshop = await getEShopDB();
-  const thresh = (query as any).thresh;
+  const thresh = (query as any)[EShopRoutes.QueryParams.thresh];
   const match = lucky ? eshop.find(title) : eshop.findMany(title, thresh);
 
   if (match) {
     return match;
   }
 
-  return notFound(`Unable to find title matching ${title}`);
+  throw notFound(`Unable to find title matching ${title}`);
 };
+
+const routes = { ...EShopRoutes.Endpoints };
+routes.getDatabase.handler = getEShopDBHandler;
+routes.postRefreshDatabase.handler = postRefreshDB;
+routes.getGameFromDB.handler = getEShopGame;
+
+export default Object.values(routes) as ServerRoute[];

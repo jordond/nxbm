@@ -19,11 +19,12 @@
     "nuke": "npm run clean:all && rimraf node_modules",
     "bootstrap": "lerna bootstrap",
     "do": "./tools/run.sh",
-    "build": "lerna run build",
+    "build": "lerna run build --stream",
     "build:server": "npm run build -- --scope @nxbm/api",
     "build:web": "npm run build -- --scope @nxbm/web",
     "lint": "lerna run lint",
-    "dev": "lerna run dev --stream --parallel"
+    "dev:all": "lerna run dev --stream --parallel",
+    "dev": "npm run dev:all -- --ignore @nxbm/api"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",

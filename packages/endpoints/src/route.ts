@@ -9,5 +9,6 @@ export interface Endpoint extends ServerRoute {
 }
 
 export abstract class Route {
-  protected joinUrl = (...paths: any[]) => urljoin(API_ROOT, ...paths);
+  protected joinUrl = (...paths: any[]): string =>
+    (urljoin as any)(API_ROOT, ...paths);
 }
