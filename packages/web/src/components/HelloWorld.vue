@@ -2,9 +2,12 @@
   <div class="hello">
     <h3>Test</h3>
     <p>Is loading: {{ loading }}</p>
+    <button v-on:click="fetchData()">refresh</button>
     <div>
       <div v-for="item in result.xcis" v-bind:key="item.file.titleid">
-        {{item.file.gameName}}
+        <div v-bind:class="{ strikethrough: item.missing }">
+          {{item.file.gameName}}
+        </div>
         <br />
       </div>
     </div>
@@ -20,7 +23,8 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
+  @Prop()
+  private msg!: string;
   private loading: boolean = false;
   private result: Game[] = [];
 
@@ -61,5 +65,8 @@ li {
 }
 a {
   color: #42b983;
+}
+.strikethrough {
+  text-decoration: line-through;
 }
 </style>

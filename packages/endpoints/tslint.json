@@ -1,6 +1,3 @@
 {
-  "extends": ["@nxbm/tslint-rules"],
-  "rules": {
-    "variable-name": [true, "allow-pascal-case"]
-  }
+  "extends": ["@nxbm/tslint-rules"]
 }
