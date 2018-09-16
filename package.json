@@ -41,8 +41,8 @@
     }
   },
   "lint-staged": {
-    "packages/api/{src,test}/**/*.ts": [
-      "tslint --project packages/api/tsconfig.json --fix",
+    "packages/**/{src,test}/**/*.ts": [
+      "tslint --project ./tsconfig.json --fix",
       "git add"
     ],
     "packages/**/*.{ts,vue,json}": [

@@ -3,6 +3,7 @@
     <h3>Test</h3>
     <p>Is loading: {{ loading }}</p>
     <button v-on:click="fetchData()">refresh</button>
+    <button v-on:click="getConfig()">config</button>
     <div>
       <div v-for="item in result.xcis" v-bind:key="item.file.titleid">
         <div v-bind:class="{ strikethrough: item.missing }">
@@ -16,9 +17,9 @@
 </template>
 
 <script lang="ts">
-import { games } from "@nxbm/api-client";
+import { games, config } from "@nxbm/api-client";
 import { Route } from "@nxbm/endpoints";
-import { Game } from "@nxbm/types";
+import { Game, IConfig } from "@nxbm/types";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
@@ -27,6 +28,7 @@ export default class HelloWorld extends Vue {
   private msg!: string;
   private loading: boolean = false;
   private result: Game[] = [];
+  private config!: IConfig;
 
   public created() {
     this.fetchData();
@@ -46,6 +48,18 @@ export default class HelloWorld extends Vue {
         console.log("ERROR");
         console.error(err);
       });
+  }
+
+  public getConfig() {
+    this.loading = true;
+
+    config
+      .getAppConfig()
+      .then(x => {
+        this.loading = false;
+        this.config = x;
+      })
+      .catch(err => console.error(err));
   }
 }
 </script>

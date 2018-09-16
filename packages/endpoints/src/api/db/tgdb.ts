@@ -10,9 +10,9 @@ export abstract class TGDBRoutes extends Route {
   public static QueryParams = DBQueryParams;
 
   public abstract getDatabase: () => Promise<TGDBGame[]>;
-  public abstract getRefreshDatabase: () => Promise<boolean>;
+  public abstract postRefreshDatabase: () => Promise<boolean>;
   public abstract getGameFromDatabase: (
     title: string,
-    lucky: boolean
-  ) => Promise<TGDBGame>;
+    lucky?: boolean
+  ) => Promise<TGDBGame | TGDBGame[]>;
 }

@@ -10,9 +10,9 @@ export abstract class EShopRoutes extends Route {
   public static QueryParams = DBQueryParams;
 
   public abstract getDatabase: () => Promise<GameUS[]>;
-  public abstract getRefreshDatabase: () => Promise<boolean>;
+  public abstract postRefreshDatabase: () => Promise<boolean>;
   public abstract getGameFromDatabase: (
     title: string,
-    lucky: boolean
-  ) => Promise<GameUS>;
+    lucky?: boolean
+  ) => Promise<GameUS | GameUS[]>;
 }
