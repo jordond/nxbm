@@ -9,6 +9,7 @@ export interface Endpoint extends ServerRoute {
 }
 
 export abstract class Route {
+  public static ApiBase = "";
   protected joinUrl = (...paths: any[]): string =>
-    (urljoin as any)(API_ROOT, ...paths);
+    (urljoin as any)(Route.ApiBase, API_ROOT, ...paths);
 }
