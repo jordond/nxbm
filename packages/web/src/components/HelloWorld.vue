@@ -2,11 +2,11 @@
   <div class="hello">
     <h3>Test</h3>
     <p>Is loading: {{ loading }}</p>
-    <button v-on:click="fetchData()">refresh</button>
-    <button v-on:click="getConfig()">config</button>
+    <button @click="fetchData">refresh</button>
+    <button @click="getConfig">config</button>
     <div>
       <div v-for="item in result.xcis" v-bind:key="item.file.titleid">
-        <div v-bind:class="{ strikethrough: item.missing }">
+        <div :class="{ strikethrough: item.missing }">
           {{item.file.gameName}}
         </div>
         <br />
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { games, config } from "@nxbm/api-client";
+import { config, games } from "@nxbm/api-client";
 import { Route } from "@nxbm/endpoints";
 import { Game, IConfig } from "@nxbm/types";
 import { Component, Prop, Vue } from "vue-property-decorator";

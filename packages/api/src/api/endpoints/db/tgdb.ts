@@ -28,7 +28,7 @@ export const getTGDBGame: Lifecycle.Method = async ({
   const thresh = (query as any)[TGDBRoutes.QueryParams.thresh];
   const match = lucky ? tgdb.find(title) : tgdb.findMany(title, thresh);
 
-  if (match) {
+  if (match && (!Array.isArray(match) || match.length)) {
     return match;
   }
 

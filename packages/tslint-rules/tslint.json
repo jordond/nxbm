@@ -20,7 +20,8 @@
       "check-format",
       "allow-pascal-case"
     ],
-    "interface-name": false
+    "interface-name": false,
+    "no-submodule-imports": [true, "@mdi/font"]
   },
   "excludes": ["node_modules", "./src/polyfills"],
   "rulesDirectory": []

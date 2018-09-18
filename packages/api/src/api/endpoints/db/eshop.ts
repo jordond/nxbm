@@ -28,11 +28,11 @@ export const getEShopGame: Lifecycle.Method = async ({
   const thresh = (query as any)[EShopRoutes.QueryParams.thresh];
   const match = lucky ? eshop.find(title) : eshop.findMany(title, thresh);
 
-  if (match) {
+  if (match && (!Array.isArray(match) || match.length)) {
     return match;
   }
 
-  throw notFound(`Unable to find title matching ${title}`);
+  throw notFound(`Unable to find EShop title matching ${title}`);
 };
 
 const routes = { ...EShopRoutes.Endpoints };

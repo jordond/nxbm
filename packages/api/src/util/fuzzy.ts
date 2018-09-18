@@ -63,7 +63,7 @@ export function findMultiple<T>(
   log.debug(`Search: ${search}, thresh -> ${thresh}`);
   return result
     .filter(res => {
-      log.debug(`-> score: ${res.score}`);
+      log.silly(`-> score: ${res.score}`);
       return res.score <= thresh;
     })
     .map(res => res.item as T);
