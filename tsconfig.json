@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2015",
     "module": "commonjs",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "./dist",
+    "lib": ["es2018", "dom"],
     "strict": true,
-    "lib": ["es2018", "es2017"],
+    "declaration": true,
+    "sourceMap": true,
+    "pretty": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots": ["node_modules/@types", "./src/types"]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+    "typeRoots": ["packages/typescript-typings/types", "node_modules/@types"]
+  }
 }

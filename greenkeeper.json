@@ -1,0 +1,16 @@
+{
+  "groups": {
+    "web": {
+      "packages": [
+        "web/package.json"
+      ]
+    },
+    "api": {
+      "packages": [
+        "api/package.json"
+      ],
+      "ignore": ["winston"]
+    }
+  },
+  "ignore": ["standard"]
+}

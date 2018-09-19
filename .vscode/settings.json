@@ -5,5 +5,8 @@
     "dist/**/*.js": true
   },
   "editor.formatOnSave": true,
-  "tslint.autoFixOnSave": true
+  "tslint.autoFixOnSave": true,
+  "eslint.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "tslint.configFile": "./tslint.json"
 }

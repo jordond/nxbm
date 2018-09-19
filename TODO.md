@@ -9,10 +9,12 @@
   - Socket communication for events, (add, delete, parse, etc)
 - Switch `GameDB` to have a list of `Game[]` instead of `xci: Game[], nsp: Game[]`
 - Update Config to use `Partial<>` instead of always optional
-- Add `cleanup` to the config file, to stop deleting of hactool temp files
 - Use NEDB or some other type of json db for the games, probably not great to just write to a json file, not thread safe
 
 - Change `Game` to `File` and vice-versa
+- For each API endpoint
+
+- Have a "first run", that generates a config file the user can use to edit
 
 ## Config structure
 
