@@ -51,7 +51,7 @@
     "@types/chokidar": "^1.7.5",
     "@types/convict": "^4.2.0",
     "@types/fs-extra": "^5.0.4",
-    "@types/glob": "^5.0.35",
+    "@types/glob": "^7.1.0",
     "@types/hapi": "^17.0.18",
     "@types/node": "^10.9.2",
     "@types/node-fetch": "^2.1.2",
