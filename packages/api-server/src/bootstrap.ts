@@ -6,22 +6,20 @@ import {
   saveConfig,
   validateConfig
 } from "@nxbm/core";
-import { IConfig } from "@nxbm/types";
-import { format } from "@nxbm/utils";
-import { mkdirp } from "fs-extra";
-import { join, resolve } from "path";
-
 import {
   downloadMissingMedia,
-  ensureHactool,
   getBlacklist,
   getGameDB,
-  getKeys,
   getMissingDetailedInfo,
   getNSWDB,
   getTGDB,
   startScanner
-} from "@nxbm/core-files";
+} from "@nxbm/core-db";
+import { ensureHactool, getKeys } from "@nxbm/core-files";
+import { IConfig } from "@nxbm/types";
+import { format } from "@nxbm/utils";
+import { mkdirp } from "fs-extra";
+import { join, resolve } from "path";
 
 export default async function bootstrap(errorHandler: (err: any) => void) {
   const config = getConfig();

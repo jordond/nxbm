@@ -1,5 +1,5 @@
 import { GameRoutes } from "@nxbm/api-endpoints";
-import { getGameDB, removeFile } from "@nxbm/core-files";
+import { getGameDB, removeFile } from "@nxbm/core-db";
 import { Game } from "@nxbm/types";
 import { getQuery, hasQuery } from "@nxbm/utils";
 import { internal, notFound } from "boom";

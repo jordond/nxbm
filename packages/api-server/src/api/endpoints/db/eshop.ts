@@ -1,5 +1,5 @@
 import { EShopRoutes } from "@nxbm/api-endpoints";
-import { getEShopDB } from "@nxbm/core-files";
+import { getEShopDB } from "@nxbm/core-db";
 import { internal, notFound } from "boom";
 import { Lifecycle, ServerRoute } from "hapi";
 

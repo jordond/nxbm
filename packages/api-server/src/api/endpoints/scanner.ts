@@ -5,7 +5,7 @@ import {
   scannerIsActive,
   startScanner,
   stopScanner
-} from "@nxbm/core-files";
+} from "@nxbm/core-db";
 import { badRequest, internal } from "boom";
 import { Lifecycle, ServerRoute } from "hapi";
 

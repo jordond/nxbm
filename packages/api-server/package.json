@@ -24,6 +24,7 @@
   "dependencies": {
     "@nxbm/api-endpoints": "^0.0.0",
     "@nxbm/core": "^0.0.0",
+    "@nxbm/core-db": "^0.0.0",
     "@nxbm/core-files": "^0.0.0",
     "@nxbm/utils": "^0.0.0",
     "axios": "^0.18.0",

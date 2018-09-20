@@ -1,5 +1,5 @@
 import { TGDBRoutes } from "@nxbm/api-endpoints";
-import { getTGDB } from "@nxbm/core-files";
+import { getTGDB } from "@nxbm/core-db";
 import { internal, notFound } from "boom";
 import { Lifecycle, ServerRoute } from "hapi";
 

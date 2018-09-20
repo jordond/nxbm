@@ -27,7 +27,8 @@
     "lint": "lerna run lint",
     "dev:lib": "lerna run dev --stream --parallel --ignore @nxbm/api-server",
     "dev:api": "lerna run dev --stream --scope @nxbm/api-server",
-    "dev": "lerna run dev --stream"
+    "dev:all": "lerna run dev --stream",
+    "dev": "./tools/dev.sh"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
