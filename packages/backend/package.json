@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "bin": "dist/bin.js",
+  "types": "dist/types/index.d.ts",
   "author": "Jordon de Hoog",
   "license": "MIT",
   "scripts": {
@@ -10,9 +11,8 @@
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "dev": "tsc-watch --onSuccess \"node dist/bin.js --root=../../tmp --level=debug\" ",
+    "dev": "nodemon src/bin.ts -- --root=../../tmp --level=debug",
     "dev:watch": "tsc -w",
-    "dev:start": "nodemon src/bin.ts -- --root=../../tmp --level=debug",
     "prestart": "yarn build",
     "start": "cross-env HOST=0.0.0.0 node dist/"
   },
@@ -23,30 +23,20 @@
     "@nxbm/core-db": "^0.0.0",
     "@nxbm/core-files": "^0.0.0",
     "@nxbm/utils": "^0.0.0",
-    "boom": "^7.2.0",
     "cross-env": "^5.2.0",
-    "fs-extra": "^7.0.0",
-    "good": "^8.1.1",
-    "hapi": "^17.5.3",
-    "hapi-good-winston": "^2.0.1",
-    "winston": "2.4.4"
+    "fs-extra": "^7.0.0"
   },
   "devDependencies": {
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
-    "@types/boom": "^7.2.0",
     "@types/fs-extra": "^5.0.4",
-    "@types/hapi": "^17.0.18",
     "@types/node": "10.10.0",
     "nodemon": "^1.18.3",
     "rimraf": "^2.6.2",
     "ts-node": "^7.0.1",
-    "tsc-watch": "^1.0.27",
     "tslint": "^5.11.0",
     "typescript": "^3.0.1"
   },
-  "typings": "dist/types/index.d.ts",
-  "types": "dist/types/index.d.ts",
   "nodemonConfig": {
     "restartable": "rs",
     "verbose": false,

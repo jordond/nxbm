@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "es2018",
     "outDir": "dist/",
-    "declarationDir": "dist/"
+    "declarationDir": "dist/types"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

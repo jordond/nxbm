@@ -21,7 +21,7 @@ import { format } from "@nxbm/utils";
 import { mkdirp } from "fs-extra";
 import { join, resolve } from "path";
 
-export default async function bootstrap(errorHandler: (err: any) => void) {
+export async function bootstrap(errorHandler: (err: any) => void) {
   const config = getConfig();
 
   // Core

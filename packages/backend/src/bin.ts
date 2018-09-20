@@ -3,7 +3,7 @@ import { createLogger } from "@nxbm/core";
 import { tempDir } from "@nxbm/utils";
 import { emptyDir } from "fs-extra";
 
-import bootstrap from "./bootstrap";
+import { bootstrap } from "./bootstrap";
 
 async function fatalExit(error: any) {
   const log = createLogger();

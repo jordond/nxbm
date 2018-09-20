@@ -2,13 +2,18 @@ import { readByByte, readNBytes } from "@nxbm/utils";
 import BlueBird, { map as mapPromise } from "bluebird";
 import { open, stat } from "fs-extra";
 
-import { gatherExtraInfo } from "./cnmt";
-import { File } from "./models/File";
-import { FSEntry } from "./models/FSEntry";
-import { FSHeader } from "./models/FSHeader";
-import { XCIHeader } from "./models/XCIHeader";
-import { decryptNCAHeader, Detail, Details, getNCADetails } from "./secure";
-import { findVersion } from "./version";
+import { gatherExtraInfo } from "./parser/cnmt";
+import { File } from "./parser/models/File";
+import { FSEntry } from "./parser/models/FSEntry";
+import { FSHeader } from "./parser/models/FSHeader";
+import { XCIHeader } from "./parser/models/XCIHeader";
+import {
+  decryptNCAHeader,
+  Detail,
+  Details,
+  getNCADetails
+} from "./parser/secure";
+import { findVersion } from "./parser/version";
 
 export async function isXCI(path: string) {
   try {
