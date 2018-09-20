@@ -1,10 +1,10 @@
 import { createLogger, getDataDir } from "@nxbm/core";
+import { File } from "@nxbm/core-files";
 import { IGameDBData } from "@nxbm/types";
 import { outputFormattedJSON } from "@nxbm/utils";
 import { pathExists, readJSON } from "fs-extra";
 import { resolve } from "path";
 
-import { File } from "../parser/models/File";
 import { GameDB } from "./gamedb";
 
 const DB_FILENAME = "gamedb.json";

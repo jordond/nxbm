@@ -1,14 +1,12 @@
 import { createLogger, getConfig, getMediaDir } from "@nxbm/core";
+import { File, getKeys, isXCI, parseXCI } from "@nxbm/core-files";
 import { Game, IGameDB } from "@nxbm/types";
 import { safeRemove } from "@nxbm/utils";
 import { basename } from "path";
 
 import { getEshopInfoForFile, getTGDBInfoForFile } from "../info";
-import { getKeys } from "../keys";
 import { getNSWDB } from "../nswdb";
-import { isXCI, parseXCI } from "../parser";
-import { File } from "../parser/models/File";
-import { downloadGameMedia } from "../thegamesdb";
+import { downloadGameMedia } from "../thegamesdb/media";
 import { addToBlacklist, isBlacklisted } from "./blacklist";
 import { getGameDB } from "./db";
 

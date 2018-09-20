@@ -5,8 +5,6 @@ import { DBOptions } from "@nxbm/utils";
 import { getGameDB } from "../games/db";
 import { TGDB } from "./tgdb";
 
-export * from "./media";
-
 const cachedDb = new TGDB();
 
 export async function getTGDB({

@@ -39,7 +39,8 @@
     "hapi-good-winston": "^2.0.1",
     "nintendo-switch-eshop": "^1.1.3",
     "node-fetch": "^2.2.0",
-    "python-shell": "^1.0.4"
+    "python-shell": "^1.0.4",
+    "winston": "2.4.4"
   },
   "devDependencies": {
     "@nxbm/tslint-rules": "^0.0.0",

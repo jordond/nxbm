@@ -5,7 +5,7 @@ import * as chokidar from "chokidar";
 import { pathExists } from "fs-extra";
 import { join, resolve } from "path";
 
-import { addFile, markFileAsMissing } from "./games/manager";
+import { addFile, markFileAsMissing } from "./games";
 
 const log = createLogger("Scanner");
 
