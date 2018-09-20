@@ -1,4 +1,4 @@
-import { TGDBRoutes } from "@nxbm/endpoints";
+import { TGDBRoutes } from "@nxbm/api-endpoints";
 import { TGDBGame } from "@nxbm/types";
 
 import { client } from "../client";

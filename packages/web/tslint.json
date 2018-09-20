@@ -1,3 +1,6 @@
 {
-  "extends": "@nxbm/tslint-rules"
+  "extends": "@nxbm/tslint-rules",
+  "rules": {
+    "no-unused-variable": false
+  }
 }

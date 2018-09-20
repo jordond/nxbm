@@ -12,6 +12,7 @@
     "packages/*"
   ],
   "scripts": {
+    "lerna": "lerna",
     "precommit": "lint-staged",
     "commit": "git-cz",
     "clean": "lerna run clean",
@@ -20,12 +21,13 @@
     "bootstrap": "lerna bootstrap",
     "reboot": "npm run nuke && yarn && npm run build",
     "do": "./tools/run.sh",
-    "build": "lerna run build --stream",
-    "build:server": "npm run build -- --scope @nxbm/api",
-    "build:web": "npm run build -- --scope @nxbm/web",
+    "build": "./tools/build.sh",
+    "build:lib": "lerna run build --stream --ignore @nxbm/api-server --ignore @nxbm/web",
+    "build:src": "lerna run build --stream --parallel --scope @nxbm/api-server --scope @nxbm/web",
     "lint": "lerna run lint",
-    "dev:all": "lerna run dev --stream --parallel",
-    "dev": "npm run dev:all -- --ignore @nxbm/api"
+    "dev:lib": "lerna run dev --stream --parallel --ignore @nxbm/api-server",
+    "dev:api": "lerna run dev --stream --scope @nxbm/api-server",
+    "dev": "lerna run dev --stream"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",

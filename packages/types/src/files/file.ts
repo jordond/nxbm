@@ -1,15 +1,35 @@
 import { GameUS } from "./eshop";
-import { TGDBGameImages } from "./tgdb";
+import { Release } from "./nswdb";
+import { TGDBGame, TGDBGameImages } from "./tgdb";
 
 // TODO - Rename this to File, and IFile to Game
 export interface Game {
-  file: File;
+  file: IFile;
   added: Date;
   missing?: boolean;
   blacklist?: boolean;
 }
 
-export interface IFile {
+export interface IGameDBData {
+  xcis: Game[];
+}
+
+export interface IGameDB extends IGameDBData {
+  save: () => Promise<boolean>;
+  load: () => Promise<boolean>;
+  dbPath: () => string;
+  find: (game?: IFile) => undefined | Game;
+  findByID: (titleID: string) => Game[];
+  findByFileName: (filename: string) => undefined | Game;
+  has: (game: IFile) => boolean;
+  add: (file: IFile) => Promise<Game>;
+  update: (file: IFile) => Promise<void>;
+  markMissing: (game: Game) => boolean;
+  remove: (game: Game) => void;
+  check: (removeOnBlacklist: boolean) => Promise<void>;
+}
+
+export interface IFileData {
   filepath: string;
   totalSizeBytes: number;
   usedSizeBytes: number;
@@ -42,6 +62,25 @@ export interface IFile {
   ESRB: number;
   media: FileMedia;
   eshop?: GameUS;
+
+  // Computed
+  titleID: string;
+  masterKeyRevision: string;
+  extension: string;
+  filename: string;
+  filenameWithExt: string;
+  totalSize: string;
+  usedSize: string;
+  isTrimmed: boolean;
+  cartSize: string;
+  releaseDataSet: boolean;
+}
+
+export interface IFile extends IFileData {
+  assignRelease: (release?: Release) => IFile;
+  assignTGDB: (data: TGDBGame) => void;
+  id: () => string;
+  displayName: () => string;
 }
 
 export interface FileMedia {

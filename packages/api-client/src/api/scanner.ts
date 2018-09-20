@@ -1,4 +1,4 @@
-import { ScannerRoutes } from "@nxbm/endpoints";
+import { ScannerRoutes } from "@nxbm/api-endpoints";
 
 import { client } from "../client";
 

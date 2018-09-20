@@ -1,3 +1,26 @@
+## Architecture
+
+- Move endpoint handler from `api-server` to `api-endpoints` \* Maybe
+- Move api-server logic into new package
+- Create new package for the backend i.e. bootstrap.ts, calls server.ts
+  - Use webpack to bundle all the node code
+  - Make sure `__dirname` points to one level up
+  - Mark all dependencies as external (except @nxbm/)
+- Build script that will run `backend`.build, and `web`.build
+  - Output to /dist (top level)
+  - Include package.json for deps
+- Somehow make the web project aware of api server address
+  - Or create a project that grabs the backend and web into a single package
+
+### Final Outputs
+
+- standalone:
+  - api-server, scanner, web-ui
+- Docker:
+  - Uses standalone
+- Electron:
+  - bundles, api-server, scanner, web-ui into one
+
 ## General
 
 - Parse NSP
@@ -9,7 +32,6 @@
   - Socket communication for events, (add, delete, parse, etc)
 - Switch `GameDB` to have a list of `Game[]` instead of `xci: Game[], nsp: Game[]`
 - Update Config to use `Partial<>` instead of always optional
-- Use NEDB or some other type of json db for the games, probably not great to just write to a json file, not thread safe
 
 - Change `Game` to `File` and vice-versa
 - For each API endpoint

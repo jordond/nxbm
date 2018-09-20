@@ -1,4 +1,4 @@
-import { GameRoutes } from "@nxbm/endpoints";
+import { GameRoutes } from "@nxbm/api-endpoints";
 import { Game } from "@nxbm/types";
 
 import { client } from "../client";
@@ -32,4 +32,4 @@ class Games extends GameRoutes {
   };
 }
 
-export const games = new Games()
+export const games = new Games();

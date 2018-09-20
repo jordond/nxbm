@@ -12,6 +12,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots": ["packages/typescript-typings/types", "node_modules/@types"]
+    "typeRoots": ["packages/typings/types", "node_modules/@types"]
   }
 }

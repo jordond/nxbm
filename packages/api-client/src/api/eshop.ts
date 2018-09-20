@@ -1,4 +1,4 @@
-import { EShopRoutes } from "@nxbm/endpoints";
+import { EShopRoutes } from "@nxbm/api-endpoints";
 import { GameUS } from "@nxbm/types";
 
 import { client } from "../client";

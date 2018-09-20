@@ -1,4 +1,4 @@
-import { ConfigRoutes } from "@nxbm/endpoints";
+import { ConfigRoutes } from "@nxbm/api-endpoints";
 import { IConfig } from "@nxbm/types";
 
 import { client } from "../client";
