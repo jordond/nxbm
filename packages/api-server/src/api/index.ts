@@ -2,7 +2,7 @@ import { API_ROOT } from "@nxbm/api-endpoints";
 import { ServerRoute } from "hapi";
 import { join } from "path";
 
-import routes from "./routes";
+import routes from "../routes";
 
 export interface IApiRoute extends ServerRoute {
   prefix?: string;

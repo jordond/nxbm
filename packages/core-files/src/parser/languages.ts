@@ -89,6 +89,7 @@ export async function moveLanguageFiles(icons: MoveIconOptions[]) {
         return output;
       }
 
+      // TODO - Update to use the logger
       console.log(`doesnt exist: ${input}`);
     } catch (error) {
       console.error(`couldnt move`);

@@ -1,10 +1,10 @@
 import { flatten } from "@nxbm/utils";
 
-import { IApiRoute } from ".";
-import config from "./endpoints/config";
-import db from "./endpoints/db";
-import games from "./endpoints/games";
-import scanner from "./endpoints/scanner";
+import { IApiRoute } from "./api";
+import config from "./api/config";
+import db from "./api/db";
+import games from "./api/games";
+import scanner from "./api/scanner";
 
 /**
  * Add Routes here
