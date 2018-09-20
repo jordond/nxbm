@@ -1,6 +1,7 @@
 #!/bin/sh
 
 if [ -z "$1" ]; then
+    echo "No projects specified, building all"
     yarn build:lib
     yarn build:src
 else
