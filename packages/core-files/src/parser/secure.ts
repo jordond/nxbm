@@ -29,6 +29,7 @@ export async function decryptNCAHeader(
   try {
     const encrypted = await openReadNBytes(filePath, 3072, offset);
 
+    // TODO - Change to allow custom temp folder
     const tempPath = resolve(
       tmpdir(),
       "nxbm",
@@ -38,7 +39,7 @@ export async function decryptNCAHeader(
     const inputPath = join(tempPath, `encrypted`);
     await outputFile(inputPath, encrypted);
 
-    const output = join(tempPath, `decrpted`);
+    const output = join(tempPath, `decrypted`);
     await decrypt({ key, inputPath, output });
 
     const decrypted = await readNBytes(await open(output, "r"), 3072);

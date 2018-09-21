@@ -27,6 +27,7 @@ export async function isXCI(path: string) {
 
 /**
  * Parse a given XCI file
+ * TODO - Add param for temp dir
  * @param xciPath Path to the XCI file
  * @param headerKey Header key to decrypt NCA
  * @param outputDir Directory to store the icons
