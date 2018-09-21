@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist/*",
     "copy-python": "cpx 'src/**/*.py' dist",
     "prebuild": "npm run clean",
     "build": "tsc",

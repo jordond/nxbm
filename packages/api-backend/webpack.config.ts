@@ -2,19 +2,20 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 import { basename, dirname, resolve } from "path";
 import { sync as readPkg } from "read-pkg";
 import { Configuration } from "webpack";
-import { argv } from "yargs";
 
 const { main } = readPkg();
-const { minify = false } = argv;
 
 // TODO - make it copy the python files
+
+const outputPath = resolve(__dirname, dirname(main));
+const pythonFiles = resolve("../core-files/src/**/*.py");
 
 const config: Configuration = {
   mode: "production",
   target: "node",
   entry: "./src/bin.ts",
   output: {
-    path: resolve(__dirname, dirname(main)),
+    path: outputPath,
     filename: basename(main)
   },
   node: {
@@ -23,7 +24,7 @@ const config: Configuration = {
     __filename: true
   },
   optimization: {
-    minimize: minify
+    minimize: false
   },
   resolve: {
     extensions: [".ts", ".js", ".mjs"]
@@ -42,7 +43,15 @@ const config: Configuration = {
       }
     ]
   },
-  plugins: [new CopyWebpackPlugin(["**/parser/py/*.py"])],
+  plugins: [
+    new CopyWebpackPlugin([
+      {
+        from: pythonFiles,
+        to: outputPath,
+        flatten: true
+      }
+    ])
+  ],
   externals: ["fsevents"]
 };
 

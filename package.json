@@ -26,7 +26,7 @@
     "build:lib": "lerna run build --stream --ignore @nxbm/backend --ignore @nxbm/web",
     "build:src": "lerna run build --stream --parallel --scope @nxbm/backend --scope @nxbm/web",
     "build:standalone": "npm run build",
-    "postbuild:standalone": "lerna run copy:standalone --stream",
+    "postbuild:standalone": "lerna run copy:standalone.. --stream",
     "lint": "lerna run lint",
     "dev:lib": "lerna run dev --stream --parallel --ignore @nxbm/backend",
     "dev:api": "lerna run dev --stream --scope @nxbm/backend",

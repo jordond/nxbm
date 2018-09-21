@@ -118,7 +118,7 @@ export abstract class AutoDownloadJsonDB<T> {
     const updatedAt = this.db.updatedAt ? new Date(this.db.updatedAt) : null;
     if (updatedAt === null || (await this.shouldDownloadNewDB())) {
       this.log.info("Cached DB doesn't exist, or is too old.");
-      this.log.info("Downloading a fresh copy of the NSWDB");
+      this.log.info(`Downloading a fresh copy of the ${this.name}`);
       try {
         const result = await this.startDownloadAndSaveResult();
         if (result) {
@@ -189,7 +189,7 @@ export abstract class AutoDownloadJsonDB<T> {
   }
 
   private async save(data: T[]) {
-    this.log.verbose(`Attempting to save ${this.name}-DB to ${this.filePath}`);
+    this.log.verbose(`Attempting to save ${this.name} to ${this.filePath}`);
 
     try {
       const output: JsonDB<T> = {

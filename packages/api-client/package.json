@@ -16,7 +16,7 @@
   },
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
     "build": "tsc",
     "dev": "tsc -w"

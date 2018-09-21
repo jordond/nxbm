@@ -105,6 +105,9 @@
 - Use semantic release with github for assets
 - Have circleci build electron for all platforms
 - Add build artifacts to github releases
+- Use bonjour to broadcast api serve to web server
+  - Allow electron app to run in "standalone" mode or "client" mode
+    - Standalone, runs the whole thing contained, client searches for a server on the network
 
 ## Far future
 

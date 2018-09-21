@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { config, games } from "@nxbm/api-client";
-import { Route } from "@nxbm/api-endpoints";
 import { Game } from "@nxbm/types";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
@@ -36,7 +35,6 @@ export default class HelloWorld extends Vue {
   public fetchData() {
     this.loading = true;
 
-    Route.ApiBase = "http://localhost:9999";
     games
       .getAllGames()
       .then(x => {

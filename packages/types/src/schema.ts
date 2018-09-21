@@ -3,13 +3,13 @@ import { resolve } from "path";
 
 import { LogLevel } from "./logger";
 
-const root = resolve(__dirname, "../");
+const root = resolve(__dirname);
 
 export const schema: Schema<any> = {
   env: {
     doc: "The application environment.",
     format: ["production", "development", "test"],
-    default: "development",
+    default: "production",
     env: "NODE_ENV",
     arg: "env"
   },
