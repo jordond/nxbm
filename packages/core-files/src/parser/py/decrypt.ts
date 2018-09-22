@@ -16,7 +16,7 @@ export function decrypt({
     const args = ["--key", key, "--file", resolve(inputPath), "--out", output];
     PythonShell.run(
       "decryptxts.py",
-      { args, scriptPath: __dirname, pythonPath: "python" },
+      { args, scriptPath: __dirname, pythonPath: "python2" },
       (err, results: string[] | undefined) =>
         err ? reject(err) : res(results || [])
     );

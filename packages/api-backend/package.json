@@ -2,22 +2,17 @@
   "name": "@nxbm/api-backend",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/nxbm-api-backend.js",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
   "author": "Jordon de Hoog",
   "license": "MIT",
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "build": "webpack --progress",
-    "build:min": "npm run build -- --minify",
-    "copy:standalone": "cpx 'dist/**/*' ../../dist/standalone",
-    "dev": "nodemon src/bin.ts -- --root=../../tmp --level=debug --env development",
-    "prestart": "yarn build",
-    "start": "cross-env node dist/"
-  },
-  "dependencies": {
-    "cross-env": "^5.2.0"
+    "build": "tsc",
+    "dev": "nodemon tools/dev.ts -- --root=../../tmp --level debug --port 9999 --env development",
+    "dev:watch": "tsc -w"
   },
   "devDependencies": {
     "@nxbm/api-endpoints": "^0.0.0",
@@ -28,25 +23,15 @@
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@nxbm/utils": "^0.0.0",
-    "@types/copy-webpack-plugin": "^4.4.2",
     "@types/fs-extra": "^5.0.4",
     "@types/node": "^10.10.1",
-    "@types/read-pkg": "^3.0.0",
-    "@types/webpack": "^4.4.12",
-    "@types/yargs": "^12.0.0",
-    "copy-webpack-plugin": "^4.5.2",
     "cpx": "^1.5.0",
     "fs-extra": "^7.0.0",
     "nodemon": "^1.18.3",
-    "read-pkg": "^4.0.1",
     "rimraf": "^2.6.2",
-    "ts-loader": "^5.1.1",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
-    "typescript": "^3.0.3",
-    "webpack": "^4.19.1",
-    "webpack-cli": "^3.1.0",
-    "yargs": "^12.0.2"
+    "typescript": "^3.0.3"
   },
   "nodemonConfig": {
     "restartable": "rs",

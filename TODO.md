@@ -1,5 +1,6 @@
 ## Architecture
 
+- Check if python2 is installed, and libs needed for compiling hactool
 - Move endpoint handler from `api-server` to `api-endpoints` \* Maybe
 - Move api-server logic into new package
 - Create new package for the backend i.e. bootstrap.ts, calls server.ts

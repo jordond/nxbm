@@ -16,6 +16,11 @@ async function fatalExit(error: any) {
   );
 }
 
-bootstrap(fatalExit)
-  .then(config => start(config))
-  .catch(error => fatalExit(error));
+export async function init() {
+  try {
+    const config = await bootstrap(fatalExit);
+    await start(config);
+  } catch (error) {
+    fatalExit(error);
+  }
+}

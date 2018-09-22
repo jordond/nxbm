@@ -1,19 +1,17 @@
 import CopyWebpackPlugin from "copy-webpack-plugin";
-import { basename, dirname, resolve } from "path";
+import { basename, dirname, join, resolve } from "path";
 import { sync as readPkg } from "read-pkg";
 import { Configuration } from "webpack";
 
 const { main } = readPkg();
 
-// TODO - make it copy the python files
-
-const outputPath = resolve(__dirname, dirname(main));
 const pythonFiles = resolve("../core-files/src/**/*.py");
+const outputPath = resolve(__dirname, dirname(main));
 
 const config: Configuration = {
   mode: "production",
   target: "node",
-  entry: "./src/bin.ts",
+  entry: "./src/index.ts",
   output: {
     path: outputPath,
     filename: basename(main)

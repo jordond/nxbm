@@ -84,7 +84,7 @@ async function initKeys({ paths, backups: { downloadKeys } }: IConfig) {
     if (keys) {
       log.info("Successfully found a valid key file");
     } else {
-      log.warn(`Key file was not found -> ${paths!.keys}`);
+      log.warn(`Key file was not found -> ${resolve(paths!.keys)}`);
       log.warn("NXBM cannot function correctly without the keys file");
       log.warn("Either add `keys` path to the config (--keys)");
       log.warn(

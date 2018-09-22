@@ -1,24 +1,25 @@
 {
-  "name": "@nxbm/web-server",
+  "name": "@nxbm/standalone",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/nxbm-web-server.js",
+  "main": "dist/nxbm.js",
+  "bin": {
+    "nxbm": "dist/nxbm.js"
+  },
   "author": "Jordon de Hoog",
   "license": "MIT",
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "temp-build": "webpack --progress",
+    "build": "webpack --progress",
+    "postbuild": "cpx '../web/dist/**/*' ./dist/public",
+    "precopy:standalone": "rimraf ../../dist/standalone",
     "copy:standalone": "cpx 'dist/**/*' ../../dist/standalone",
-    "dev": "nodemon src/bin.ts -- --root=../../tmp --level=debug --env development",
-    "prestart": "yarn build",
-    "start": "cross-env node dist/"
-  },
-  "dependencies": {
-    "cross-env": "^5.2.0"
+    "dev": "nodemon src/bin.ts -- --root=../../tmp --level=debug --env development"
   },
   "devDependencies": {
+    "@nxbm/api-backend": "^0.0.0",
     "@nxbm/core": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
