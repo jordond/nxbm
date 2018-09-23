@@ -12,7 +12,7 @@
     "lint": "tslint --project ./ --fix -t codeFrame",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "build": "webpack --progress",
+    "build": "webpack",
     "postbuild": "cpx '../web/dist/**/*' ./dist/public",
     "precopy:standalone": "rimraf ../../dist/standalone",
     "copy:standalone": "cpx 'dist/**/*' ../../dist/standalone",
