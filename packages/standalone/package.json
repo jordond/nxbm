@@ -16,26 +16,27 @@
     "postbuild": "cpx '../web/dist/**/*' ./dist/public",
     "precopy:standalone": "rimraf ../../dist/standalone",
     "copy:standalone": "cpx 'dist/**/*' ../../dist/standalone",
-    "dev": "nodemon src/bin.ts -- --root=../../tmp --level=debug --env development"
+    "dev": "nodemon src/index.ts -- --root=../../tmp --level=info --env development"
   },
   "devDependencies": {
     "@nxbm/api-backend": "^0.0.0",
+    "@nxbm/api-server": "^0.0.0",
     "@nxbm/core": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
+    "@types/body-parser": "^1.17.0",
     "@types/copy-webpack-plugin": "^4.4.2",
     "@types/fs-extra": "^5.0.4",
-    "@types/koa": "^2.0.46",
-    "@types/koa-static": "^4.0.0",
+    "@types/inert": "^5.1.1",
     "@types/node": "^10.10.1",
     "@types/read-pkg": "^3.0.0",
     "@types/webpack": "^4.4.12",
     "copy-webpack-plugin": "^4.5.2",
     "cpx": "^1.5.0",
     "fs-extra": "^7.0.0",
-    "koa": "^2.5.3",
-    "koa-proxy": "^0.9.0",
-    "koa-static": "^5.0.0",
+    "hapi": "^17.6.0",
+    "inert": "^5.1.0",
     "nodemon": "^1.18.3",
     "read-pkg": "^4.0.1",
     "rimraf": "^2.6.2",
@@ -50,9 +51,9 @@
     "restartable": "rs",
     "verbose": false,
     "watch": [
-      "dist"
+      "src/**/*"
     ],
-    "ext": "js",
+    "ext": "ts",
     "ignore": [
       "src/**/*.spec.ts"
     ],

@@ -11,12 +11,11 @@
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "dev": "nodemon tools/dev.ts -- --root=../../tmp --level debug --port 9999 --env development",
-    "dev:watch": "tsc -w"
+    "dev": "tsc -w",
+    "dev:start": "nodemon tools/dev.ts -- --root=../../tmp --level debug --port 9999 --env development"
   },
   "devDependencies": {
     "@nxbm/api-endpoints": "^0.0.0",
-    "@nxbm/api-server": "^0.0.0",
     "@nxbm/core": "^0.0.0",
     "@nxbm/core-db": "^0.0.0",
     "@nxbm/core-files": "^0.0.0",

@@ -7,7 +7,7 @@ import routes from "./api";
 
 const log = createLogger("API");
 
-export async function start(config: IConfig) {
+export async function createServer(config: IConfig) {
   const { port, host } = config;
   const server = new Server({ port, host, routes: { cors: true } });
 
@@ -34,11 +34,15 @@ export async function start(config: IConfig) {
   );
   server.route(routes);
 
+  return server;
+}
+
+export async function start(server: Server, { host, port }: IConfig) {
   try {
     log.verbose(`Starting API server on -> ${host}:${port}`);
 
     await server.start();
-    log.info(`Server running on ${config.host}:${config.port}`);
+    log.info(`Server running on ${host}:${port}`);
   } catch (error) {
     log.error("Unable to start server...\n");
     throw error;

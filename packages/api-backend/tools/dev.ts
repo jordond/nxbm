@@ -1,3 +1,7 @@
-import { init } from "../src/index";
+import { getConfig } from "@nxbm/core";
 
-init();
+import { initBackend } from "../src/index";
+
+initBackend(getConfig())
+  .then(server => server.start())
+  .catch(err => console.error("Something bad happened", err));

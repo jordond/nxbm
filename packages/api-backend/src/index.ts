@@ -1,2 +1,2 @@
 export { bootstrap } from "./bootstrap";
-export { init } from "./lib";
+export * from "./lib";

@@ -1,7 +1,6 @@
 import {
   configPath,
   createLogger,
-  getConfig,
   getDataDir,
   saveConfig,
   validateConfig
@@ -21,14 +20,14 @@ import { format } from "@nxbm/utils";
 import { mkdirp } from "fs-extra";
 import { join, resolve } from "path";
 
-export async function bootstrap(errorHandler: (err: any) => void) {
-  const config = getConfig();
-
+export async function bootstrap(config: IConfig) {
   // Core
   await initData(config);
   await initConfig(config);
 
-  initSecondary(config).catch(err => errorHandler(err));
+  initSecondary(config).catch(err => {
+    throw err;
+  });
 
   return config;
 }
