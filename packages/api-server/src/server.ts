@@ -5,7 +5,7 @@ import goodWinston from "hapi-good-winston";
 
 import routes from "./api";
 
-const log = createLogger("API");
+const log = createLogger("nxbm:API");
 
 export async function createServer(config: IConfig) {
   const { port, host } = config;
@@ -37,12 +37,12 @@ export async function createServer(config: IConfig) {
   return server;
 }
 
-export async function start(server: Server, { host, port }: IConfig) {
+export async function startServer(server: Server) {
   try {
-    log.verbose(`Starting API server on -> ${host}:${port}`);
+    log.verbose(`Starting API server on -> ${server.info.uri}`);
 
     await server.start();
-    log.info(`Server running on ${host}:${port}`);
+    log.info(`Server running on ${server.info.uri}`);
   } catch (error) {
     log.error("Unable to start server...\n");
     throw error;

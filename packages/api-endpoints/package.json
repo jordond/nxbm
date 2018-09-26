@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "description": "Endpoint for the nxbm api",
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/jordond/nxbm"
   },
+  "sideEffects": false,
   "license": "MIT",
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
     "@types/url-join": "^0.8.2",
     "hapi": "^17.5.4",
     "rimraf": "^2.6.1",

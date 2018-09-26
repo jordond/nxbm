@@ -2,7 +2,7 @@
   "name": "@nxbm/api-server",
   "version": "0.0.0",
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "description": "",
   "author": "Jordon de Hoog",
   "license": "MIT",

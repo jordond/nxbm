@@ -11,12 +11,7 @@ export interface IApiRoute extends ServerRoute {
 // Redirect to the api for now
 const rootRoutes: ServerRoute[] = [
   {
-    method: ["POST", "GET", "PUT", "PATCH", "DELETE"],
-    path: "/",
-    handler: (_, r) => r.redirect(API_ROOT)
-  },
-  {
-    method: "GET",
+    method: "*",
     path: API_ROOT,
     handler: (_, r) => r.response("nxbm API")
   }

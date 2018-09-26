@@ -1,5 +1,6 @@
+import { GET, POST } from "@nxbm/utils";
+
 import { Endpoint } from "../../route";
-import { GET, POST } from "../../util/hapi";
 
 export enum DBQueryParams {
   thresh = "thresh"

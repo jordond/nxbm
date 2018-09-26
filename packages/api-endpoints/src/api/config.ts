@@ -1,7 +1,7 @@
 import { IConfig } from "@nxbm/types";
+import { GET, PUT } from "@nxbm/utils/dist/hapiRoute";
 
 import { Endpoint, Route } from "../route";
-import { GET, PUT } from "../util/hapi";
 
 interface IConfigRoutes {
   getAppConfig: Endpoint;

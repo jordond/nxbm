@@ -1,7 +1,7 @@
 import { Game } from "@nxbm/types";
+import { DELETE, GET } from "@nxbm/utils/dist/hapiRoute";
 
 import { Endpoint, Route } from "../route";
-import { DELETE, GET } from "../util/hapi";
 
 enum GameQueryParams {
   revision = "revision",

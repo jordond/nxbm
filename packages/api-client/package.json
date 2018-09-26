@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "sideEffects": false,
   "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
   "repository": {

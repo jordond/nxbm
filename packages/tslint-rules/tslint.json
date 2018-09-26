@@ -21,7 +21,7 @@
       "allow-pascal-case"
     ],
     "interface-name": false,
-    "no-submodule-imports": [true, "@mdi/font"],
+    "no-submodule-imports": [true, "@mdi/font", "@nxbm/utils"],
     "no-unused-variable": true
   },
   "excludes": ["node_modules", "./src/polyfills"],

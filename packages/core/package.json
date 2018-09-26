@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "author": "Jordon de Hoog",
   "license": "MIT",
   "scripts": {

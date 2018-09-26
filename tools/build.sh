@@ -4,7 +4,6 @@ if [ -z "$1" ]; then
     echo "No projects specified, building all"
     yarn build:lib
     yarn build:src
-    yarn build:packages
 else
     for proj in "$@"
     do

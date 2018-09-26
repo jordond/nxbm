@@ -1,5 +1,6 @@
+import { GET } from "@nxbm/utils/dist/hapiRoute";
+
 import { Endpoint, Route } from "../route";
-import { GET } from "../util/hapi";
 
 interface IScannerRoutes {
   getStartScanner: Endpoint;
