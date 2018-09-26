@@ -1,5 +1,4 @@
-import { IConfig } from "@nxbm/types";
-import { GET, PUT } from "@nxbm/utils/dist/hapiRoute";
+import { GET, IConfig, PUT } from "@nxbm/types";
 
 import { Endpoint, Route } from "../route";
 

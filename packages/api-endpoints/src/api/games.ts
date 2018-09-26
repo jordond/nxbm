@@ -1,5 +1,4 @@
-import { Game } from "@nxbm/types";
-import { DELETE, GET } from "@nxbm/utils/dist/hapiRoute";
+import { DELETE, Game, GET } from "@nxbm/types";
 
 import { Endpoint, Route } from "../route";
 

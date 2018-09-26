@@ -2,7 +2,6 @@ export * from "./buffer";
 export * from "./filesystem";
 export * from "./fuzzy";
 export * from "./hapiExt";
-export * from "./hapiRoute";
 export * from "./http";
 export * from "./jsondb";
 export * from "./misc";

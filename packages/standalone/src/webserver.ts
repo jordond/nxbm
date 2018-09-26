@@ -1,5 +1,4 @@
-import { IConfig } from "@nxbm/types";
-import { GET } from "@nxbm/utils";
+import { GET, IConfig } from "@nxbm/types";
 import { Server } from "hapi";
 import * as inert from "inert";
 import { join, resolve } from "path";

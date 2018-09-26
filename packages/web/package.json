@@ -2,10 +2,9 @@
   "name": "@nxbm/web",
   "version": "0.0.0",
   "private": true,
-  "sideEffects": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --report",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "clean": "rimraf dist/*",
     "test:unit": "vue-cli-service test:unit",

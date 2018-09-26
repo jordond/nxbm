@@ -1,4 +1,4 @@
-import { GET } from "@nxbm/utils/dist/hapiRoute";
+import { GET } from "@nxbm/types";
 
 import { Endpoint, Route } from "../route";
 

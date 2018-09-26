@@ -1,4 +1,4 @@
-import { GET, POST } from "@nxbm/utils";
+import { GET, POST } from "@nxbm/types";
 
 import { Endpoint } from "../../route";
 
