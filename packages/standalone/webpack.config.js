@@ -1,15 +1,18 @@
-import CopyWebpackPlugin from "copy-webpack-plugin";
-import { basename, dirname, join, resolve } from "path";
-import { sync as readPkg } from "read-pkg";
-import { Configuration } from "webpack";
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const NodemonPlugin = require("nodemon-webpack-plugin");
+const { basename, dirname, resolve } = require("path");
+const { sync: readPkg } = require("read-pkg");
+const { argv } = require("yargs");
 
 const { main } = readPkg();
 
 const pythonFiles = resolve("../core-files/src/**/*.py");
 const outputPath = resolve(__dirname, dirname(main));
 
-const config: Configuration = {
-  mode: "production",
+const isDev = argv.dev;
+
+const config = {
+  mode: isDev ? "development" : "production",
   target: "node",
   entry: "./src/index.ts",
   output: {
@@ -53,4 +56,12 @@ const config: Configuration = {
   externals: ["fsevents"]
 };
 
-export default config;
+if (isDev) {
+  config.plugins.push(
+    new NodemonPlugin({
+      args: ["--root=../../tmp", "--level=debug", "--env development"]
+    })
+  );
+}
+
+module.exports = config;

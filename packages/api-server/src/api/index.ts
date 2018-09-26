@@ -1,4 +1,5 @@
 import { API_ROOT } from "@nxbm/api-endpoints";
+import { DELETE, GET, POST, PUT } from "@nxbm/types";
 import { ServerRoute } from "hapi";
 import { join } from "path";
 
@@ -11,7 +12,7 @@ export interface IApiRoute extends ServerRoute {
 // Redirect to the api for now
 const rootRoutes: ServerRoute[] = [
   {
-    method: "*",
+    method: [GET, POST, PUT, DELETE],
     path: API_ROOT,
     handler: (_, r) => r.response("nxbm API")
   }
