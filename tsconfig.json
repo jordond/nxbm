@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "es2015",
-    "module": "es2015",
+    // Set to commonjs for testing tmp/parse.js
+    // Research to see if we can keep it as commonjs
+    "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["es2018", "dom"],
     "strict": true,

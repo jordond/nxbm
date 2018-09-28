@@ -1,25 +1,21 @@
-import { readByByte, readNBytes } from "@nxbm/utils";
-import BlueBird, { map as mapPromise } from "bluebird";
-import { open, stat } from "fs-extra";
+import { FileParseOptions } from "@nxbm/types";
+import { ensureOpenRead, readNBytes } from "@nxbm/utils";
+import { stat } from "fs-extra";
 
+import { IFile } from "../../types/dist";
 import { gatherExtraInfo } from "./parser/cnmt";
 import { File } from "./parser/models/File";
-import { FSHeader } from "./parser/models/FSHeader";
 import { HFS0Entry } from "./parser/models/HFS0Entry";
+import { createHFS0Header } from "./parser/models/HFS0Header";
 import { XCIHeader } from "./parser/models/XCIHeader";
-import {
-  decryptNCAHeader,
-  Detail,
-  Details,
-  getNCADetails
-} from "./parser/secure";
+import { decryptNCAHeader, getNCADetails } from "./parser/secure";
 import { findVersion } from "./parser/version";
 
 export async function isXCI(path: string) {
   try {
-    const fd = await open(path, "r");
+    const fd = await ensureOpenRead(path);
     const header = new XCIHeader(await readNBytes(fd, 61440));
-    return header.magic === "HEAD";
+    return header.isValid();
   } catch (error) {
     return false;
   }
@@ -36,57 +32,63 @@ export async function isXCI(path: string) {
  */
 export async function parseXCI(
   xciPath: string,
-  headerKey: string,
-  outputDir: string,
-  cleanup: boolean = true
+  options: FileParseOptions
 ): Promise<File> {
-  const fd = await open(xciPath, "r");
-  const stats = await stat(xciPath);
+  const fd = await ensureOpenRead(xciPath);
 
-  const xciData = new File({
+  // Get root HFS0 details
+  const xciHeader = new XCIHeader(await readNBytes(fd, 61440));
+  const header = await createHFS0Header(fd, xciHeader.hfs0Offset);
+  const entries = await header.getHFS0Entries(fd, xciHeader.hfs0Offset);
+  const offset = xciHeader.getHFS0Offset();
+
+  // Get the detailed info
+  const version = await getXCIVersion(fd, entries, offset);
+  const secureInfo = await processSecurePartition(
+    fd,
+    xciPath,
+    entries,
+    offset,
+    options
+  );
+
+  const stats = await stat(xciPath);
+  return new File({
+    version,
+    distributionType: "Cartridge",
+    contentType: "Application",
     filepath: xciPath,
     totalSizeBytes: stats.size,
-    distributionType: "Cartridge",
-    contentType: "Application"
+    usedSizeBytes: xciHeader.calculateUsedSize(),
+    rawCartSize: xciHeader.cardSize1,
+    ...secureInfo
   });
+}
 
-  const xciHeader = new XCIHeader(await readNBytes(fd, 61440));
-  xciData.assign({
-    usedSizeBytes: xciHeader.cardSize2 * 512 + 512,
-    rawCartSize: xciHeader.cardSize1
-  });
-
-  const hfs0Header = new FSHeader(
-    await readNBytes(fd, 16, xciHeader.hfs0Offset)
-  );
-
-  const hfs0Size = xciHeader.hfs0Offset + xciHeader.hfs0Size;
-  const hsf0Entries: HFS0Entry[] = await getMainHFS0Entries(
-    fd,
-    xciHeader,
-    hfs0Header
-  );
-
-  // Handle secure partition details
-  const secureHFS0 = hsf0Entries.find(entry => entry.name === "secure");
-  if (!secureHFS0) throw new Error("A Secure partition was not found!");
+async function processSecurePartition(
+  fd: number,
+  xciPath: string,
+  hfs0Entries: HFS0Entry[],
+  hfs0Offset: number,
+  { headerKey, cleanup = true, outputDir }: FileParseOptions
+): Promise<Partial<IFile>> {
+  const secureEntry = hfs0Entries.find(entry => entry.name === "secure");
+  if (!secureEntry) throw new Error("A Secure partition was not found!");
 
   // Gather information about the secure partition
-  const secureDetails = await getSecureHFS0Details(fd, secureHFS0, hfs0Size);
+  const secureStartOffset = secureEntry.offset + hfs0Offset;
+  const secureHeader = await createHFS0Header(fd, secureStartOffset);
+  const secureDetails = await secureHeader.getSecurePartionDetails(
+    fd,
+    secureStartOffset
+  );
 
   // Decrypt the NCA header
   const { offset } = getNCADetails(secureDetails);
   const ncaHeader = await decryptNCAHeader(xciPath, headerKey, offset, cleanup);
-  xciData.assign({
-    titleIDRaw: ncaHeader.rawTitleID,
-    sdkVersion: ncaHeader.formatSDKVersion(),
-    masterKeyRevisionRaw: ncaHeader.masterKeyRev
-  });
 
-  // Get detailed information containe in secure partition
-  const filteredDetails = secureDetails.filter(
-    detail => detail.size < 0x4e20000
-  );
+  // Get detailed information contained in secure partition
+  const filteredDetails = secureDetails.filter(it => it.size < 0x4e20000);
   const extraInfo = await gatherExtraInfo(
     fd,
     filteredDetails,
@@ -94,88 +96,25 @@ export async function parseXCI(
     outputDir,
     cleanup
   );
-  xciData.assign(extraInfo);
 
-  // Get the version number
-  const updateHFS0 = hsf0Entries.find(entry => entry.name === "update");
-  if (!updateHFS0) throw new Error("A update partition was not found");
-
-  const updateHeader = await getHFS0Header(fd, updateHFS0, hfs0Size);
-  const updateEntries = await getHFS0Entries(fd, updateHeader, hfs0Size);
-  xciData.version = findVersion(updateEntries.map(x => x.name));
-
-  return xciData;
+  return {
+    titleIDRaw: ncaHeader.rawTitleID,
+    sdkVersion: ncaHeader.formatSDKVersion(),
+    masterKeyRevisionRaw: ncaHeader.masterKeyRev,
+    ...extraInfo
+  };
 }
 
-function calcHFSOffset(offset: number, additional?: number): number {
-  return offset + 16 + 64 * (additional !== undefined ? additional : 1);
-}
-
-function getMainHFS0Entries(file: number, xci: XCIHeader, hfs0: FSHeader) {
-  return getHFS0Entries(file, hfs0, xci.hfs0Offset);
-}
-
-async function getHFS0Header(
-  file: number,
-  entry: HFS0Entry,
-  hfs0Size: number
-): Promise<FSHeader> {
-  const offset = entry.offset + hfs0Size;
-  return new FSHeader(await readNBytes(file, 16, offset));
-}
-
-function getHFS0Entries(
-  file: number,
-  fsHeader: FSHeader,
-  startOffset: number
-): BlueBird<HFS0Entry[]> {
-  return mapPromise(Array(fsHeader.filecount), async (_, index) => {
-    // Get entry
-    const entryPosition = calcHFSOffset(startOffset, index);
-    const entry = new HFS0Entry(await readNBytes(file, 64, entryPosition));
-
-    // Get name
-    const namePosition =
-      calcHFSOffset(startOffset, fsHeader.filecount) + entry.namePtr;
-    const charName = await readByByte(file, namePosition, num => num !== 0);
-    entry.name = charName.toString();
-
-    return entry;
-  });
-}
-
-async function getSecureHFS0Details(
-  file: number,
-  rootEntry: HFS0Entry,
-  hfs0Size: number
-): Promise<Details> {
-  const secureHeader = await getHFS0Header(file, rootEntry, hfs0Size);
-  const secureEntries = await getHFS0Entries(
-    file,
-    secureHeader,
-    rootEntry.offset + hfs0Size
-  );
-
-  // Iterate over the children in the secure partition and gather sizes and offsets
-  return secureEntries.map<Detail>(entry => ({
-    size: entry.size,
-    name: entry.name,
-    offset: calcSecureOffset(secureHeader, rootEntry, entry, hfs0Size)
-  }));
-}
-
-function calcSecureOffset(
-  header: FSHeader,
-  root: HFS0Entry,
-  child: HFS0Entry,
-  hfs0Size: number
+async function getXCIVersion(
+  fd: number,
+  hfs0Entries: HFS0Entry[],
+  hfs0Offset: number
 ) {
-  return (
-    root.offset +
-    child.offset +
-    hfs0Size +
-    16 +
-    header.stringTableSize +
-    header.filecount * 64
-  );
+  const entry = hfs0Entries.find(hfs0 => hfs0.name === "update");
+  if (!entry) throw new Error("A update partition was not found");
+
+  const offset = entry.offset + hfs0Offset;
+  const header = await createHFS0Header(fd, offset);
+  const entries = await header.getHFS0Entries(fd, hfs0Offset);
+  return findVersion(entries.map(x => x.name));
 }

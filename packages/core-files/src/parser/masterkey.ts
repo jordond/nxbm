@@ -13,6 +13,16 @@ export function getMasterKey(keys: MasterKeys, keyRevision: number) {
   return keys[strRevision] || "";
 }
 
+const MASTER_KEY_MAP: { [key: string]: string } = {
+  0: "MasterKey0 (1.0.0-2.3.0)",
+  1: "MasterKey0 (1.0.0-2.3.0)",
+  2: "MasterKey1 (3.0.0)",
+  3: "MasterKey2 (3.0.1-3.0.2)",
+  4: "MasterKey3 (4.0.0-4.1.0)",
+  5: "MasterKey4 (5.0.0+)",
+  6: "MasterKey5 (6.0.0)"
+};
+
 /**
  * Convert the master key byte value to a human readable string
  *
@@ -22,15 +32,6 @@ export function getMasterKey(keys: MasterKeys, keyRevision: number) {
 export function getMasterKeyStr(id: number) {
   if (id < 0) return "";
 
-  const map: { [key: string]: string } = {
-    0: "MasterKey0 (1.0.0-2.3.0)",
-    1: "MasterKey0 (1.0.0-2.3.0)",
-    2: "MasterKey1 (3.0.0)",
-    3: "MasterKey2 (3.0.1-3.0.2)",
-    4: "MasterKey3 (4.0.0-4.1.0)",
-    5: "MasterKey4 (5.0.0+)"
-  };
-
-  const value = map[id];
+  const value = MASTER_KEY_MAP[id];
   return value || `MasterKey${id} (?)`;
 }

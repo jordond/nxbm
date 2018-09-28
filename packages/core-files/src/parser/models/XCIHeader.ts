@@ -15,6 +15,18 @@ export class XCIHeader {
     this.hfs0Size = read64LEFloat(bytes, 312);
   }
 
+  public isValid() {
+    return this.magic === "HEAD";
+  }
+
+  public getHFS0Offset() {
+    return this.hfs0Offset + this.hfs0Size;
+  }
+
+  public calculateUsedSize() {
+    return this.cardSize2 * 512 + 512;
+  }
+
   public toString() {
     return `XCI:
     Magic: ${this.magic}

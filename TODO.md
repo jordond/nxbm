@@ -1,26 +1,21 @@
 ## Architecture
 
 - Check if python2 is installed, and libs needed for compiling hactool
-- Move endpoint handler from `api-server` to `api-endpoints` \* Maybe
-- Move api-server logic into new package
-- Create new package for the backend i.e. bootstrap.ts, calls server.ts
-  - Use webpack to bundle all the node code
-  - Make sure `__dirname` points to one level up
-  - Mark all dependencies as external (except @nxbm/)
-- Build script that will run `backend`.build, and `web`.build
-  - Output to /dist (top level)
-  - Include package.json for deps
-- Somehow make the web project aware of api server address
-  - Or create a project that grabs the backend and web into a single package
+- When downloading hactool, save its version
+  - Make sure the file is executable
+  - Allow user to select hactool version
+  - Compare current hactool version to remote, download and update
 
 ### Final Outputs
 
-- standalone:
-  - api-server, scanner, web-ui
+- ~~standalone:~~
+  - ~~api-server, scanner, web-ui~~
 - Docker:
   - Uses standalone
 - Electron:
   - bundles, api-server, scanner, web-ui into one
+- Setup automatic github releases from master
+  - Semantic release?
 
 ## General
 
@@ -35,8 +30,6 @@
 - Update Config to use `Partial<>` instead of always optional
 
 - Change `Game` to `File` and vice-versa
-- For each API endpoint
-
 - Have a "first run", that generates a config file the user can use to edit
 
 ## Config structure

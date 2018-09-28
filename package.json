@@ -26,11 +26,11 @@
     "build:lib": "lerna run build --stream --ignore @nxbm/standalone --ignore @nxbm/web ",
     "build:src": "npm run build web",
     "prebuild:packages": "npm run build",
-    "build:packages":"npm run build standalone",
+    "build:packages": "npm run build standalone",
     "lint": "lerna run lint",
     "dev:lib": "lerna run dev --stream --parallel --ignore @nxbm/standalone",
     "dev:src": "concurrently --kill-others 'npm run do web serve' 'lerna run dev:start --scope @nxbm/api-backend'",
-    "dev:all":"concurrently --kill-others 'npm run dev:lib' 'npm run dev:src'",
+    "dev:all": "concurrently --kill-others 'npm run dev:lib' 'npm run dev:src'",
     "dev": "./tools/dev.sh",
     "package:standalone": "npm run build:packages && lerna run copy:standalone"
   },
