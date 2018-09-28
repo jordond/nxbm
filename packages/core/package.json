@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "convict": "^4.3.2",
-    "winston": "2.4.4",
-    "fs-extra": "^7.0.0"
+    "fs-extra": "^7.0.0",
+    "winston": "2.4.4"
   },
   "devDependencies": {
     "@nxbm/tslint-rules": "^0.0.0",
