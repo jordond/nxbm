@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@nxbm/api-endpoints": "^0.0.0",
+    "@nxbm/api-server": "^0.0.0",
     "@nxbm/core": "^0.0.0",
     "@nxbm/core-db": "^0.0.0",
     "@nxbm/core-files": "^0.0.0",

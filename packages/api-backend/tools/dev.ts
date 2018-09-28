@@ -1,7 +1,11 @@
+import { createServer, startServer } from "@nxbm/api-server";
 import { getConfig } from "@nxbm/core";
 
 import { initBackend } from "../src/index";
 
 initBackend(getConfig())
-  .then(server => server.start())
+  .then(async _ => {
+    const server = await createServer(getConfig());
+    await startServer(server);
+  })
   .catch(err => console.error("Something bad happened", err));
