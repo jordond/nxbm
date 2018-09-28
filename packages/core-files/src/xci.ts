@@ -4,8 +4,8 @@ import { open, stat } from "fs-extra";
 
 import { gatherExtraInfo } from "./parser/cnmt";
 import { File } from "./parser/models/File";
-import { FSEntry } from "./parser/models/FSEntry";
 import { FSHeader } from "./parser/models/FSHeader";
+import { HFS0Entry } from "./parser/models/HFS0Entry";
 import { XCIHeader } from "./parser/models/XCIHeader";
 import {
   decryptNCAHeader,
@@ -61,7 +61,7 @@ export async function parseXCI(
   );
 
   const hfs0Size = xciHeader.hfs0Offset + xciHeader.hfs0Size;
-  const hsf0Entries: FSEntry[] = await getMainHFS0Entries(
+  const hsf0Entries: HFS0Entry[] = await getMainHFS0Entries(
     fd,
     xciHeader,
     hfs0Header
@@ -117,7 +117,7 @@ function getMainHFS0Entries(file: number, xci: XCIHeader, hfs0: FSHeader) {
 
 async function getHFS0Header(
   file: number,
-  entry: FSEntry,
+  entry: HFS0Entry,
   hfs0Size: number
 ): Promise<FSHeader> {
   const offset = entry.offset + hfs0Size;
@@ -128,11 +128,11 @@ function getHFS0Entries(
   file: number,
   fsHeader: FSHeader,
   startOffset: number
-): BlueBird<FSEntry[]> {
+): BlueBird<HFS0Entry[]> {
   return mapPromise(Array(fsHeader.filecount), async (_, index) => {
     // Get entry
     const entryPosition = calcHFSOffset(startOffset, index);
-    const entry = new FSEntry(await readNBytes(file, 64, entryPosition));
+    const entry = new HFS0Entry(await readNBytes(file, 64, entryPosition));
 
     // Get name
     const namePosition =
@@ -146,7 +146,7 @@ function getHFS0Entries(
 
 async function getSecureHFS0Details(
   file: number,
-  rootEntry: FSEntry,
+  rootEntry: HFS0Entry,
   hfs0Size: number
 ): Promise<Details> {
   const secureHeader = await getHFS0Header(file, rootEntry, hfs0Size);
@@ -166,8 +166,8 @@ async function getSecureHFS0Details(
 
 function calcSecureOffset(
   header: FSHeader,
-  root: FSEntry,
-  child: FSEntry,
+  root: HFS0Entry,
+  child: HFS0Entry,
   hfs0Size: number
 ) {
   return (
