@@ -121,7 +121,11 @@ async function parseXCIFile(filePath: string): Promise<File | undefined> {
 
   log.verbose(`Parsing ${filePath}`);
   try {
-    const file = await parseXCI(filePath, keys.headerKey, getMediaDir());
+    const { headerKey } = keys;
+    const file = await parseXCI(filePath, {
+      headerKey,
+      outputDir: getMediaDir()
+    });
     log.verbose(`Successfully parsed ${file.displayName()}`);
 
     return file;
