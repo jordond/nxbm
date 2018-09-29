@@ -5,7 +5,9 @@ import * as inert from "inert";
 import { join, resolve } from "path";
 
 export async function setupWebserver(server: Server, { env }: IConfig) {
-  await server.register(inert);
+  await server.register(
+    inert as any /* TODO - Temp fix until plugin issue resolved */
+  );
 
   const contextDir = env === "development" ? "./dist" : __dirname;
   const webDir = resolve(contextDir, "public");
@@ -29,6 +31,6 @@ export async function setupWebserver(server: Server, { env }: IConfig) {
   server.route({
     method: GET,
     path: "/",
-    handler: (_, h) => h.file(indexFile)
+    handler: (_, h) => (h as any).file(indexFile)
   });
 }

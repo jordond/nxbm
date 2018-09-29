@@ -193,6 +193,8 @@ async function getMissingMedia() {
         } games`
       );
     }
+
+    log.info("Finished missing media download");
   } catch (error) {
     log.error("Failed to get missing media");
     log.error(error);

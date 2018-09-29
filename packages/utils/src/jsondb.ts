@@ -121,9 +121,7 @@ export abstract class AutoDownloadJsonDB<T> {
       this.log.info(`Downloading a fresh copy of the ${this.name}`);
       try {
         const result = await this.startDownloadAndSaveResult();
-        if (result) {
-          return result;
-        }
+        return result;
       } catch (error) {
         if (this.db && this.db.data.length) {
           this.log.info("Failed to download new DB, using old version");
@@ -182,10 +180,11 @@ export abstract class AutoDownloadJsonDB<T> {
 
     if (data.length) {
       await this.save(data);
-      return;
+      return true;
     }
 
     this.log.warn("Recieved no data");
+    return false;
   }
 
   private async save(data: T[]) {
