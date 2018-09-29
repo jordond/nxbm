@@ -9,6 +9,7 @@
   "author": "Jordon de Hoog",
   "license": "MIT",
   "workspaces": [
+    "lib/*",
     "packages/*"
   ],
   "scripts": {
@@ -23,7 +24,7 @@
     "dep": "./tools/dep.sh",
     "do": "./tools/run.sh",
     "build": "npm run build:lib && npm run build:dist && npm run build:bin",
-    "build:lib": "tsc --build packages/ --verbose",
+    "build:lib": "tsc --build lib/",
     "build:dist": "lerna run build --stream --scope @nxbm/web",
     "build:bin": "lerna run build --stream --scope @nxbm/standalone",
     "copy:web": "cpx 'build/dist/web/**/*'",

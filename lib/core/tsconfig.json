@@ -1,9 +1,9 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es2018",
     "outDir": "../../build/lib/core"
   },
   "include": ["index.ts", "src/**/*.ts"],
-  "references": [{ "path": "../types" }]
+  "references": [{ "path": "../../lib/types" }]
 }

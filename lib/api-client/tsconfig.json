@@ -1,10 +1,13 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
     "outDir": "../../build/lib/api-client"
   },
   "include": ["index.ts", "src/**/*"],
-  "references": [{ "path": "../api-endpoints" }, { "path": "../types" }]
+  "references": [
+    { "path": "../../lib/api-endpoints" },
+    { "path": "../../lib/types" }
+  ]
 }

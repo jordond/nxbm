@@ -17,10 +17,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots": ["./typings/types", "../node_modules/@types"],
+    "typeRoots": ["./lib/typings/types", "./node_modules/@types"],
     "baseUrl": ".",
     "paths": {
-      "@nxbm/*": ["./"]
+      "@nxbm/*": ["lib/*", "packages/*"]
     }
   }
 }

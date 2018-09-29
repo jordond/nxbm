@@ -2,18 +2,15 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es2018",
-    "module": "commonjs",
-    "outDir": "dist/lib",
-    "composite": false,
-    "declarationMap": false,
-    "declaration": false
+    "outDir": "../../build/lib/api-backend"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"],
+  "include": ["index.ts", "src/**/*"],
   "references": [
-    { "path": "../../lib/api-backend" },
+    { "path": "../../lib/api-endpoints" },
     { "path": "../../lib/api-server" },
     { "path": "../../lib/core" },
+    { "path": "../../lib/core-db" },
+    { "path": "../../lib/core-files" },
     { "path": "../../lib/types" },
     { "path": "../../lib/utils" }
   ]

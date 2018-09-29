@@ -6,7 +6,6 @@ cliargs.js
 data
 .cache
 *.pyc
-lib/
 build/
 
 lib-cov

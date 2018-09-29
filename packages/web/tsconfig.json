@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
@@ -19,5 +19,9 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "references": [
+    { "path": "../../lib/api-client" },
+    { "path": "../../lib/types" }
+  ]
 }
