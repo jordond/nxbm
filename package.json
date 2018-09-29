@@ -30,7 +30,7 @@
     "copy:web": "cpx 'build/dist/web/**/*'",
     "prepackage:standalone":"rimraf build/bin/standalone",
     "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public",
-    "dev:lib": "tsc --build --watch packages/",
+    "dev:lib": "tsc --build --watch lib/",
     "dev:standalone": "npx lerna run dev --stream --scope @nxbm/standalone",
     "dev:src": "concurrently --kill-others 'npm run do web serve' 'lerna run dev:start'"
   },
