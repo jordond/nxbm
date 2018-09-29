@@ -2,8 +2,8 @@
   "name": "@nxbm/types",
   "version": "0.0.0",
   "description": "Shared custom types",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "../../lib/types/index.js",
+  "types": "../../lib/types/index.d.ts",
   "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
   "repository": {
     "type": "git",

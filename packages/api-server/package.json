@@ -1,8 +1,8 @@
 {
   "name": "@nxbm/api-server",
   "version": "0.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "../../dist/lib/api-server/index.js",
+  "types": "../../dist/lib/api-server/index.d.ts",
   "description": "",
   "author": "Jordon de Hoog",
   "license": "MIT",
@@ -15,11 +15,6 @@
     "dev": "tsc -w "
   },
   "dependencies": {
-    "@nxbm/api-endpoints": "^0.0.0",
-    "@nxbm/core": "^0.0.0",
-    "@nxbm/core-db": "^0.0.0",
-    "@nxbm/core-files": "^0.0.0",
-    "@nxbm/utils": "^0.0.0",
     "boom": "^7.2.0",
     "compare-semver": "^1.1.0",
     "fs-extra": "^7.0.0",
@@ -30,6 +25,11 @@
   },
   "devDependencies": {
     "@nxbm/tslint-rules": "^0.0.0",
+    "@nxbm/api-endpoints": "^0.0.0",
+    "@nxbm/core": "^0.0.0",
+    "@nxbm/core-db": "^0.0.0",
+    "@nxbm/core-files": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@types/boom": "^7.2.0",
     "@types/fs-extra": "^5.0.4",

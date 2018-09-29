@@ -1,19 +1,3 @@
 {
-  "compilerOptions": {
-    "target": "es2015",
-    // Set to commonjs for testing tmp/parse.js
-    // Research to see if we can keep it as commonjs
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "lib": ["es2018", "dom"],
-    "strict": true,
-    "declaration": true,
-    "sourceMap": true,
-    "pretty": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
-    "typeRoots": ["packages/typings/types", "node_modules/@types"]
-  }
+  "extends": "packages/tsconfig.json"
 }

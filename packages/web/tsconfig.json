@@ -1,8 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    "composite": false,
     "jsx": "preserve",
     "importHelpers": true,
     "esModuleInterop": true,

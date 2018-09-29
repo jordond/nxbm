@@ -2,8 +2,8 @@
   "name": "@nxbm/api-endpoints",
   "version": "0.0.0",
   "description": "Endpoint for the nxbm api",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "../../dist/lib/api-endpoints/index.js",
+  "types": "../../dist/lib/api-endpoints/index.d.ts",
   "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
   "repository": {
     "type": "git",

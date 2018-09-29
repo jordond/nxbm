@@ -1,10 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "outDir": "dist/"
+    "outDir": "../../lib/api-endpoints"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["index.ts", "src/**/*"],
+  "references": [{ "path": "../types" }]
 }

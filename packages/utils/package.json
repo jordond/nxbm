@@ -2,8 +2,8 @@
   "name": "@nxbm/utils",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "../../lib/utils/index.js",
+  "types": "../../lib/utils/index.d.ts",
   "author": "Jordon de Hoog",
   "license": "MIT",
   "sideEffects": false,
@@ -15,7 +15,6 @@
     "dev": "tsc -w "
   },
   "dependencies": {
-    "@nxbm/core": "^0.0.0",
     "axios": "^0.18.0",
     "fs-extra": "^7.0.0",
     "fuse.js": "^3.2.1",
@@ -28,6 +27,7 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
+    "@nxbm/core": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@types/fs-extra": "^5.0.4",

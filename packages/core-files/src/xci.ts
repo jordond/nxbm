@@ -1,8 +1,7 @@
-import { FileParseOptions } from "@nxbm/types";
+import { FileParseOptions, IFile } from "@nxbm/types";
 import { ensureOpenRead, readNBytes } from "@nxbm/utils";
 import { stat } from "fs-extra";
 
-import { IFile } from "../../types/dist";
 import { gatherExtraInfo } from "./parser/cnmt";
 import { File } from "./parser/models/File";
 import { HFS0Entry } from "./parser/models/HFS0Entry";

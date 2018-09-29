@@ -1,0 +1,15 @@
+{
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./api-backend" },
+    { "path": "./api-client" },
+    { "path": "./api-endpoints" },
+    { "path": "./api-server" },
+    { "path": "./core" },
+    { "path": "./core-db" },
+    { "path": "./core-files" },
+    { "path": "./types" },
+    { "path": "./utils" }
+  ]
+}

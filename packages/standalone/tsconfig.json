@@ -1,8 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
+    "composite": false,
     "outDir": "dist/",
     "declaration": false
   },

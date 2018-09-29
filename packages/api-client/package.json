@@ -2,8 +2,8 @@
   "name": "@nxbm/api-client",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "../../dist/lib/api-client/index.js",
+  "types": "../../dist/lib/api-client/index.d.ts",
   "sideEffects": false,
   "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
   "repository": {

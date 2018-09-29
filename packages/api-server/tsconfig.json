@@ -1,9 +1,16 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "es2018",
-    "outDir": "dist/"
+    "outDir": "../../lib/api-server"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["index.ts", "src/**/*"],
+  "references": [
+    { "path": "../api-endpoints" },
+    { "path": "../core" },
+    { "path": "../core-db" },
+    { "path": "../core-files" },
+    { "path": "../types" },
+    { "path": "../utils" }
+  ]
 }

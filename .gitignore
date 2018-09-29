@@ -6,6 +6,7 @@ cliargs.js
 data
 .cache
 *.pyc
+lib/
 
 lib-cov
 *.seed

@@ -1,8 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist/"
+    "outDir": "../../lib/core-files"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["index.ts", "src/**/*"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../types" },
+    { "path": "../utils" }
+  ]
 }

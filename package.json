@@ -32,7 +32,8 @@
     "dev:src": "concurrently --kill-others 'npm run do web serve' 'lerna run dev:start --scope @nxbm/api-backend'",
     "dev:all": "concurrently --kill-others 'npm run dev:lib' 'npm run dev:src'",
     "dev": "./tools/dev.sh",
-    "package:standalone": "npm run build:packages && lerna run copy:standalone"
+    "package:standalone": "npm run build:packages && lerna run copy:standalone",
+    "tsc": "tsc"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
@@ -42,7 +43,8 @@
     "lerna": "^3.1.4",
     "lint-staged": "^7.2.2",
     "prettier": "^1.14.2",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "typescript": "^3.1.1"
   },
   "husky": {
     "hooks": {
@@ -51,7 +53,7 @@
   },
   "lint-staged": {
     "packages/**/{src,test}/**/*.ts": [
-      "tslint --project ./tsconfig.json --fix",
+      "tslint --project ./packages/tsconfig.base.json --fix",
       "git add"
     ],
     "packages/**/*.{ts,vue,json}": [
