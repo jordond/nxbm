@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "outDir": "../../lib/api-client"
+    "outDir": "../../build/lib/api-client"
   },
   "include": ["index.ts", "src/**/*"],
   "references": [{ "path": "../api-endpoints" }, { "path": "../types" }]

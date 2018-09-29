@@ -5,9 +5,10 @@ const { argv } = require("yargs");
 
 const { main } = readPkg();
 
-const outputPath = resolve(__dirname, dirname(main));
+const outputPath = resolve(__dirname, "../../build/bin/", dirname(main));
 
 const isDev = argv.dev;
+const minimize = argv.m || argv.mini;
 
 const config = {
   mode: isDev ? "development" : "production",
@@ -22,9 +23,7 @@ const config = {
     __dirname: false,
     __filename: true
   },
-  optimization: {
-    minimize: false
-  },
+  optimization: { minimize },
   resolve: {
     extensions: [".ts", ".js", ".mjs"]
   },

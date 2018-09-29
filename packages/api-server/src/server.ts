@@ -14,7 +14,7 @@ export async function createServer(config: IConfig) {
   const goodWinstonOptions = {
     levels: {
       ops: "silly",
-      response: "verbose",
+      response: "debug",
       request: "debug",
       error: "error"
     }

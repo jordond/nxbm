@@ -9,7 +9,7 @@ export async function setupWebserver(server: Server, { env }: IConfig) {
     inert as any /* TODO - Temp fix until plugin issue resolved */
   );
 
-  const contextDir = env === "development" ? "./dist" : __dirname;
+  const contextDir = env === "development" ? "../../build/dist/web" : __dirname;
   const webDir = resolve(contextDir, "public");
   const indexFile = join(webDir, "index.html");
 

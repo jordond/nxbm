@@ -2,7 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "es2018",
-    "outDir": "../../lib/api-server"
+    "outDir": "../../build/lib/api-server"
   },
   "include": ["index.ts", "src/**/*"],
   "references": [

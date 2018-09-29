@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../lib/core-db"
+    "outDir": "../../build/lib/core-db"
   },
   "include": ["index.ts", "src/**/*"],
   "references": [

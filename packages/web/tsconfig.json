@@ -4,6 +4,8 @@
     "target": "esnext",
     "module": "esnext",
     "composite": false,
+    "declarationMap": false,
+    "declaration": false,
     "jsx": "preserve",
     "importHelpers": true,
     "esModuleInterop": true,

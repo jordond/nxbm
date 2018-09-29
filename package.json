@@ -12,7 +12,7 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "lerna run lint",
+    "lint": "lerna run lint --stream",
     "lerna": "lerna",
     "precommit": "lint-staged",
     "commit": "git-cz",
@@ -22,19 +22,21 @@
     "reboot": "npm run nuke && yarn && npm run build",
     "dep": "./tools/dep.sh",
     "do": "./tools/run.sh",
-    "build": "./tools/build.sh",
-    "build:lib": "tsc --build packages/",
-    "build:src": "lerna run build",
-    "prebuild:packages": "npm run build",
-    "build:packages": "npm run build standalone",
+    "build": "npm run build:lib && npm run build:dist && npm run build:bin",
+    "build:lib": "tsc --build packages/ --verbose",
+    "build:dist": "lerna run build --stream --scope @nxbm/web",
+    "build:bin": "lerna run build --stream --scope @nxbm/standalone",
+    "copy:web": "cpx 'build/dist/web/**/*'",
+    "prepackage:standalone":"rimraf build/bin/standalone",
+    "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public",
     "dev:lib": "tsc --build --watch packages/",
     "dev:standalone": "npx lerna run dev --stream --scope @nxbm/standalone",
-    "dev:src": "concurrently --kill-others 'npm run do web serve' 'lerna run dev:start'",
-    "package:standalone": "npm run build:packages && lerna run copy:standalone"
+    "dev:src": "concurrently --kill-others 'npm run do web serve' 'lerna run dev:start'"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
     "concurrently": "^4.0.1",
+    "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",
     "husky": "^0.14.3",
     "lerna": "^3.1.4",

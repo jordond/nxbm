@@ -2,19 +2,15 @@
   "name": "@nxbm/standalone",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/nxbm.js",
+  "main": "../../build/bin/standalone/nxbm.js",
   "bin": {
-    "nxbm": "dist/nxbm.js"
+    "nxbm": "../../build/bin/standalone/nxbm.js"
   },
   "author": "Jordon de Hoog",
   "license": "MIT",
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist/*",
-    "prebuild": "npm run clean",
     "build": "webpack",
-    "precopy:standalone": "rimraf ../../dist/standalone",
-    "copy:standalone": "cpx 'dist/**/*' ../../dist/standalone",
     "predev": "tsc --build ../",
     "dev": "webpack --watch --dev"
   },
@@ -34,7 +30,6 @@
     "@types/webpack": "^4.4.12",
     "@types/yargs": "^12.0.0",
     "copy-webpack-plugin": "^4.5.2",
-    "cpx": "^1.5.0",
     "fs-extra": "^7.0.0",
     "hapi": "^17.6.0",
     "inert": "^5.1.0",
