@@ -4,20 +4,11 @@
   "description": "",
   "main": "../../dist/lib/core-db/index.js",
   "types": "../../dist/lib/core-db/index.d.ts",
-  "author": "Jordon de Hoog",
-  "license": "MIT",
   "sideEffects": false,
   "scripts": {
-    "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist/*",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "dev": "tsc -w"
+    "lint": "tslint --project ./ --fix -t codeFrame"
   },
   "dependencies": {
-    "@nxbm/core": "^0.0.0",
-    "@nxbm/core-files": "^0.0.0",
-    "@nxbm/utils": "^0.0.0",
     "axios": "^0.18.0",
     "bluebird": "^3.5.2",
     "chokidar": "^2.0.4",
@@ -27,6 +18,9 @@
     "node-fetch": "^2.2.0"
   },
   "devDependencies": {
+    "@nxbm/core": "^0.0.0",
+    "@nxbm/core-files": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@types/bluebird": "^3.5.24",

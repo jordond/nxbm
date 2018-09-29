@@ -4,21 +4,14 @@
   "description": "",
   "main": "../../dist/lib/core-files/index.js",
   "types": "../../dist/lib/core-files/index.d.ts",
-  "author": "Jordon de Hoog",
-  "license": "MIT",
   "sideEffects": false,
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist/*",
-    "copy-python": "cpx 'src/**/*.py' dist",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "postbuild": "npm run copy-python",
-    "dev": "tsc-watch --onSuccess \"npm run copy-python\""
+    "copy-python": "cpx 'src/**/*.py' ../../dist/lib/core-files",
+    "build": "npm run copy-python"
   },
   "dependencies": {
-    "@nxbm/core": "^0.0.0",
-    "@nxbm/utils": "^0.0.0",
+
     "axios": "^0.18.0",
     "bluebird": "^3.5.2",
     "compare-semver": "^1.1.0",
@@ -26,6 +19,8 @@
     "python-shell": "^1.0.4"
   },
   "devDependencies": {
+    "@nxbm/core": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@types/bluebird": "^3.5.24",

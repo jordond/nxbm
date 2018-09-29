@@ -13,10 +13,9 @@
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
     "build": "webpack",
-    "postbuild": "cpx '../web/dist/**/*' ./dist/public",
     "precopy:standalone": "rimraf ../../dist/standalone",
     "copy:standalone": "cpx 'dist/**/*' ../../dist/standalone",
-    "predev": "npm run postbuild",
+    "predev": "tsc --build ../",
     "dev": "webpack --watch --dev"
   },
   "devDependencies": {

@@ -1,4 +1,3 @@
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 const { basename, dirname, resolve } = require("path");
 const { sync: readPkg } = require("read-pkg");
@@ -6,7 +5,6 @@ const { argv } = require("yargs");
 
 const { main } = readPkg();
 
-const pythonFiles = resolve("../core-files/src/**/*.py");
 const outputPath = resolve(__dirname, dirname(main));
 
 const isDev = argv.dev;
@@ -35,7 +33,10 @@ const config = {
       {
         test: /\.ts/,
         loader: "ts-loader",
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        options: {
+          projectReferences: true
+        }
       },
       {
         test: /\.mjs$/,
@@ -44,15 +45,7 @@ const config = {
       }
     ]
   },
-  plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: pythonFiles,
-        to: outputPath,
-        flatten: true
-      }
-    ])
-  ],
+  plugins: [],
   externals: ["fsevents"]
 };
 

@@ -1,3 +1,6 @@
+export default {
+  name: "aes128.py",
+  script: `
 # Pure python AES128 implementation
 # SciresM, 2017
 # https://gist.github.com/SciresM/a4b9ae50a9ae89e6119c4de9def22435
@@ -430,3 +433,5 @@ class AESECB:
         assert(len(block) <= self.block_size)
         num_pad = self.block_size - len(block)
         return block + (chr(num_pad) * num_pad)
+`
+};

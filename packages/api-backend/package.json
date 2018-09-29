@@ -9,10 +9,6 @@
   "sideEffects": false,
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist/*",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "dev": "tsc -w",
     "dev:start": "nodemon tools/dev.ts -- --root=../../tmp --level debug --port 9999 --env development"
   },
   "devDependencies": {

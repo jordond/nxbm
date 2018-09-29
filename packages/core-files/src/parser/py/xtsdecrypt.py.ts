@@ -1,8 +1,10 @@
-import argparse
+export default {
+  name: "xtsdecrypt.py",
+  script: `import argparse
 from aes128 import AESXTSN
 
 def main():
-  parser = argparse.ArgumentParser(description='Decrypt an AES-128-XTS encrypted file or hex string, pass either `--input` or `--file`')
+  parser = argparse.ArgumentParser(description='Decrypt an AES-128-XTS encrypted file or hex string, pass either "--input" or "--file"')
   parser.add_argument('--key', dest='key', required=True, help='Hex string used for decrypting')
   parser.add_argument('--file', dest='file', required=True, help='Encrypted file to decrypt')
   parser.add_argument('--out', dest='output', help='File to write the decrypted contents, if not supplied output will be send to stdout')
@@ -41,3 +43,5 @@ def main():
       print(deciphertext)
 
 main()
+`
+};

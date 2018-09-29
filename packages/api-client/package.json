@@ -5,21 +5,8 @@
   "main": "../../dist/lib/api-client/index.js",
   "types": "../../dist/lib/api-client/index.d.ts",
   "sideEffects": false,
-  "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jordond/nxbm"
-  },
-  "license": "MIT",
-  "engines": {
-    "node": ">=6.0.0"
-  },
   "scripts": {
-    "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist/*",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "dev": "tsc -w"
+    "lint": "tslint --project ./ --fix -t codeFrame"
   },
   "dependencies": {
     "axios": "^0.18.0"
