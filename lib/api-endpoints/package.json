@@ -16,7 +16,6 @@
     "@nxbm/types": "^0.0.0",
     "@types/url-join": "^0.8.2",
     "hapi": "^17.5.4",
-    "rimraf": "^2.6.1",
     "tslint": "^5.8.0",
     "typescript": "^3.0.3"
   }

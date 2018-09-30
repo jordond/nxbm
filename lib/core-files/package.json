@@ -6,12 +6,9 @@
   "types": "../../dist/lib/core-files/index.d.ts",
   "sideEffects": false,
   "scripts": {
-    "lint": "tslint --project ./ --fix -t codeFrame",
-    "copy-python": "cpx 'src/**/*.py' ../../dist/lib/core-files",
-    "build": "npm run copy-python"
+    "lint": "tslint --project ./ --fix -t codeFrame"
   },
   "dependencies": {
-
     "axios": "^0.18.0",
     "bluebird": "^3.5.2",
     "compare-semver": "^1.1.0",
@@ -27,9 +24,6 @@
     "@types/fs-extra": "^5.0.4",
     "@types/node": "10.10.0",
     "@types/python-shell": "^0.4.1",
-    "cpx": "^1.5.0",
-    "rimraf": "^2.6.2",
-    "tsc-watch": "^1.0.27",
     "tslint": "^5.11.0",
     "typescript": "^3.0.1"
   }

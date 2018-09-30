@@ -18,21 +18,21 @@
     "precommit": "lint-staged",
     "commit": "git-cz",
     "clean": "lerna clean --yes",
-    "nuke": "npm run clean && rimraf node_modules",
-    "bootstrap": "lerna bootstrap",
+    "nuke": "npm run clean && rimraf build/ && rimraf node_modules",
     "reboot": "npm run nuke && yarn && npm run build",
+    "bootstrap": "lerna bootstrap",
     "dep": "./tools/dep.sh",
     "do": "./tools/run.sh",
+    "copy:web": "cpx 'build/dist/web/**/*'",
     "build": "npm run build:lib && npm run build:dist && npm run build:bin",
     "build:lib": "tsc --build lib/",
     "build:dist": "lerna run build --stream --scope @nxbm/web",
     "build:bin": "lerna run build --stream --scope @nxbm/standalone",
-    "copy:web": "cpx 'build/dist/web/**/*'",
-    "prepackage:standalone":"rimraf build/bin/standalone",
-    "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public",
     "dev:lib": "tsc --build --watch lib/",
-    "dev:standalone": "npx lerna run dev --stream --scope @nxbm/standalone",
-    "dev:src": "concurrently --kill-others 'npm run do web serve' 'lerna run dev:start'"
+    "dev:web": "lerna run serve --stream",
+    "dev:api": "lerna run dev --stream --scope @nxbm/standalone",
+    "dev:bin": "concurrently --kill-others 'npm run dev:web' 'npm run dev:api'",
+    "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
@@ -53,7 +53,7 @@
   },
   "lint-staged": {
     "packages/**/{src,test}/**/*.ts": [
-      "tslint --project ./packages/tsconfig.base.json --fix",
+      "tslint --project ./tsconfig.json --fix",
       "git add"
     ],
     "packages/**/*.{ts,vue,json}": [

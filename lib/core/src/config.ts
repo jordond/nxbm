@@ -1,13 +1,21 @@
-import { IConfig, schema } from "@nxbm/types";
+import { ENV_DEV, ENV_PROD, IConfig, schema } from "@nxbm/types";
 import * as convict from "convict";
+import { outputJSON } from "fs-extra";
 import { join, resolve } from "path";
 
-import { outputJSON } from "fs-extra";
 import { createLogger } from "./logger";
 
 const config = convict(schema);
 
 export const CONFIG_NAME: string = "config.json";
+
+export function isProduction() {
+  return getConfig().env === ENV_PROD;
+}
+
+export function isDevelopment() {
+  return getConfig().env === ENV_DEV;
+}
 
 export function configPath() {
   let path = config.get("paths.data");
@@ -78,7 +86,8 @@ export async function saveConfig(data?: IConfig) {
       configPath(),
       {
         ...config.getProperties(),
-        ...paths
+        ...paths,
+        env: ENV_PROD
       },
       { spaces: 2 }
     );

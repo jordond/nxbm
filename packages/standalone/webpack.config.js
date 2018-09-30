@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 const { basename, dirname, resolve } = require("path");
 const { sync: readPkg } = require("read-pkg");
@@ -49,11 +50,12 @@ const config = {
 };
 
 if (isDev) {
-  config.plugins.push(
+  config.plugins = [
+    new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
     new NodemonPlugin({
-      args: ["--root=../../tmp", "--level=debug", "--env development"]
+      args: ["--root=../../tmp", "--level=debug", "--env=development"]
     })
-  );
+  ];
 }
 
 module.exports = config;

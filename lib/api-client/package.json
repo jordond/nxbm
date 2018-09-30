@@ -16,8 +16,6 @@
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "concurrently": "^4.0.1",
-    "rimraf": "^2.6.1",
-    "ts-node": "^7.0.0",
     "tslint": "^5.8.0",
     "typescript": "^3.0.3"
   }

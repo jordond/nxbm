@@ -1,6 +1,6 @@
 import { initBackend } from "@nxbm/api-backend";
 import { createServer, startServer } from "@nxbm/api-server";
-import { createLogger, getConfig } from "@nxbm/core";
+import { createLogger, getConfig, isProduction } from "@nxbm/core";
 import { tempDir } from "@nxbm/utils";
 import { emptyDir } from "fs-extra";
 
@@ -27,7 +27,12 @@ export async function start() {
     await initBackend(config);
 
     const server = await createServer(config);
-    await setupWebserver(server, config);
+
+    if (isProduction()) {
+      await setupWebserver(server);
+    } else {
+      log.info("Not starting webserver in dev mode");
+    }
 
     startServer(server);
   } catch (error) {

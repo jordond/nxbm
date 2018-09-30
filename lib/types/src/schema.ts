@@ -5,11 +5,16 @@ import { LogLevel } from "./logger";
 
 const root = resolve(__dirname);
 
+export const ENV_PROD = "production";
+export const ENV_DEV = "development";
+export const ENV_TEST = "test2";
+export const ENVIRONMENTS = [ENV_PROD, ENV_DEV, ENV_TEST];
+
 export const schema: Schema<any> = {
   env: {
     doc: "The application environment.",
-    format: ["production", "development", "test"],
-    default: "production",
+    format: ENVIRONMENTS,
+    default: ENV_PROD,
     env: "NODE_ENV",
     arg: "env"
   },
