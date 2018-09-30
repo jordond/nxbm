@@ -7,7 +7,7 @@ const root = resolve(__dirname);
 
 export const ENV_PROD = "production";
 export const ENV_DEV = "development";
-export const ENV_TEST = "test2";
+export const ENV_TEST = "test";
 export const ENVIRONMENTS = [ENV_PROD, ENV_DEV, ENV_TEST];
 
 export const schema: Schema<any> = {

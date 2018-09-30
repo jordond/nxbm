@@ -20,5 +20,6 @@
     "paths": {
       "@nxbm/*": ["lib/*", "packages/*"]
     }
-  }
+  },
+  "typeAcquisition": { "enable": true }
 }

@@ -1,4 +1,5 @@
 const webpack = require("webpack");
+const nodeExternals = require("webpack-node-externals");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 const { basename, dirname, resolve } = require("path");
 const { sync: readPkg } = require("read-pkg");
@@ -46,12 +47,15 @@ const config = {
     ]
   },
   plugins: [],
-  externals: ["fsevents"]
+  externals: ["fsevents", isDev ? nodeExternals() : []],
+  watchOptions: {
+    aggregateTimeout: 5000
+  }
 };
 
 if (isDev) {
   config.plugins = [
-    new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
+    // new webpack.WatchIgnorePlugin([/*/\.js$/,*/ /\.d\.ts$/]),
     new NodemonPlugin({
       args: ["--root=../../tmp", "--level=debug", "--env=development"]
     })
