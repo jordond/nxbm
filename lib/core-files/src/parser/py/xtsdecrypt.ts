@@ -1,5 +1,5 @@
 export default {
-  name: "xtsdecrypt.py",
+  name: "xtsdecrypt",
   script: `import argparse
 from aes128 import AESXTSN
 

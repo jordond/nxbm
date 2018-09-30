@@ -3,8 +3,8 @@ import { map } from "bluebird";
 import { outputFile, pathExists } from "fs-extra";
 import { resolve } from "path";
 
-import aes128 from "./aes128.py";
-import xtsdecrypt from "./xtsdecrypt.py";
+import aes128 from "./aes128";
+import xtsdecrypt from "./xtsdecrypt";
 
 const scripts = [aes128, xtsdecrypt];
 
@@ -12,7 +12,7 @@ export async function ensurePythonScripts() {
   const results = await map(scripts, async script => {
     const log = createLogger("python");
     try {
-      const filename = resolve(__dirname, script.name);
+      const filename = resolve(__dirname, `${script.name}.py`);
       if (await pathExists(filename)) {
         return true;
       }

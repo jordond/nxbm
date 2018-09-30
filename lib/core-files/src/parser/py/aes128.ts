@@ -1,5 +1,5 @@
 export default {
-  name: "aes128.py",
+  name: "aes128",
   script: `
 # Pure python AES128 implementation
 # SciresM, 2017

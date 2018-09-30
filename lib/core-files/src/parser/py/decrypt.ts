@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { PythonShell } from "python-shell";
 
 import { ensurePythonScripts } from "./writer";
-import script from "./xtsdecrypt.py";
+import script from "./xtsdecrypt";
 
 export interface DecryptOptions {
   key: string;
@@ -22,7 +22,7 @@ export async function decrypt({
   return new Promise((res, reject) => {
     const args = ["--key", key, "--file", resolve(inputPath), "--out", output];
     PythonShell.run(
-      script.name,
+      `${script.name}.py`,
       { args, scriptPath: __dirname, pythonPath: "python2" },
       (err, results: string[] | undefined) =>
         err ? reject(err) : res(results || [])
