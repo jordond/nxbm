@@ -47,13 +47,14 @@ const config = {
     ]
   },
   plugins: [],
-  externals: ["fsevents", isDev ? nodeExternals() : []],
+  externals: ["fsevents"],
   watchOptions: {
     aggregateTimeout: 5000
   }
 };
 
 if (isDev) {
+  config.externals.push(nodeExternals());
   config.plugins = [
     // new webpack.WatchIgnorePlugin([/*/\.js$/,*/ /\.d\.ts$/]),
     new NodemonPlugin({
