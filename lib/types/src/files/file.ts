@@ -71,8 +71,8 @@ export interface IFileData {
   media: FileMedia;
   eshop?: GameUS;
 
-  // Computed
   titleID: string;
+  titleIDBaseGame: string;
   masterKeyRevision: string;
   extension: string;
   filename: string;

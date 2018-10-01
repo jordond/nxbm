@@ -16,7 +16,7 @@ export class PFS0Header extends FSHeader {
     return this.getFS0Entries() as BlueBird<PFS0Entry[]>;
   }
 
-  public getXmlOffset(entry: PFS0Entry) {
+  public getEntryOffset(entry: PFS0Entry) {
     return (
       16 +
       this.getEntryByteLength() * this.filecount +

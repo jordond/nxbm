@@ -52,11 +52,11 @@
     }
   },
   "lint-staged": {
-    "packages/**/{src,test}/**/*.ts": [
+    "{lib,packages}/**/{src,test}/**/*.ts": [
       "tslint --project ./tsconfig.json --fix",
       "git add"
     ],
-    "packages/**/*.{ts,vue,json}": [
+    "{lib,packages}/**/*.{ts,vue,json}": [
       "prettier --write",
       "git add"
     ]

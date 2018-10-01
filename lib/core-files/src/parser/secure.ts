@@ -1,6 +1,9 @@
-import { openReadNBytes, readNBytes } from "@nxbm/utils";
+import {
+  openReadNBytes,
+  readNBytes,
+  tempDir
+} from "@nxbm/utils";
 import { open, outputFile, remove } from "fs-extra";
-import { tmpdir } from "os";
 import { basename, join, resolve } from "path";
 
 import { NCAHeader } from "./models/NCAHeader";
@@ -30,12 +33,7 @@ export async function decryptNCAHeader(
     const encrypted = await openReadNBytes(filePath, 3072, offset);
 
     // TODO - Change to allow custom temp folder
-    const tempPath = resolve(
-      tmpdir(),
-      "nxbm",
-      "decrypt-nca",
-      basename(filePath)
-    );
+    const tempPath = resolve(tempDir(), "decrypt-nca", basename(filePath));
     const inputPath = join(tempPath, `encrypted`);
     await outputFile(inputPath, encrypted);
 
@@ -62,6 +60,11 @@ export type Details = Detail[];
 export interface Detail {
   size: number;
   name: string;
+  offset: number;
+}
+
+export interface DetailNumbers {
+  size: number;
   offset: number;
 }
 

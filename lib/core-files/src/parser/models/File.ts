@@ -9,6 +9,7 @@ export class File implements IFile {
   public totalSizeBytes = 0;
   public usedSizeBytes = 0;
   public titleIDRaw = 0;
+  public titleIDBaseGame = "";
   public gameName = "";
   public developer = "";
   public gameRevision = "";
@@ -64,7 +65,9 @@ export class File implements IFile {
 
     Object.keys(opts).forEach(key => ((this as any)[key] = (opts as any)[key]));
 
-    this.titleID = formatTitleId(this.titleIDRaw);
+    if (this.titleIDRaw) {
+      this.titleID = formatTitleId(this.titleIDRaw);
+    }
     this.masterKeyRevision = getMasterKeyStr(this.masterKeyRevisionRaw);
     this.extension = extname(this.filepath);
     this.filename = basename(this.filepath, this.extension);

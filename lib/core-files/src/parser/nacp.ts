@@ -45,7 +45,6 @@ export async function getInfoFromNACP(
   return {
     gameRevision,
     productCode,
-    // ...languages,
     gameName: nacpName ? nacpName.name : "",
     developer: nacpDev ? nacpDev.developer : ""
   };

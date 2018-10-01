@@ -9,6 +9,12 @@ import { hactoolBinary } from "./tools";
 
 const exec = promisify(fsExec);
 
+export enum Command {
+  UNPACK_SECTION0 = "section0",
+  UNPACK_ROMFS = "romfs",
+  INFO = ""
+}
+
 export interface HactoolOptions {
   path: string;
   keys: string;
@@ -48,12 +54,12 @@ export async function runHactool(
       throw new Error(stderr);
     }
 
-    return true;
+    return stdout;
   } catch (error) {
     log.error("Failed to run hactool command");
     log.error(fullCommand);
     log.error(error);
-    return false;
+    return "";
   }
 }
 
@@ -65,31 +71,38 @@ export function createHactool(opts: HactoolOptions) {
 }
 
 export function unpackSection0(input: string, outputDir: string) {
-  return doCommand("section0", input, outputDir);
+  return doCommand(Command.UNPACK_SECTION0, input, outputDir);
 }
 
 export function unpackRomFs(input: string, outputDir: string) {
-  return doCommand("romfs", input, outputDir);
+  return doCommand(Command.UNPACK_ROMFS, input, outputDir);
 }
 
-async function doCommand(name: string, input: string, outputDir: string) {
-  const log = createLogger(`hactool:${name}`);
+export function getInfo(input: string) {
+  return doCommand(Command.INFO, input, "");
+}
+
+async function doCommand(cmd: Command, input: string, outputDir: string) {
+  const log = createLogger(`hactool:${cmd}`);
 
   const resolvedIn = resolve(input);
   const resolvedOut = resolve(outputDir);
 
   await ensureDir(resolvedOut);
 
-  log.silly(`Unpacking ${name} -> ${resolvedIn}`);
+  log.silly(`Command ${cmd} -> ${resolvedIn}`);
   log.silly(`to -> ${resolvedOut}`);
 
-  const command = `--${name}dir=${resolvedOut} ${resolvedIn}`;
+  const command = `${
+    cmd === Command.INFO ? "" : `--${cmd}dir=${resolvedOut}`
+  } ${resolvedIn}`;
+
   const result = await createHactool({
     path: hactoolBinary(),
     keys: getConfig().paths!.keys
   }).run(command);
 
-  log.silly(`unpack ${name} result -> ${result}`);
+  log.silly(`${cmd} result -> ${result}`);
 
   return result;
 }

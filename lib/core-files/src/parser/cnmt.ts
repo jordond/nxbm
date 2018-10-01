@@ -7,19 +7,15 @@ import {
 } from "@nxbm/utils";
 import { map as mapPromise } from "bluebird";
 import { emptyDir, open, remove } from "fs-extra";
-import { join, sep } from "path";
+import { join } from "path";
 
 import {
-  createMoveIconOptions,
-  findLanguageFromPath,
-  getRomFSLanguageAndIcons,
   getUniqueLanguages,
-  LanguageIconData,
-  moveLanguageFiles
+  LanguageIconData
 } from "./languages";
 import { CNMTEntry } from "./models/CNMTEntry";
 import { CNMTHeader } from "./models/CNMTHeader";
-import { getInfoFromNACP, getNACPFromRomFS } from "./nacp";
+import { processNCA, processNCAInfo } from "./nca";
 import { Details } from "./secure";
 import {
   genRomFSDir,
@@ -31,7 +27,8 @@ import { compareGameRevision } from "./version";
 
 const TEMP_OUTPUT_DIR = join(tempDir(), "parser-meta");
 
-const getTempMetaDir = (titleId: string) => join(TEMP_OUTPUT_DIR, titleId);
+export const getTempMetaDir = (titleId: string) =>
+  join(TEMP_OUTPUT_DIR, titleId);
 
 export async function gatherExtraInfo(
   fd: number,
@@ -72,8 +69,8 @@ async function gatherExtraInfoImpl(
     return {};
   }
 
-  const { file, langIconData }: CNMTInfo = await mapPromise(details, detail => {
-    const section0Dir = genSection0Dir(metaDir, detail);
+  const info: Info = await mapPromise(details, detail => {
+    const section0Dir = genSection0Dir(metaDir, detail.name);
     return unpackCNMTSection0(fd, detail, section0Dir);
   })
     .filter(section0Dir => section0Dir !== "")
@@ -81,8 +78,8 @@ async function gatherExtraInfoImpl(
       extractInfoFromCNMT(fd, secureDetails, section0Dir, metaDir)
     )
     .reduce(
-      (acc: any, curr: CNMTInfo) => {
-        const prev = acc as CNMTInfo;
+      (acc: any, curr: Info) => {
+        const prev = acc as Info;
         const gameRevision = compareGameRevision(
           prev.file.gameRevision || "",
           curr.file.gameRevision || ""
@@ -90,7 +87,7 @@ async function gatherExtraInfoImpl(
 
         const unique = getUniqueLanguages(prev.langIconData, curr.langIconData);
 
-        const result: CNMTInfo = {
+        const result: Info = {
           langIconData: unique,
           file: {
             gameRevision,
@@ -105,25 +102,10 @@ async function gatherExtraInfoImpl(
       { file: {}, langIconData: [] }
     );
 
-  const icons = langIconData.map(lang => lang.iconPath);
-  const iconPaths = createMoveIconOptions(icons, outputDir, titleId);
-  const movedIcons = await moveLanguageFiles(iconPaths);
-  if (movedIcons.length) {
-    const iconMap = movedIcons.reduce(
-      (prev, curr) => ({
-        ...prev,
-        [findLanguageFromPath(curr)]: curr.replace(`${outputDir}${sep}`, "")
-      }),
-      {}
-    );
-    file.languages = Object.keys(iconMap);
-    file.media = { icons: iconMap };
-  }
-
-  return file;
+  return processNCAInfo(info, outputDir, titleId);
 }
 
-interface CNMTInfo {
+export interface Info {
   file: Partial<IFile>;
   langIconData: LanguageIconData[];
 }
@@ -133,7 +115,7 @@ async function extractInfoFromCNMT(
   details: Details,
   section0Dir: string,
   metaDir: string
-): Promise<CNMTInfo> {
+): Promise<Info> {
   const cnmtPath = await findFirstFileByName(section0Dir, ".cnmt");
   if (cnmtPath) {
     const cnmtFd = await open(cnmtPath, "r");
@@ -146,25 +128,13 @@ async function extractInfoFromCNMT(
       const ncaDetails = findMatchingNCADetail(details, ncaTarget);
 
       if (ncaDetails) {
-        const romFSDir = genRomFSDir(metaDir, ncaDetails);
+        const romFSDir = genRomFSDir(metaDir, ncaDetails.name);
 
         if (await unpackCNMTRomFS(fd, ncaDetails, romFSDir)) {
-          const result: CNMTInfo = {
-            file: {},
-            langIconData: await getRomFSLanguageAndIcons(romFSDir)
-          };
-
-          const nacp = await getNACPFromRomFS(romFSDir);
-          if (nacp.length) {
-            result.file = await getInfoFromNACP(nacp);
-          }
-
-          return result;
+          return processNCA(romFSDir);
         }
       }
     }
-  } else {
-    console.error("not found");
   }
 
   return { file: {}, langIconData: [] };

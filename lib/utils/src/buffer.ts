@@ -105,7 +105,7 @@ export function readWriteByNBytes(
   outputPath: string,
   startPosition: number = 0
 ) {
-  return new Promise(async (finish, reject) => {
+  return new Promise<number>(async (finish, reject) => {
     let pos = 0;
     let remainingBytes = totalBytesToRead;
     let readBytes = 0;
