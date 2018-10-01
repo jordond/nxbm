@@ -10,12 +10,16 @@ export function getFSHeaderBytes(fd: number, offset: number = 0) {
 }
 
 export abstract class FSHeader {
+  public fd: number;
+
   public magic: string;
   public filecount: number;
   public stringTableSize: number;
   public reserved: number;
 
-  constructor(bytes: Buffer) {
+  constructor(bytes: Buffer, fd: number) {
+    this.fd = fd;
+
     this.magic = bytes.toString("utf8", 0, 4);
     this.filecount = bytes.readInt32LE(4);
     this.stringTableSize = bytes.readInt32LE(8);
@@ -39,21 +43,22 @@ export abstract class FSHeader {
 
   protected abstract createFSEntry(bytes: Buffer): FSEntry;
 
-  protected getFS0Entries(
-    fd: number,
-    startOffset: number = 0
-  ): BlueBird<FSEntry[]> {
+  protected getFS0Entries(startOffset: number = 0): BlueBird<FSEntry[]> {
     return mapPromise(Array(this.filecount), async (_, index) => {
       // Get entry
       const entryPosition = this.calcHFSOffset(startOffset, index);
       const entry = this.createFSEntry(
-        await readNBytes(fd, this.getEntryByteLength(), entryPosition)
+        await readNBytes(this.fd, this.getEntryByteLength(), entryPosition)
       );
 
       // Get name
       const namePosition =
         this.calcHFSOffset(startOffset, this.filecount) + entry.namePtr;
-      const charName = await readByByte(fd, namePosition, num => num !== 0);
+      const charName = await readByByte(
+        this.fd,
+        namePosition,
+        num => num !== 0
+      );
       entry.name = charName.toString();
 
       return entry;

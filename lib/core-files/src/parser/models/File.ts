@@ -1,4 +1,4 @@
-import { GameUS, IFile, Release, TGDBGame } from "@nxbm/types";
+import { FileType, GameUS, IFile, Release, TGDBGame } from "@nxbm/types";
 import { fileSize, formatTitleId, hexToGbStr } from "@nxbm/utils";
 import { basename, extname } from "path";
 
@@ -25,7 +25,7 @@ export class File implements IFile {
   public region = "";
   public distributionType = "";
   public sceneID = 0;
-  public contentType = "";
+  public contentType = FileType.NONE;
   public version = "";
   public description = "";
   public rating = "";

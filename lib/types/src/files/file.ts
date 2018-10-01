@@ -10,6 +10,14 @@ export interface Game {
   blacklist?: boolean;
 }
 
+export enum FileType {
+  APPLICATION = "Application",
+  UPDATE = "Patch",
+  DLC = "AddOnContent",
+  UNKNOWN = "Unknown",
+  NONE = ""
+}
+
 export interface IGameDBData {
   xcis: Game[];
 }
@@ -50,7 +58,7 @@ export interface IFileData {
   region: string;
   distributionType: string;
   sceneID: number;
-  contentType: string;
+  contentType: FileType;
   version: string;
   description: string;
   rating: string;

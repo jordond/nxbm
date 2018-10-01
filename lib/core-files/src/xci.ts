@@ -1,11 +1,11 @@
-import { FileParseOptions, IFile } from "@nxbm/types";
+import { FileParseOptions, FileType, IFile } from "@nxbm/types";
 import { ensureOpenRead, readNBytes } from "@nxbm/utils";
 import { stat } from "fs-extra";
 
 import { gatherExtraInfo } from "./parser/cnmt";
 import { File } from "./parser/models/File";
 import { HFS0Entry } from "./parser/models/HFS0Entry";
-import { createHFS0Header } from "./parser/models/HFS0Header";
+import { HFS0Header } from "./parser/models/HFS0Header";
 import { XCIHeader } from "./parser/models/XCIHeader";
 import { decryptNCAHeader, getNCADetails } from "./parser/secure";
 import { findVersion } from "./parser/version";
@@ -37,8 +37,8 @@ export async function parseXCI(
 
   // Get root HFS0 details
   const xciHeader = new XCIHeader(await readNBytes(fd, 61440));
-  const header = await createHFS0Header(fd, xciHeader.hfs0Offset);
-  const entries = await header.getHFS0Entries(fd, xciHeader.hfs0Offset);
+  const header = await HFS0Header.create(fd, xciHeader.hfs0Offset);
+  const entries = await header.getHFS0Entries(xciHeader.hfs0Offset);
   const offset = xciHeader.getHFS0Offset();
 
   // Get the detailed info
@@ -55,7 +55,7 @@ export async function parseXCI(
   return new File({
     version,
     distributionType: "Cartridge",
-    contentType: "Application",
+    contentType: FileType.APPLICATION,
     filepath: xciPath,
     totalSizeBytes: stats.size,
     usedSizeBytes: xciHeader.calculateUsedSize(),
@@ -76,9 +76,8 @@ async function processSecurePartition(
 
   // Gather information about the secure partition
   const secureStartOffset = secureEntry.offset + hfs0Offset;
-  const secureHeader = await createHFS0Header(fd, secureStartOffset);
+  const secureHeader = await HFS0Header.create(fd, secureStartOffset);
   const secureDetails = await secureHeader.getSecurePartionDetails(
-    fd,
     secureStartOffset
   );
 
@@ -113,7 +112,8 @@ async function getXCIVersion(
   if (!entry) throw new Error("A update partition was not found");
 
   const offset = entry.offset + hfs0Offset;
-  const header = await createHFS0Header(fd, offset);
-  const entries = await header.getHFS0Entries(fd, hfs0Offset);
+  const header = await HFS0Header.create(fd, offset);
+  const entries = await header.getHFS0Entries(hfs0Offset);
+
   return findVersion(entries.map(x => x.name));
 }
