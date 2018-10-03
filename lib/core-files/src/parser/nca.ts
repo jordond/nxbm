@@ -1,7 +1,8 @@
+import { IFile } from "@nxbm/types";
 import { readWriteByNBytes } from "@nxbm/utils";
 import { join, sep } from "path";
 
-import { unpackRomFs } from "../hactool";
+import { getInfo, unpackRomFs } from "../hactool";
 import { getTempMetaDir, Info } from "./cnmt";
 import {
   createMoveIconOptions,
@@ -78,4 +79,34 @@ export async function processNCAInfo(
   }
 
   return file;
+}
+
+enum RomFSInfo {
+  SDK_VERSION = "SDK Version",
+  DIST_TYPE = "Distribution type",
+  MASTER_KEY_REV = "Master Key Revision"
+}
+
+export async function parseRomFSInfo(
+  romfsDir: string
+): Promise<Partial<IFile>> {
+  const romfsFile = join(romfsDir, UnpackTypes.ROMFS);
+  const targetProps = Object.values(RomFSInfo);
+
+  const stdout = await getInfo(romfsFile);
+  const result = stdout
+    .split(/\n/g)
+    .map(line => line.trim())
+    .filter(line => targetProps.some(prop => line.includes(prop)))
+    .map(line => {
+      const keyPair = line.split(":");
+      return { [keyPair[0]]: keyPair[1].trim() };
+    })
+    .reduce((acc, keypair) => ({ ...acc, ...keypair }), {});
+
+  return {
+    sdkVersion: result[RomFSInfo.SDK_VERSION],
+    distributionType: result[RomFSInfo.DIST_TYPE],
+    masterKeyRevision: result[RomFSInfo.MASTER_KEY_REV]
+  };
 }

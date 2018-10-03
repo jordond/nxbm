@@ -45,7 +45,7 @@ export async function loadGameDB(): Promise<IGameDBData | undefined> {
     const result: IGameDBData = {
       xcis: xcis.map(({ file, ...rest }) => ({
         ...rest,
-        file: new File(file)
+        file: new File(file.type, file)
       }))
     };
 

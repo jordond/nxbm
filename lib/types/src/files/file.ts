@@ -10,8 +10,8 @@ export interface Game {
   blacklist?: boolean;
 }
 
-export enum FileType {
-  APPLICATION = "Application",
+export enum ContentType {
+  APPLICATION = "ContentType",
   UPDATE = "Patch",
   DLC = "AddOnContent",
   UNKNOWN = "Unknown",
@@ -38,6 +38,7 @@ export interface IGameDB extends IGameDBData {
 }
 
 export interface IFileData {
+  type: FileType;
   filepath: string;
   totalSizeBytes: number;
   usedSizeBytes: number;
@@ -58,7 +59,7 @@ export interface IFileData {
   region: string;
   distributionType: string;
   sceneID: number;
-  contentType: FileType;
+  contentType: ContentType;
   version: string;
   description: string;
   rating: string;
@@ -84,11 +85,20 @@ export interface IFileData {
   releaseDataSet: boolean;
 }
 
+export enum FileType {
+  XCI = "xci",
+  NSP = "nsp"
+}
+
 export interface IFile extends IFileData {
+  assign: (data: Partial<IFile>) => IFile;
   assignRelease: (release?: Release) => IFile;
   assignTGDB: (data: TGDBGame) => void;
   id: () => string;
   displayName: () => string;
+  isNSP: () => boolean;
+  isXCI: () => boolean;
+  isDLC: () => boolean;
 }
 
 export interface FileMedia {

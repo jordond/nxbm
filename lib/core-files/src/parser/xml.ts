@@ -1,4 +1,4 @@
-import { FileType, NSPXML, NSPXmlResult } from "@nxbm/types";
+import { ContentType, NSPXML, NSPXmlResult } from "@nxbm/types";
 import { parseXml, readNBytes } from "@nxbm/utils";
 
 import { PFS0Entry } from "./models/PFS0Entry";
@@ -19,12 +19,12 @@ export async function extractXml(entry: PFS0Entry, header: PFS0Header) {
 }
 
 export function getBaseGameTitleId(xmlData: NSPXML): string {
-  if (xmlData.Type === FileType.APPLICATION) {
+  if (xmlData.Type === ContentType.APPLICATION) {
     return xmlData.Id.toUpperCase();
   }
 
   let base = xmlData.Id.substr(0, 13);
-  if (xmlData.Type === FileType.DLC) {
+  if (xmlData.Type === ContentType.DLC) {
     const raw = parseInt(base, 16) - 1;
     base = `0${raw.toString(16)}`;
   }

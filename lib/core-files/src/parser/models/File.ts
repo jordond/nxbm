@@ -1,10 +1,18 @@
-import { FileType, GameUS, IFile, Release, TGDBGame } from "@nxbm/types";
+import {
+  ContentType,
+  FileType,
+  GameUS,
+  IFile,
+  Release,
+  TGDBGame
+} from "@nxbm/types";
 import { fileSize, formatTitleId, hexToGbStr } from "@nxbm/utils";
 import { basename, extname } from "path";
 
 import { getMasterKeyStr } from "../masterkey";
 
 export class File implements IFile {
+  public type: FileType;
   public filepath = "";
   public totalSizeBytes = 0;
   public usedSizeBytes = 0;
@@ -26,7 +34,7 @@ export class File implements IFile {
   public region = "";
   public distributionType = "";
   public sceneID = 0;
-  public contentType = FileType.NONE;
+  public contentType = ContentType.NONE;
   public version = "";
   public description = "";
   public rating = "";
@@ -54,7 +62,8 @@ export class File implements IFile {
 
   public releaseDataSet: boolean = false;
 
-  constructor(opts: Partial<IFile> = {}) {
+  constructor(type: FileType, opts: Partial<IFile> = {}) {
+    this.type = type;
     this.assign(opts);
   }
 
@@ -65,10 +74,18 @@ export class File implements IFile {
 
     Object.keys(opts).forEach(key => ((this as any)[key] = (opts as any)[key]));
 
-    if (this.titleIDRaw) {
+    if (opts.titleIDRaw) {
       this.titleID = formatTitleId(this.titleIDRaw);
     }
-    this.masterKeyRevision = getMasterKeyStr(this.masterKeyRevisionRaw);
+
+    if (!opts.titleIDBaseGame) {
+      this.titleIDBaseGame = this.titleID;
+    }
+
+    if (opts.masterKeyRevisionRaw) {
+      this.masterKeyRevision = getMasterKeyStr(this.masterKeyRevisionRaw);
+    }
+
     this.extension = extname(this.filepath);
     this.filename = basename(this.filepath, this.extension);
     this.filenameWithExt = basename(this.filepath);
@@ -128,6 +145,12 @@ export class File implements IFile {
   public displayName(): string {
     return `${this.gameName}:${this.id()}`;
   }
+
+  public isNSP = () => this.type === FileType.NSP;
+
+  public isXCI = () => this.type === FileType.XCI;
+
+  public isDLC = () => this.isNSP() && this.contentType === ContentType.DLC;
 
   public toString() {
     return ` XCI Info:

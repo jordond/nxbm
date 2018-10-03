@@ -1,4 +1,4 @@
-import { FileParseOptions, FileType, IFile } from "@nxbm/types";
+import { ContentType, FileParseOptions, FileType, IFile } from "@nxbm/types";
 import { ensureOpenRead, readNBytes } from "@nxbm/utils";
 import { stat } from "fs-extra";
 
@@ -52,10 +52,10 @@ export async function parseXCI(
   );
 
   const stats = await stat(xciPath);
-  return new File({
+  return new File(FileType.XCI, {
     version,
     distributionType: "Cartridge",
-    contentType: FileType.APPLICATION,
+    contentType: ContentType.APPLICATION,
     filepath: xciPath,
     totalSizeBytes: stats.size,
     usedSizeBytes: xciHeader.calculateUsedSize(),

@@ -8,6 +8,7 @@ import {
 import {
   downloadMissingMedia,
   getBlacklist,
+  getEShopDB,
   getGameDB,
   getMissingDetailedInfo,
   getNSWDB,
@@ -139,6 +140,7 @@ async function initFileScanner({ backups }: IConfig) {
   const db = await getGameDB();
   await db.check(backups.removeBlacklisted);
 
+  await initDatabases();
   await startScanner(backups);
 }
 
@@ -199,4 +201,10 @@ async function getMissingMedia() {
     log.error("Failed to get missing media");
     log.error(error);
   }
+}
+
+async function initDatabases() {
+  const promises = [getNSWDB(), getTGDB(), getEShopDB()];
+
+  await Promise.all(promises as any[]);
 }

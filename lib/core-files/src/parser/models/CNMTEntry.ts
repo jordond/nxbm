@@ -1,6 +1,6 @@
 import { takeBytes } from "@nxbm/utils";
 
-export enum ContentType {
+export enum CMNTContentType {
   META,
   PROGRAM,
   DATA,
@@ -30,9 +30,9 @@ export class CNMTEntry {
     this.reserved = bytes[55];
   }
 
-  public type = () => ContentType[this.rawType];
+  public type = () => CMNTContentType[this.rawType];
 
-  public isTypeContent = () => this.rawType === ContentType.CONTROL;
+  public isTypeContent = () => this.rawType === CMNTContentType.CONTROL;
 
   public ncaID = () => `${this.rawNcaID.toString("hex")}.nca`;
 

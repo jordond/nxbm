@@ -10,14 +10,20 @@ import { getTGDB } from "./";
 
 const ARTWORK_FOLDER = "artwork";
 
+export async function hasDownloadedMedia(file: IFile) {
+  const log = createLogger(`media:${file.gameName}`);
+  const path = getMediaOutputFolder(file.titleIDBaseGame);
+  log.verbose(`Checking if ${path} exists`);
+
+  const exists = await pathExists(path);
+  log.debug(`Media folder exists: ${exists}`);
+
+  return exists;
+}
+
 export function downloadMissingMedia(games: Game[], threshold: number = 0.02) {
   return Bluebird.map(games, async game => {
-    const log = createLogger(`media:missing:${game.file.gameName}`);
-    const path = getMediaOutputFolder(game.file.titleID);
-    log.verbose(`Checking if ${path} exists`);
-
-    const exists = await pathExists(path);
-    log.debug(`Media folder exists: ${exists}`);
+    const exists = await hasDownloadedMedia(game.file);
     return { exists, game };
   })
     .filter(result => !result.exists)
@@ -48,7 +54,7 @@ export async function downloadGameMedia(file: IFile, threshold?: number) {
   }
 
   log.info(`${file.gameName} Starting media download`);
-  const imageDictionary = await downloadMedia(file.titleID, imageLinks);
+  const imageDictionary = await downloadMedia(file.titleIDBaseGame, imageLinks);
   if (!imageDictionary) {
     log.error("Something went wrong when downloading media");
     return false;

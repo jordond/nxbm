@@ -1,4 +1,4 @@
-import { FileType } from "./file";
+import { ContentType } from "./file";
 
 export interface NSPXmlResult {
   ContentMeta: NSPXML;
@@ -13,7 +13,7 @@ export enum NSPContentType {
 }
 
 export interface NSPXML {
-  Type: FileType;
+  Type: ContentType;
   Id: string;
   Version: string;
   RequiredDownloadSystemVersion: string;

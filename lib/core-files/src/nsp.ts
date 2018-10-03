@@ -1,94 +1,96 @@
 import {
+  ContentType,
   FileParseOptions,
   FileType,
   NSPContentType,
   NSPXML
 } from "@nxbm/types";
-import { open, stat } from "fs-extra";
-import { join } from "path";
+import { ensureOpenRead } from "@nxbm/utils";
+import { open, remove, stat } from "fs-extra";
 
-import { getInfo } from "./hactool";
+import { getTempMetaDir } from "./parser/cnmt";
 import { getFirmwareFromString } from "./parser/firmware";
 import { File } from "./parser/models/File";
 import { PFS0Entry } from "./parser/models/PFS0Entry";
 import { PFS0Header } from "./parser/models/PFS0Header";
 import {
+  parseRomFSInfo,
   processNCAInfo,
   unpackAndProcessTargetNCA,
   writeNCATargetRomFS
 } from "./parser/nca";
-import { UnpackTypes } from "./parser/unpack";
 import { extractXml, findEntryXml, getBaseGameTitleId } from "./parser/xml";
 
-export async function isNSP() {
-  // noop
+export async function isNSP(path: string) {
+  try {
+    const fd = await ensureOpenRead(path);
+    const header = await PFS0Header.create(fd);
+    return header.isValid();
+  } catch (error) {
+    return false;
+  }
 }
 
 export async function parseNSP(
   nspPath: string,
-  { outputDir, ...options }: FileParseOptions
+  { outputDir, cleanup = true }: FileParseOptions
 ): Promise<File> {
   const fd = await open(nspPath, "r");
-  const stats = await stat(nspPath);
+  const nspData = new File(FileType.NSP);
 
-  const nspData = new File({
-    filepath: nspPath,
-    totalSizeBytes: stats.size,
-    usedSizeBytes: stats.size,
-    carttype: "eshop"
-  });
-
+  // Check if it is a valid NSP
   const pfs0Header = await PFS0Header.create(fd);
   if (!pfs0Header.isValid()) {
     throwInvalidMagic(nspData, pfs0Header.magic);
   }
 
+  // Get all the pfs0 entries, then find the the info xml
   const pfs0Entries: PFS0Entry[] = await pfs0Header.getPFS0Entries();
   const controlEntry = findEntryXml(pfs0Entries);
   if (!controlEntry) {
     throw createParseError("Unable to find .cnmt.xml");
   }
 
+  // Extract and parse the XML
   const nspXml = await extractXml(controlEntry, pfs0Header);
-  nspData.firmware = getFirmwareFromString(nspXml.RequiredSystemVersion);
-  nspData.titleID = nspXml.Id;
-  nspData.titleIDBaseGame = getBaseGameTitleId(nspXml);
-  nspData.contentType = nspXml.Type;
-  nspData.version = nspXml.Version;
+  const titleId = nspXml.Id;
+  const titleIDBaseGame = getBaseGameTitleId(nspXml);
 
+  // Find the NCA containing icon and language data
   const targetNCA = findNCATarget(nspXml, pfs0Entries);
   if (!targetNCA) {
     throw createParseError("Unable to find the target NCA");
   }
 
-  const romfsDir = await writeNCATargetRomFS(
-    pfs0Header,
-    targetNCA,
-    nspData.titleID
-  );
+  // Write the NCA's romfs to the disk
+  const romfsDir = await writeNCATargetRomFS(pfs0Header, targetNCA, titleId);
 
-  if (nspData.contentType !== FileType.DLC) {
+  // If it isn't a DLC, grab meta-data from the romfs
+  if (nspXml.Type !== ContentType.DLC) {
     const info = await unpackAndProcessTargetNCA(romfsDir);
-    const result = await processNCAInfo(
-      info,
-      outputDir,
-      nspData.titleIDBaseGame
-    );
+    const result = await processNCAInfo(info, outputDir, titleIDBaseGame);
 
     nspData.assign(result);
-  } else {
-    // Try to grab info about this NSP from it's parent (using titleid)
-    // From gamedb
-    // OR - from NSWDB
   }
 
-  // Get remaining info from reading stdout from hactool
-  const stdout = await getInfo(join(romfsDir, UnpackTypes.ROMFS));
-  stdout
-    .split("/n")
-    .map(x => x.trim().replace(/ /g, ""))
-    .forEach(x => console.log(x));
-  // If clean enabled delete dir
+  const stats = await stat(nspPath);
+  const miscInfo = await parseRomFSInfo(romfsDir);
+  nspData.assign({
+    filepath: nspPath,
+    totalSizeBytes: stats.size,
+    usedSizeBytes: stats.size,
+    carttype: "eshop",
+    firmware: getFirmwareFromString(nspXml.RequiredSystemVersion),
+    titleID: nspXml.Id,
+    titleIDBaseGame: getBaseGameTitleId(nspXml),
+    contentType: nspXml.Type,
+    version: nspXml.Version,
+    ...miscInfo
+  });
+
+  if (cleanup) {
+    await remove(getTempMetaDir(nspData.titleID));
+  }
 
   return nspData;
 }
@@ -99,7 +101,7 @@ function findNCATarget(xml: NSPXML, entries: PFS0Entry[]) {
 }
 
 function findNCATargetString(xml: NSPXML) {
-  if (xml.Type !== FileType.DLC) {
+  if (xml.Type !== ContentType.DLC) {
     const control = xml.Content.find(x => x.Type === NSPContentType.CONTROL);
     return control ? `${control.Id}.nca` : "";
   }
