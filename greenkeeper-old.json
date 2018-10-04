@@ -1,0 +1,12 @@
+{
+  "groups": {
+    "lib": {
+      "packages": []
+    },
+    "bin": {
+      "packages": ["standalone/package.json", "web/package.json"],
+      "ignore": ["winston"]
+    }
+  },
+  "ignore": ["standard"]
+}

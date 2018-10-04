@@ -1,89 +1,63 @@
 {
   "name": "nxbm",
+  "private": true,
   "version": "0.0.0",
-  "description": "",
-  "main": "dist/index.js",
+  "description": "Nintendo Switch Backup Manager",
   "engines": {
     "node": ">=8.11.1"
   },
+  "author": "Jordon de Hoog",
+  "license": "MIT",
+  "workspaces": [
+    "lib/*",
+    "packages/*"
+  ],
   "scripts": {
+    "lint": "lerna run lint --stream",
+    "lerna": "lerna",
     "precommit": "lint-staged",
     "commit": "git-cz",
-    "lint": "tslint --project tsconfig.json --fix src/**/*.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "rimraf dist",
-    "build": "tsc",
-    "postbuild": "cpx 'src/**/*.py' dist",
-    "dev": "nodemon src/index.ts -- --root=./tmp --level=debug",
-    "dev:debug": "nodemon --inspect=5858 src/index.ts -- --root=./tmp --level=debug",
-    "prestart": "yarn build",
-    "start": "cross-env HOST=0.0.0.0 node dist/"
-  },
-  "author": "Jordon de Hoog",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^0.18.0",
-    "bluebird": "^3.5.1",
-    "boom": "^7.2.0",
-    "chokidar": "^2.0.4",
-    "compare-semver": "^1.1.0",
-    "convict": "^4.3.2",
-    "cross-env": "^5.2.0",
-    "dotenv": "^6.0.0",
-    "fs-extra": "^7.0.0",
-    "fuse.js": "^3.2.1",
-    "glob": "^7.1.3",
-    "good": "^8.1.1",
-    "hapi": "^17.5.3",
-    "hapi-good-winston": "^2.0.1",
-    "int64-buffer": "^0.1.10",
-    "nintendo-switch-eshop": "^1.1.3",
-    "node-fetch": "^2.2.0",
-    "python-shell": "^1.0.4",
-    "recursive-readdir": "^2.2.2",
-    "unzipper": "^0.9.3",
-    "winston": "2.4.4",
-    "xml2js": "^0.4.19"
+    "clean": "lerna clean --yes",
+    "nuke": "npm run clean && rimraf build/ && rimraf node_modules",
+    "reboot": "npm run nuke && yarn && npm run build",
+    "bootstrap": "lerna bootstrap",
+    "dep": "./tools/dep.sh",
+    "do": "./tools/run.sh",
+    "copy:web": "cpx 'build/dist/web/**/*'",
+    "build": "npm run build:lib && npm run build:dist && npm run build:bin",
+    "build:lib": "tsc --build lib/",
+    "build:dist": "lerna run build --stream --scope @nxbm/web",
+    "build:bin": "lerna run build --stream --scope @nxbm/standalone",
+    "dev:lib": "tsc --build --watch lib/",
+    "dev:web": "lerna run serve --stream",
+    "dev:api": "lerna run dev --stream --scope @nxbm/standalone",
+    "dev:bin": "concurrently --kill-others 'npm run dev:web' 'npm run dev:api'",
+    "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.24",
-    "@types/boom": "^7.2.0",
-    "@types/chokidar": "^1.7.5",
-    "@types/convict": "^4.2.0",
-    "@types/fs-extra": "^5.0.4",
-    "@types/glob": "^7.1.0",
-    "@types/hapi": "^17.0.18",
-    "@types/node": "^10.10.1",
-    "@types/node-fetch": "^2.1.2",
-    "@types/recursive-readdir": "^2.2.0",
-    "@types/unzipper": "^0.9.0",
-    "@types/winston": "^2.4.4",
-    "@types/xml2js": "^0.4.3",
-    "commitizen": "^3.0.2",
+    "commitizen": "^2.10.1",
+    "concurrently": "^4.0.1",
     "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",
     "husky": "^0.14.3",
+    "lerna": "^3.1.4",
     "lint-staged": "^7.2.2",
-    "nodemon": "^1.18.3",
     "prettier": "^1.14.2",
-    "rimraf": "^2.6.2",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "tslint-config-airbnb": "^5.10.0",
-    "tslint-config-prettier": "^1.15.0",
-    "typescript": "^3.0.1"
+    "rimraf": "^2.6.1",
+    "typescript": "^3.1.1"
   },
-  "typings": "dist/types/index.d.ts",
-  "types": "dist/types/index.d.ts",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
-    "{src,test}/**/*.ts": [
+    "{lib,packages}/**/{src,test}/**/*.ts": [
+      "tslint --project ./tsconfig.json --fix",
+      "git add"
+    ],
+    "{lib,packages}/**/*.{ts,vue,json}": [
       "prettier --write",
-      "tslint --project tsconfig.json --fix",
       "git add"
     ]
   },
@@ -91,24 +65,5 @@
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
     }
-  },
-  "nodemonConfig": {
-    "restartable": "rs",
-    "verbose": false,
-    "watch": [
-      "src"
-    ],
-    "ext": "ts",
-    "ignore": [
-      "src/**/*.spec.ts"
-    ],
-    "execMap": {
-      "ts": "ts-node --files"
-    }
-  },
-  "greenkeeper": {
-    "ignore": [
-      "winston"
-    ]
   }
 }

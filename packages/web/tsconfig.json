@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "composite": false,
+    "declarationMap": false,
+    "declaration": false,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx"
+  ],
+  "exclude": ["node_modules"],
+  "references": [
+    { "path": "../../lib/api-client" },
+    { "path": "../../lib/types" }
+  ]
+}

@@ -1,18 +1,25 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2018",
     "module": "commonjs",
     "moduleResolution": "node",
+    "lib": ["esnext", "es2018", "dom"],
+    "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "composite": true,
+    "noEmitOnError": true,
     "strict": true,
-    "lib": ["es2018", "es2017"],
+    "pretty": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots": ["node_modules/@types", "./src/types"]
+    "typeRoots": ["./lib/typings/types", "./node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@nxbm/*": ["lib/*", "packages/*"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "typeAcquisition": { "enable": true }
 }

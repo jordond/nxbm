@@ -1,0 +1,30 @@
+{
+  "name": "@nxbm/core-files",
+  "version": "0.0.0",
+  "description": "",
+  "main": "../../dist/lib/core-files/index.js",
+  "types": "../../dist/lib/core-files/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "lint": "tslint --project ./ --fix -t codeFrame"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bluebird": "^3.5.2",
+    "compare-semver": "^1.1.0",
+    "fs-extra": "^7.0.0",
+    "python-shell": "^1.0.4"
+  },
+  "devDependencies": {
+    "@nxbm/core": "^0.0.0",
+    "@nxbm/tslint-rules": "^0.0.0",
+    "@nxbm/types": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
+    "@types/bluebird": "^3.5.24",
+    "@types/fs-extra": "^5.0.4",
+    "@types/node": "10.10.0",
+    "@types/python-shell": "^0.4.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
+  }
+}

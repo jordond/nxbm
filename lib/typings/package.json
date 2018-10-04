@@ -1,0 +1,11 @@
+{
+  "name": "@nxbm/typings",
+  "version": "0.0.0",
+  "description": "Shared typings",
+  "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jordond/nxbm"
+  },
+  "license": "MIT"
+}

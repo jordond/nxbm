@@ -1,18 +1,33 @@
+## Architecture
+
+- Use Bonjour to broadcast server ip address
+  - In the electron version, allow it to connect to a dedicated server (enter manually, or using bonjour)
+    - or run it's own instance
+- Queue
+  - Add a queue for adding xci/nsp files. If the server starts up and tries to process 200 files at a time, but be crazy
+  - A\*) Maybe each add event, adds to the queue
+    - First add, starts a timeout timer (5 seconds?)
+  - When the timer runs out, or the max per run is hit (10?)
+  - Start processing files
+    - While queue is running, if a new file is added, add it to the backlog
+    - when queue is finished, go back to step A\*
+
+### Final Outputs
+
+- Docker:
+  - Uses standalone
+- Electron:
+  - bundles, api-server, scanner, web-ui into one
+- Setup automatic github releases from master
+  - Semantic release?
+
 ## General
 
-- Parse NSP
-- ~~Prune db of missing files~~
-  - ~~If a file is missing on startup (ex not detected by the folder scanner)~~
-  - ~~Mark it as 'missing' (property on the `Game`?)~~
-  - Still return it with API calls, but UI should grey it out
 - Sockets
   - Socket communication for events, (add, delete, parse, etc)
 - Switch `GameDB` to have a list of `Game[]` instead of `xci: Game[], nsp: Game[]`
-- Update Config to use `Partial<>` instead of always optional
-- Add `cleanup` to the config file, to stop deleting of hactool temp files
-- Use NEDB or some other type of json db for the games, probably not great to just write to a json file, not thread safe
 
-- Change `Game` to `File` and vice-versa
+- Have a "first run", that generates a config file the user can use to edit
 
 ## Config structure
 
@@ -81,6 +96,9 @@
 - Use semantic release with github for assets
 - Have circleci build electron for all platforms
 - Add build artifacts to github releases
+- Use bonjour to broadcast api serve to web server
+  - Allow electron app to run in "standalone" mode or "client" mode
+    - Standalone, runs the whole thing contained, client searches for a server on the network
 
 ## Far future
 
