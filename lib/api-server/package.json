@@ -18,13 +18,13 @@
     "winston": "2.4.4"
   },
   "devDependencies": {
-    "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/api-endpoints": "^0.0.0",
     "@nxbm/core": "^0.0.0",
     "@nxbm/core-db": "^0.0.0",
     "@nxbm/core-files": "^0.0.0",
-    "@nxbm/utils": "^0.0.0",
+    "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
     "@types/boom": "^7.2.0",
     "@types/fs-extra": "^5.0.4",
     "@types/hapi": "^17.0.18",
