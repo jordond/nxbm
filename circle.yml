@@ -31,5 +31,8 @@ jobs:
           name: Build all libs and package binaries
           command: yarn package:standalone
       - store_artifacts:
-          path: ./dist
+          path: ./build/bin
           destination: binaries
+      - store_artifacts:
+          path: ./build/lib
+          destination: lib
