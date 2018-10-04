@@ -2,7 +2,9 @@ const webpack = require("webpack");
 
 const plugins = [];
 
-if (process.env.NODE_ENV !== "production") {
+const isProd = process.env.NODE_ENV === "production";
+
+if (!isProd) {
   // plugins.push(new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]));
 }
 
