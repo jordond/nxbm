@@ -2,7 +2,7 @@
   "name": "nxbm",
   "private": true,
   "version": "0.0.0",
-  "description": "",
+  "description": "Nintendo Switch Backup Manager",
   "engines": {
     "node": ">=8.11.1"
   },
