@@ -15,11 +15,11 @@
   <a href="https://greenkeeper.io">
     <img alt="Greenkeeper" src="https://badges.greenkeeper.io/jordond/nxbm.svg">
   </a>
-  <a href="https://david-dm.org/jordond/circleci-api">
+  <a href="https://david-dm.org/jordond/nxbm">
     <img alt="Dependencies" src="https://david-dm.org/jordond/nxbm/status.svg">
   </a>
-  <a href="https://david-dm.org/jordond/circleci-api?type=dev">
-    <img alt="Dev Dependencies" src="https://david-dm.org/jordond/circleci-api/dev-status.svg">
+  <a href="https://david-dm.org/jordond/nxbm?type=dev">
+    <img alt="Dev Dependencies" src="https://david-dm.org/jordond/nxbm/dev-status.svg">
   </a>
 </p>
 <p align="center">
