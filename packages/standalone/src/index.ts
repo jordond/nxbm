@@ -1,3 +1,3 @@
-import { start } from "./bin";
+import { start } from "./backend";
 
 start();

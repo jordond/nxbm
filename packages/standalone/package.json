@@ -2,21 +2,17 @@
   "name": "@nxbm/standalone",
   "version": "0.0.0",
   "description": "",
-  "main": "dist/nxbm.js",
+  "main": "../../build/bin/standalone/nxbm.js",
   "bin": {
-    "nxbm": "dist/nxbm.js"
+    "nxbm": "../../build/bin/standalone/nxbm.js"
   },
   "author": "Jordon de Hoog",
   "license": "MIT",
   "scripts": {
     "lint": "tslint --project ./ --fix -t codeFrame",
-    "clean": "rimraf dist/*",
+    "clean": "rimraf ../../build/bin/standalone",
     "prebuild": "npm run clean",
     "build": "webpack",
-    "postbuild": "cpx '../web/dist/**/*' ./dist/public",
-    "precopy:standalone": "rimraf ../../dist/standalone",
-    "copy:standalone": "cpx 'dist/**/*' ../../dist/standalone",
-    "predev": "npm run postbuild",
     "dev": "webpack --watch --dev"
   },
   "devDependencies": {
@@ -35,7 +31,6 @@
     "@types/webpack": "^4.4.12",
     "@types/yargs": "^12.0.0",
     "copy-webpack-plugin": "^4.5.2",
-    "cpx": "^1.5.0",
     "fs-extra": "^7.0.0",
     "hapi": "^17.6.0",
     "inert": "^5.1.0",
@@ -43,12 +38,12 @@
     "nodemon-webpack-plugin": "^4.0.3",
     "read-pkg": "^4.0.1",
     "rimraf": "^2.6.2",
-    "ts-loader": "^5.1.1",
-    "ts-node": "^7.0.1",
+    "ts-loader": "^5.2.1",
     "tslint": "^5.11.0",
     "typescript": "^3.0.3",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.1.0",
+    "webpack-node-externals": "^1.7.2",
     "yargs": "^12.0.2"
   },
   "nodemonConfig": {

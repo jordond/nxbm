@@ -39,7 +39,7 @@ export default class HelloWorld extends Vue {
       .getAllGames()
       .then(x => {
         this.loading = false;
-        this.result = x.xcis;
+        this.result = x;
       })
       .catch(err => {
         console.log("ERROR");

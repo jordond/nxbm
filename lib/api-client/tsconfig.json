@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../build/lib/api-client"
+  },
+  "include": ["index.ts", "src/**/*"],
+  "references": [
+    { "path": "../../lib/api-endpoints" },
+    { "path": "../../lib/types" }
+  ]
+}

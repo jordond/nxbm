@@ -1,18 +1,34 @@
 import { createLogger } from "@nxbm/core";
-import { GET, IConfig } from "@nxbm/types";
+import { GET } from "@nxbm/types";
+import { pathExists } from "fs-extra";
 import { Server } from "hapi";
 import * as inert from "inert";
 import { join, resolve } from "path";
 
-export async function setupWebserver(server: Server, { env }: IConfig) {
-  await server.register(inert);
+function checkWebFilesExist(path: string) {
+  const log = createLogger("nxbm:server");
+  try {
+    log.debug(`Checking if ${path} exists`);
+    return pathExists(path);
+  } catch (error) {
+    log.error(`Unable stat index.html!\n${error}`);
+    return false;
+  }
+}
 
-  const contextDir = env === "development" ? "./dist" : __dirname;
-  const webDir = resolve(contextDir, "public");
+export async function setupWebserver(server: Server) {
+  await server.register(
+    inert as any /* TODO - Temp fix until plugin issue resolved */
+  );
+
+  const webDir = resolve(__dirname, "public");
   const indexFile = join(webDir, "index.html");
 
   const log = createLogger("nxbm:server");
   log.debug(`Web Directory: ${webDir}`);
+  if (!(await checkWebFilesExist(indexFile))) {
+    throw new Error(`Unable to locate web files: ${indexFile}`);
+  }
 
   server.route({
     method: GET,
@@ -29,6 +45,6 @@ export async function setupWebserver(server: Server, { env }: IConfig) {
   server.route({
     method: GET,
     path: "/",
-    handler: (_, h) => h.file(indexFile)
+    handler: (_, h) => (h as any).file(indexFile)
   });
 }

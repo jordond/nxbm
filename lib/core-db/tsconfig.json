@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../build/lib/core-db"
+  },
+  "include": ["index.ts", "src/**/*"],
+  "references": [
+    { "path": "../../lib/core" },
+    { "path": "../../lib/core-files" },
+    { "path": "../../lib/types" },
+    { "path": "../../lib/utils" }
+  ]
+}

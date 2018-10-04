@@ -1,26 +1,29 @@
 ## Architecture
 
 - Check if python2 is installed, and libs needed for compiling hactool
-- Move endpoint handler from `api-server` to `api-endpoints` \* Maybe
-- Move api-server logic into new package
-- Create new package for the backend i.e. bootstrap.ts, calls server.ts
-  - Use webpack to bundle all the node code
-  - Make sure `__dirname` points to one level up
-  - Mark all dependencies as external (except @nxbm/)
-- Build script that will run `backend`.build, and `web`.build
-  - Output to /dist (top level)
-  - Include package.json for deps
-- Somehow make the web project aware of api server address
-  - Or create a project that grabs the backend and web into a single package
+- When downloading hactool, save its version
+  - Make sure the file is executable
+  - Allow user to select hactool version
+  - Compare current hactool version to remote, download and update
+- Queue
+  - Add a queue for adding xci/nsp files. If the server starts up and tries to process 200 files at a time, but be crazy
+  - A\*) Maybe each add event, adds to the queue
+    - First add, starts a timeout timer (5 seconds?)
+  - When the timer runs out, or the max per run is hit (10?)
+  - Start processing files
+    - While queue is running, if a new file is added, add it to the backlog
+    - when queue is finished, go back to step A\*
 
 ### Final Outputs
 
-- standalone:
-  - api-server, scanner, web-ui
+- ~~standalone:~~
+  - ~~api-server, scanner, web-ui~~
 - Docker:
   - Uses standalone
 - Electron:
   - bundles, api-server, scanner, web-ui into one
+- Setup automatic github releases from master
+  - Semantic release?
 
 ## General
 
@@ -35,8 +38,6 @@
 - Update Config to use `Partial<>` instead of always optional
 
 - Change `Game` to `File` and vice-versa
-- For each API endpoint
-
 - Have a "first run", that generates a config file the user can use to edit
 
 ## Config structure

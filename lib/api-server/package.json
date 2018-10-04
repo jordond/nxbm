@@ -1,0 +1,35 @@
+{
+  "name": "@nxbm/api-server",
+  "version": "0.0.0",
+  "main": "../../dist/lib/api-server/index.js",
+  "types": "../../dist/lib/api-server/index.d.ts",
+  "description": "",
+  "sideEffects": false,
+  "scripts": {
+    "lint": "tslint --project ./ --fix -t codeFrame"
+  },
+  "dependencies": {
+    "boom": "^7.2.0",
+    "compare-semver": "^1.1.0",
+    "fs-extra": "^7.0.0",
+    "good": "^8.1.1",
+    "hapi": "^17.5.3",
+    "hapi-good-winston": "^2.0.1",
+    "winston": "2.4.4"
+  },
+  "devDependencies": {
+    "@nxbm/tslint-rules": "^0.0.0",
+    "@nxbm/api-endpoints": "^0.0.0",
+    "@nxbm/core": "^0.0.0",
+    "@nxbm/core-db": "^0.0.0",
+    "@nxbm/core-files": "^0.0.0",
+    "@nxbm/utils": "^0.0.0",
+    "@nxbm/types": "^0.0.0",
+    "@types/boom": "^7.2.0",
+    "@types/fs-extra": "^5.0.4",
+    "@types/hapi": "^17.0.18",
+    "@types/node": "10.10.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
+  }
+}
