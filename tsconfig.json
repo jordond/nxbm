@@ -1,19 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    // Set to commonjs for testing tmp/parse.js
-    // Research to see if we can keep it as commonjs
+    "target": "es2018",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["es2018", "dom"],
-    "strict": true,
+    "lib": ["esnext", "es2018", "dom"],
     "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
+    "composite": true,
+    "noEmitOnError": true,
+    "strict": true,
     "pretty": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots": ["packages/typings/types", "node_modules/@types"]
-  }
+    "typeRoots": ["./lib/typings/types", "./node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@nxbm/*": ["lib/*", "packages/*"]
+    }
+  },
+  "typeAcquisition": { "enable": true }
 }

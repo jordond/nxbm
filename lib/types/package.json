@@ -1,0 +1,17 @@
+{
+  "name": "@nxbm/types",
+  "version": "0.0.0",
+  "description": "Shared custom types",
+  "main": "../../lib/types/index.js",
+  "types": "../../lib/types/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "lint": "tslint --project ./ --fix -t codeFrame"
+  },
+  "devDependencies": {
+    "@nxbm/tslint-rules": "^0.0.0",
+    "convict": "^4.3.2",
+    "tslint": "^5.8.0",
+    "typescript": "^3.0.3"
+  }
+}

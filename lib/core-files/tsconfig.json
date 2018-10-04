@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../build/lib/core-files"
+  },
+  "include": ["index.ts", "src/**/*"],
+  "references": [
+    { "path": "../../lib/core" },
+    { "path": "../../lib/types" },
+    { "path": "../../lib/utils" }
+  ]
+}

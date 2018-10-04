@@ -1,4 +1,5 @@
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const webpack = require("webpack");
+const nodeExternals = require("webpack-node-externals");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 const { basename, dirname, resolve } = require("path");
 const { sync: readPkg } = require("read-pkg");
@@ -6,10 +7,10 @@ const { argv } = require("yargs");
 
 const { main } = readPkg();
 
-const pythonFiles = resolve("../core-files/src/**/*.py");
-const outputPath = resolve(__dirname, dirname(main));
+const outputPath = resolve(__dirname, "../../build/bin/", dirname(main));
 
 const isDev = argv.dev;
+const minimize = argv.m || argv.mini;
 
 const config = {
   mode: isDev ? "development" : "production",
@@ -24,9 +25,7 @@ const config = {
     __dirname: false,
     __filename: true
   },
-  optimization: {
-    minimize: false
-  },
+  optimization: { minimize },
   resolve: {
     extensions: [".ts", ".js", ".mjs"]
   },
@@ -35,7 +34,10 @@ const config = {
       {
         test: /\.ts/,
         loader: "ts-loader",
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        options: {
+          projectReferences: true
+        }
       },
       {
         test: /\.mjs$/,
@@ -44,24 +46,25 @@ const config = {
       }
     ]
   },
-  plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: pythonFiles,
-        to: outputPath,
-        flatten: true
-      }
-    ])
-  ],
-  externals: ["fsevents"]
+  plugins: [],
+  externals: ["fsevents"],
+  watchOptions: {
+    aggregateTimeout: 5000
+  }
 };
 
 if (isDev) {
-  config.plugins.push(
+  config.externals.push(nodeExternals());
+  config.plugins = [
+    // new webpack.WatchIgnorePlugin([/*/\.js$/,*/ /\.d\.ts$/]),
     new NodemonPlugin({
-      args: ["--root=../../tmp", "--level=debug", "--env development"]
+      args: [
+        "--root=../../tmp",
+        `--level=${argv.level || "debug"}`,
+        "--env=development"
+      ]
     })
-  );
+  ];
 }
 
 module.exports = config;

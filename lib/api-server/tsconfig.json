@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../build/lib/api-server"
+  },
+  "include": ["index.ts", "src/**/*"],
+  "references": [
+    { "path": "../../lib/api-endpoints" },
+    { "path": "../../lib/core" },
+    { "path": "../../lib/core-db" },
+    { "path": "../../lib/core-files" },
+    { "path": "../../lib/types" },
+    { "path": "../../lib/utils" }
+  ]
+}

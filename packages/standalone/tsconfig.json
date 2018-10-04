@@ -3,9 +3,17 @@
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
-    "outDir": "dist/",
-    "declaration": false
+    "outDir": "dist/lib",
+    "composite": true,
+    "declarationMap": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "references": [
+    { "path": "../../lib/api-backend" },
+    { "path": "../../lib/api-server" },
+    { "path": "../../lib/core" },
+    { "path": "../../lib/types" },
+    { "path": "../../lib/utils" }
+  ]
 }

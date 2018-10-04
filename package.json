@@ -9,40 +9,42 @@
   "author": "Jordon de Hoog",
   "license": "MIT",
   "workspaces": [
+    "lib/*",
     "packages/*"
   ],
   "scripts": {
+    "lint": "lerna run lint --stream",
     "lerna": "lerna",
     "precommit": "lint-staged",
     "commit": "git-cz",
-    "clean": "lerna run clean",
-    "clean:all": "npm run clean && lerna clean --yes",
-    "nuke": "npm run clean:all && rimraf node_modules",
-    "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean --yes",
+    "nuke": "npm run clean && rimraf build/ && rimraf node_modules",
     "reboot": "npm run nuke && yarn && npm run build",
+    "bootstrap": "lerna bootstrap",
     "dep": "./tools/dep.sh",
     "do": "./tools/run.sh",
-    "build": "./tools/build.sh",
-    "build:lib": "lerna run build --stream --ignore @nxbm/standalone --ignore @nxbm/web ",
-    "build:src": "npm run build web",
-    "prebuild:packages": "npm run build",
-    "build:packages": "npm run build standalone",
-    "lint": "lerna run lint",
-    "dev:lib": "lerna run dev --stream --parallel --ignore @nxbm/standalone",
-    "dev:src": "concurrently --kill-others 'npm run do web serve' 'lerna run dev:start --scope @nxbm/api-backend'",
-    "dev:all": "concurrently --kill-others 'npm run dev:lib' 'npm run dev:src'",
-    "dev": "./tools/dev.sh",
-    "package:standalone": "npm run build:packages && lerna run copy:standalone"
+    "copy:web": "cpx 'build/dist/web/**/*'",
+    "build": "npm run build:lib && npm run build:dist && npm run build:bin",
+    "build:lib": "tsc --build lib/",
+    "build:dist": "lerna run build --stream --scope @nxbm/web",
+    "build:bin": "lerna run build --stream --scope @nxbm/standalone",
+    "dev:lib": "tsc --build --watch lib/",
+    "dev:web": "lerna run serve --stream",
+    "dev:api": "lerna run dev --stream --scope @nxbm/standalone",
+    "dev:bin": "concurrently --kill-others 'npm run dev:web' 'npm run dev:api'",
+    "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
     "concurrently": "^4.0.1",
+    "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",
     "husky": "^0.14.3",
     "lerna": "^3.1.4",
     "lint-staged": "^7.2.2",
     "prettier": "^1.14.2",
-    "rimraf": "^2.6.1"
+    "rimraf": "^2.6.1",
+    "typescript": "^3.1.1"
   },
   "husky": {
     "hooks": {
@@ -50,11 +52,11 @@
     }
   },
   "lint-staged": {
-    "packages/**/{src,test}/**/*.ts": [
+    "{lib,packages}/**/{src,test}/**/*.ts": [
       "tslint --project ./tsconfig.json --fix",
       "git add"
     ],
-    "packages/**/*.{ts,vue,json}": [
+    "{lib,packages}/**/*.{ts,vue,json}": [
       "prettier --write",
       "git add"
     ]

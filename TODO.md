@@ -5,6 +5,14 @@
   - Make sure the file is executable
   - Allow user to select hactool version
   - Compare current hactool version to remote, download and update
+- Queue
+  - Add a queue for adding xci/nsp files. If the server starts up and tries to process 200 files at a time, but be crazy
+  - A\*) Maybe each add event, adds to the queue
+    - First add, starts a timeout timer (5 seconds?)
+  - When the timer runs out, or the max per run is hit (10?)
+  - Start processing files
+    - While queue is running, if a new file is added, add it to the backlog
+    - when queue is finished, go back to step A\*
 
 ### Final Outputs
 

@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../build/lib/core"
+  },
+  "include": ["index.ts", "src/**/*.ts"],
+  "references": [{ "path": "../../lib/types" }]
+}
