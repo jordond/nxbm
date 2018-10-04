@@ -16,7 +16,7 @@ import {
   startScanner
 } from "@nxbm/core-db";
 import { ensureHactool, getKeys } from "@nxbm/core-files";
-import { IConfig } from "@nxbm/types";
+import { IBackupConfig, IConfig } from "@nxbm/types";
 import { format } from "@nxbm/utils";
 import { mkdirp } from "fs-extra";
 import { join, resolve } from "path";
@@ -140,7 +140,7 @@ async function initFileScanner({ backups }: IConfig) {
   const db = await getGameDB();
   await db.check(backups.removeBlacklisted);
 
-  await initDatabases();
+  await initDatabases(backups);
   await startScanner(backups);
 }
 
@@ -166,7 +166,7 @@ async function initExtraInformation({ backups }: IConfig) {
 async function getMissingDetails() {
   try {
     const gamesdb = await getGameDB();
-    await getMissingDetailedInfo(gamesdb.xcis);
+    await getMissingDetailedInfo(gamesdb.toList());
   } catch (error) {
     createLogger("boostrap:info").error("Failed to get missing details", error);
   }
@@ -176,12 +176,12 @@ async function getMissingMedia() {
   const log = createLogger("bootstrap:media");
   try {
     const gamesdb = await getGameDB();
-    if (!gamesdb.xcis.length) {
+    if (!gamesdb.toList().length) {
       log.info("No games to scrape");
       return;
     }
 
-    const result = await downloadMissingMedia(gamesdb.xcis);
+    const result = await downloadMissingMedia(gamesdb.toList());
     const success = result.filter(x => x);
 
     if (success.length) {
@@ -203,8 +203,11 @@ async function getMissingMedia() {
   }
 }
 
-async function initDatabases() {
-  const promises = [getNSWDB(), getTGDB(), getEShopDB()];
+async function initDatabases({ getDetailedInfo }: IBackupConfig) {
+  const promises = [
+    getNSWDB(),
+    ...(getDetailedInfo ? [getTGDB(), getEShopDB()] : [])
+  ];
 
   await Promise.all(promises as any[]);
 }

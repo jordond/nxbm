@@ -3,13 +3,13 @@ import {
   FileType,
   GameUS,
   IFile,
+  prettyContentType,
   Release,
   TGDBGame
 } from "@nxbm/types";
-import { fileSize, formatTitleId, hexToGbStr } from "@nxbm/utils";
+import { fileSize, hexToGbStr } from "@nxbm/utils";
 import { basename, extname } from "path";
 
-import { getMasterKeyStr } from "../masterkey";
 
 export class File implements IFile {
   public type: FileType;
@@ -67,24 +67,24 @@ export class File implements IFile {
     this.assign(opts);
   }
 
-  public assign(opts?: Partial<IFile>): File {
+  public assign(
+    opts?: Partial<IFile>,
+    options: { whitelist: string[]; truthy: boolean } = {
+      whitelist: [],
+      truthy: false
+    }
+  ): File {
     if (!opts) {
       return this;
     }
 
-    Object.keys(opts).forEach(key => ((this as any)[key] = (opts as any)[key]));
-
-    if (opts.titleIDRaw) {
-      this.titleID = formatTitleId(this.titleIDRaw);
-    }
-
-    if (!opts.titleIDBaseGame) {
-      this.titleIDBaseGame = this.titleID;
-    }
-
-    if (opts.masterKeyRevisionRaw) {
-      this.masterKeyRevision = getMasterKeyStr(this.masterKeyRevisionRaw);
-    }
+    Object.keys(opts).forEach(key => {
+      const value = (opts as any)[key];
+      if (options.whitelist.includes(key) || (options.truthy && !value)) {
+        return;
+      }
+      (this as any)[key] = value;
+    });
 
     this.extension = extname(this.filepath);
     this.filename = basename(this.filepath, this.extension);
@@ -138,9 +138,10 @@ export class File implements IFile {
     this.youtube = data.youtube;
   }
 
-  public id(): string {
-    return `${this.titleID}-${this.gameRevision}`;
-  }
+  public id = () =>
+    `${prettyContentType(this.contentType)}-${this.titleID}-${
+      this.gameRevision
+    }`;
 
   public displayName(): string {
     return `${this.gameName}:${this.id()}`;
@@ -161,6 +162,7 @@ export class File implements IFile {
     Cart Size: ${this.cartSize}
     Is Trimmed: ${this.isTrimmed}
     Title ID: ${this.titleID}
+    Title ID Base: ${this.titleIDBaseGame}
     MasterKey Rev: ${this.masterKeyRevision}
     SDK Version: ${this.sdkVersion}
     Version: ${this.version}

@@ -1,6 +1,6 @@
 import { createLogger, getDataDir } from "@nxbm/core";
 import { File } from "@nxbm/core-files";
-import { IGameDBData } from "@nxbm/types";
+import { Game } from "@nxbm/types";
 import { outputFormattedJSON } from "@nxbm/utils";
 import { pathExists, readJSON } from "fs-extra";
 import { resolve } from "path";
@@ -18,11 +18,11 @@ export async function getGameDB(force: boolean = false): Promise<GameDB> {
   }
 
   log.info("Reading games database from the disk");
-  const database = await loadGameDB();
-  if (database) {
+  const loadedFiles = await loadGameDB();
+  if (loadedFiles) {
     log.info("Successfully read games database");
-    log.info(`Found [${database.xcis.length}] games`);
-    gameDBCache = new GameDB(database);
+    log.info(`Found [${loadedFiles.length}] games`);
+    gameDBCache = new GameDB(loadedFiles);
   } else {
     log.warn("Failed to load game db from disk...");
     gameDBCache = new GameDB();
@@ -31,26 +31,24 @@ export async function getGameDB(force: boolean = false): Promise<GameDB> {
   return gameDBCache;
 }
 
-export async function loadGameDB(): Promise<IGameDBData | undefined> {
+export async function loadGameDB(): Promise<Game[] | undefined> {
   const path = getGameDBPath();
   log.verbose(`Game database path -> ${path}`);
 
   if (!(await pathExists(path))) {
     log.verbose("Game database doesn't exist, using empty database");
-    return { xcis: [] };
+    return [];
   }
 
   try {
-    const { xcis }: IGameDBData = await readJSON(path);
-    const result: IGameDBData = {
-      xcis: xcis.map(({ file, ...rest }) => ({
-        ...rest,
-        file: new File(file.type, file)
-      }))
-    };
+    const games: Game[] = await readJSON(path);
+    const result: Game[] = games.map(({ file, ...rest }) => ({
+      ...rest,
+      file: new File(file.type, file)
+    }));
 
     log.debug(
-      `Found Games in database: \n\t${result.xcis
+      `Found Games in database: \n\t${result
         .map(x => x.file.displayName())
         .join("\n\t")}`
     );
@@ -62,11 +60,11 @@ export async function loadGameDB(): Promise<IGameDBData | undefined> {
   }
 }
 
-export async function saveGameDB({ xcis }: IGameDBData = gameDBCache) {
+export async function saveGameDB(games: Game[] = gameDBCache.toList()) {
   const path = getGameDBPath();
   log.verbose(`Attempting to save the game database to ${path}`);
   try {
-    await outputFormattedJSON(path, { xcis });
+    await outputFormattedJSON(path, games);
     return true;
   } catch (error) {
     log.error("Unable to save the local games database");

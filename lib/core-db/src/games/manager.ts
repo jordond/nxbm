@@ -1,5 +1,5 @@
 import { createLogger, getConfig } from "@nxbm/core";
-import { parseFile } from "@nxbm/core-files";
+import { File, parseFile } from "@nxbm/core-files";
 import { Game, IFile, IGameDB } from "@nxbm/types";
 import { safeRemove } from "@nxbm/utils";
 
@@ -18,17 +18,26 @@ export async function addFile(filePath: string) {
   const db = await getGameDB();
   const foundFilename = db.findByFileName(filePath);
 
-  if (foundFilename) {
+  // TODO - Verify the file size matches == same file
+  if (foundFilename && !foundFilename.missing) {
     log.info(
       `Skipping ${foundFilename.file.displayName()}, matched filename to an existing file`
     );
     return foundFilename;
   }
 
+  if (foundFilename && foundFilename.missing) {
+    log.info(
+      `Welcome back ${foundFilename.file.displayName()}! Missing file has been added again`
+    );
+    db.markMissing(foundFilename, false);
+    db.save();
+    return foundFilename;
+  }
+
   let parsed = await parseFile(filePath);
   if (!parsed) return;
 
-  // TODO - If its a DLC, try to find info from the LocalDB (titleid), or the NSWDB
   if (parsed.isDLC()) {
     const processedDLC = await processDLC(parsed);
     if (processedDLC) {
@@ -51,16 +60,26 @@ export async function addFile(filePath: string) {
   }
 
   // TODO - Check to see if the titleIDBaseGame exists in the DB, and grab their info
-  await getNSWDBInfo(parsed);
+  const existingParent = db.findByID(parsed.titleIDBaseGame)[0];
+  if (existingParent) {
+    log.info(
+      `Found meta-data from an existing parent game ${existingParent.file.id()}`
+    );
+    mergeExistingMetaData(existingParent.file, parsed);
+  } else {
+    await getNSWDBInfo(parsed);
 
-  const { backups } = getConfig();
-  if (backups.downloadGameMedia) {
-    getGameMedia(parsed);
-  }
+    const { backups } = getConfig();
+    if (backups.downloadGameMedia) {
+      await getGameMedia(parsed);
+    }
 
-  if (backups.getDetailedInfo) {
-    getTGDBInfoForFile(parsed);
-    getEshopInfoForFile(parsed);
+    if (backups.getDetailedInfo) {
+      await Promise.all([
+        getTGDBInfoForFile(parsed),
+        getEshopInfoForFile(parsed)
+      ]);
+    }
   }
 
   const game = await db.add(parsed);
@@ -96,17 +115,41 @@ export async function markFileAsMissing(filePath: string) {
   const found = await db.findByFileName(filePath);
   if (found) {
     log.info(`${found.file.displayName()} has gone missing!`);
-    return db.markMissing(found);
+    db.markMissing(found);
+    db.save();
+    return true;
   }
 
   log.debug(`File must have been deleted by the user`);
   return false;
 }
 
+function mergeExistingMetaData(existing: IFile, newData: IFile) {
+  const whitelist = [
+    "filepath",
+    "totalSizeBytes",
+    "usedSizeBytes",
+    "titleIDBaseGame",
+    "sdkVersion",
+    "firmware",
+    "carttype",
+    "distributionType",
+    "contentType",
+    "version",
+    "titleID",
+    "masterKeyRevision"
+  ];
+
+  const parent = new File(newData.type, { ...existing });
+  newData.assign({
+    ...parent.assign(newData, { whitelist, truthy: true })
+  });
+}
+
 async function getNSWDBInfo(file: IFile) {
   const log = createLogger(`${TAG}:nswdb`);
   const nswdb = await getNSWDB();
-  const release = nswdb.find(file.titleID);
+  const release = nswdb.find(file.titleID) || nswdb.find(file.titleIDBaseGame);
   if (release) {
     log.info(`Found a match in the scene db: ${release.releasename}`);
     file.assignRelease(release);

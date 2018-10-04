@@ -19,7 +19,7 @@ async function getDB() {
 
 const getAllGames: Lifecycle.Method = async () => {
   const db = await getDB();
-  return { xcis: db.xcis };
+  return db.toList();
 };
 
 const getAllGamesByTitleID: Lifecycle.Method = async request => {

@@ -45,7 +45,7 @@ export abstract class GameRoutes extends Route {
   public static Endpoints = routes;
   public static QueryParams = GameQueryParams;
 
-  public abstract getAllGames: () => Promise<{ xcis: Game[] }>;
+  public abstract getAllGames: () => Promise<Game[]>;
   public abstract getAllGamesByTitleID: (titleid: number) => Promise<Game[]>;
   public abstract getGameByTitleID: (
     titleid: number,

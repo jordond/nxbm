@@ -1,4 +1,5 @@
 import { formatTitleId, read64LEFloat } from "@nxbm/utils";
+import { getMasterKeyStr } from "../masterkey";
 
 export class NCAHeader {
   public magic: string;
@@ -29,6 +30,8 @@ export class NCAHeader {
       this.sdkVersion1
     ].join(".");
   }
+
+  public formatMasterKey = () => getMasterKeyStr(this.masterKeyRev);
 
   public toString() {
     return `NCA - Header:

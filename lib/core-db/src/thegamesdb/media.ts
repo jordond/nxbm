@@ -22,11 +22,20 @@ export async function hasDownloadedMedia(file: IFile) {
 }
 
 export function downloadMissingMedia(games: Game[], threshold: number = 0.02) {
+  const log = createLogger("media:missing");
   return Bluebird.map(games, async game => {
     const exists = await hasDownloadedMedia(game.file);
     return { exists, game };
   })
-    .filter(result => !result.exists)
+    .filter(result => {
+      if (result.exists) {
+        log.verbose(
+          `Skipping ${result.game.file.displayName()}, already exists`
+        );
+        return false;
+      }
+      return true;
+    })
     .map(result => result.game)
     .map(({ file }) => downloadGameMedia(file, threshold));
 }
@@ -101,7 +110,7 @@ async function downloadMedia(titleid: string, images: TGDBGameImages) {
     return;
   }
 
-  log.info(`Successfully downloaded ${result.length} images`);
+  log.info(`Successfully downloaded ${files} images`);
 
   const tempPath = getMediaTempFolder(titleid);
   await moveMediaFiles(titleid, tempPath);

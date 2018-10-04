@@ -8,8 +8,8 @@ const endpoints = GameRoutes.Endpoints;
 class Games extends GameRoutes {
   public getAllGames = async () => {
     const url = this.joinUrl(endpoints.getAllGames.url());
-    const xcis = await client.get<Game[]>(url);
-    return { xcis };
+    const result = await client.get<Game[]>(url);
+    return result;
   };
 
   public getAllGamesByTitleID = (titleid: number) => {

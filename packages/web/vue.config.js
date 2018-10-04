@@ -3,7 +3,7 @@ const webpack = require("webpack");
 const plugins = [];
 
 if (process.env.NODE_ENV !== "production") {
-  plugins.push(new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]));
+  // plugins.push(new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]));
 }
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
       .use("ts-loader")
       .loader("ts-loader")
       .tap(options => {
-        options.projectReferences = true;
+        // options.projectReferences = true;
         return options;
       });
   },

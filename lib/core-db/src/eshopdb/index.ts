@@ -27,7 +27,7 @@ export async function getEshopInfo(file: IFile, threshold: number = 0.01) {
   const match = eshop.find(file.gameName, threshold);
 
   if (!match) {
-    createLogger("eshop").warn(
+    createLogger(`eshop:${file.id()}`).warn(
       `Unable to find a close enough match for ${file.gameName}`
     );
 

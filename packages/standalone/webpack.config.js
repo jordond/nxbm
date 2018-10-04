@@ -58,7 +58,11 @@ if (isDev) {
   config.plugins = [
     // new webpack.WatchIgnorePlugin([/*/\.js$/,*/ /\.d\.ts$/]),
     new NodemonPlugin({
-      args: ["--root=../../tmp", "--level=debug", "--env=development"]
+      args: [
+        "--root=../../tmp",
+        `--level=${argv.level || "debug"}`,
+        "--env=development"
+      ]
     })
   ];
 }

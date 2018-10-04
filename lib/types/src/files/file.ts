@@ -11,15 +11,28 @@ export interface Game {
 }
 
 export enum ContentType {
-  APPLICATION = "ContentType",
+  APPLICATION = "Application",
   UPDATE = "Patch",
   DLC = "AddOnContent",
   UNKNOWN = "Unknown",
   NONE = ""
 }
 
+export function prettyContentType(type: ContentType) {
+  switch (type) {
+    case ContentType.APPLICATION:
+      return "APP";
+    case ContentType.UPDATE:
+      return "UPDATE";
+    case ContentType.DLC:
+      return "DLC";
+    default:
+      return "unknown";
+  }
+}
+
 export interface IGameDBData {
-  xcis: Game[];
+  games: Map<string, Game>;
 }
 
 export interface IGameDB extends IGameDBData {
@@ -91,7 +104,10 @@ export enum FileType {
 }
 
 export interface IFile extends IFileData {
-  assign: (data: Partial<IFile>) => IFile;
+  assign: (
+    data: Partial<IFile>,
+    options?: { whitelist: string[]; truthy: boolean }
+  ) => IFile;
   assignRelease: (release?: Release) => IFile;
   assignTGDB: (data: TGDBGame) => void;
   id: () => string;

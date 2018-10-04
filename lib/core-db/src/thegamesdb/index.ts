@@ -27,7 +27,7 @@ export async function getTGDBInfo(file: IFile, threshold: number = 0.01) {
   const match = tgdb.find(file.gameName, threshold);
 
   if (!match) {
-    createLogger("tgdb").warn(
+    createLogger(`tgdb:${file.id()}`).warn(
       `Unable to find a close enough match for ${file.gameName}`
     );
     return false;

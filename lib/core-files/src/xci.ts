@@ -1,4 +1,4 @@
-import { ContentType, FileParseOptions, FileType, IFile } from "@nxbm/types";
+import { ContentType, FileParseOptions, IFile } from "@nxbm/types";
 import { ensureOpenRead, readNBytes } from "@nxbm/utils";
 import { stat } from "fs-extra";
 
@@ -6,6 +6,7 @@ import { gatherExtraInfo } from "./parser/cnmt";
 import { File } from "./parser/models/File";
 import { HFS0Entry } from "./parser/models/HFS0Entry";
 import { HFS0Header } from "./parser/models/HFS0Header";
+import { XCI } from "./parser/models/XCI";
 import { XCIHeader } from "./parser/models/XCIHeader";
 import { decryptNCAHeader, getNCADetails } from "./parser/secure";
 import { findVersion } from "./parser/version";
@@ -52,7 +53,7 @@ export async function parseXCI(
   );
 
   const stats = await stat(xciPath);
-  return new File(FileType.XCI, {
+  return new XCI({
     version,
     distributionType: "Cartridge",
     contentType: ContentType.APPLICATION,
@@ -96,9 +97,10 @@ async function processSecurePartition(
   );
 
   return {
-    titleIDRaw: ncaHeader.rawTitleID,
+    titleID: ncaHeader.titleId(),
+    titleIDBaseGame: ncaHeader.titleId(),
     sdkVersion: ncaHeader.formatSDKVersion(),
-    masterKeyRevisionRaw: ncaHeader.masterKeyRev,
+    masterKeyRevision: ncaHeader.formatMasterKey(),
     ...extraInfo
   };
 }

@@ -1,7 +1,7 @@
 import {
   ContentType,
   FileParseOptions,
-  FileType,
+  IFileData,
   NSPContentType,
   NSPXML
 } from "@nxbm/types";
@@ -11,6 +11,7 @@ import { open, remove, stat } from "fs-extra";
 import { getTempMetaDir } from "./parser/cnmt";
 import { getFirmwareFromString } from "./parser/firmware";
 import { File } from "./parser/models/File";
+import { NSP } from "./parser/models/NSP";
 import { PFS0Entry } from "./parser/models/PFS0Entry";
 import { PFS0Header } from "./parser/models/PFS0Header";
 import {
@@ -36,12 +37,13 @@ export async function parseNSP(
   { outputDir, cleanup = true }: FileParseOptions
 ): Promise<File> {
   const fd = await open(nspPath, "r");
-  const nspData = new File(FileType.NSP);
 
   // Check if it is a valid NSP
   const pfs0Header = await PFS0Header.create(fd);
   if (!pfs0Header.isValid()) {
-    throwInvalidMagic(nspData, pfs0Header.magic);
+    throw createParseError(
+      `${nspPath} => Invalid 'magic' header: ${pfs0Header.magic}`
+    );
   }
 
   // Get all the pfs0 entries, then find the the info xml
@@ -66,16 +68,22 @@ export async function parseNSP(
   const romfsDir = await writeNCATargetRomFS(pfs0Header, targetNCA, titleId);
 
   // If it isn't a DLC, grab meta-data from the romfs
+  let ncaInfo: Partial<IFileData> = {};
   if (nspXml.Type !== ContentType.DLC) {
     const info = await unpackAndProcessTargetNCA(romfsDir);
     const result = await processNCAInfo(info, outputDir, titleIDBaseGame);
 
-    nspData.assign(result);
+    ncaInfo = result;
   }
 
   const stats = await stat(nspPath);
   const miscInfo = await parseRomFSInfo(romfsDir);
-  nspData.assign({
+
+  if (cleanup) {
+    await remove(getTempMetaDir(titleId));
+  }
+
+  return new NSP({
     filepath: nspPath,
     totalSizeBytes: stats.size,
     usedSizeBytes: stats.size,
@@ -85,14 +93,9 @@ export async function parseNSP(
     titleIDBaseGame: getBaseGameTitleId(nspXml),
     contentType: nspXml.Type,
     version: nspXml.Version,
+    ...ncaInfo,
     ...miscInfo
   });
-
-  if (cleanup) {
-    await remove(getTempMetaDir(nspData.titleID));
-  }
-
-  return nspData;
 }
 
 function findNCATarget(xml: NSPXML, entries: PFS0Entry[]) {
@@ -108,12 +111,6 @@ function findNCATargetString(xml: NSPXML) {
 
   const meta = xml.Content.find(x => x.Type === NSPContentType.META);
   return meta ? `${meta.Id}.cnmt.nca` : "";
-}
-
-function throwInvalidMagic(data: File, magic: string) {
-  throw createParseError(
-    `${data.filenameWithExt} => Invalid 'magic' header: ${magic}`
-  );
 }
 
 function createParseError(reason: string) {
