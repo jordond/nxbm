@@ -6,13 +6,13 @@ import { getEShopDB, getEshopInfo } from "./eshopdb";
 import { getTGDBInfo } from "./thegamesdb";
 
 export async function getMissingDetailedInfo(games: Game[]) {
-  await getEShopDB();
-  return map(games, game => {
-    if (!game.file.description) {
+  return map(games, async game => {
+    if (!game.file.extras) {
       getTGDBInfoForFile(game.file);
     }
 
     if (!game.file.eshop) {
+      await getEShopDB();
       getEshopInfoForFile(game.file);
     }
   });

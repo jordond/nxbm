@@ -1,10 +1,8 @@
 ## Architecture
 
-- Check if python2 is installed, and libs needed for compiling hactool
-- When downloading hactool, save its version
-  - Make sure the file is executable
-  - Allow user to select hactool version
-  - Compare current hactool version to remote, download and update
+- Use Bonjour to broadcast server ip address
+  - In the electron version, allow it to connect to a dedicated server (enter manually, or using bonjour)
+    - or run it's own instance
 - Queue
   - Add a queue for adding xci/nsp files. If the server starts up and tries to process 200 files at a time, but be crazy
   - A\*) Maybe each add event, adds to the queue
@@ -16,8 +14,6 @@
 
 ### Final Outputs
 
-- ~~standalone:~~
-  - ~~api-server, scanner, web-ui~~
 - Docker:
   - Uses standalone
 - Electron:
@@ -27,17 +23,10 @@
 
 ## General
 
-- Parse NSP
-- ~~Prune db of missing files~~
-  - ~~If a file is missing on startup (ex not detected by the folder scanner)~~
-  - ~~Mark it as 'missing' (property on the `Game`?)~~
-  - Still return it with API calls, but UI should grey it out
 - Sockets
   - Socket communication for events, (add, delete, parse, etc)
 - Switch `GameDB` to have a list of `Game[]` instead of `xci: Game[], nsp: Game[]`
-- Update Config to use `Partial<>` instead of always optional
 
-- Change `Game` to `File` and vice-versa
 - Have a "first run", that generates a config file the user can use to edit
 
 ## Config structure

@@ -74,16 +74,13 @@ export interface IFileData {
   sceneID: number;
   contentType: ContentType;
   version: string;
-  description: string;
-  rating: string;
-  youtube: string;
   publisher: string;
-  releaseDate: string;
-  numberOfPlayers: string;
   categories: string[];
   ESRB: number;
   media: FileMedia;
+
   eshop?: GameUS;
+  extras?: FileTGDBData;
 
   titleID: string;
   titleIDBaseGame: string;
@@ -122,4 +119,12 @@ export interface FileMedia {
     [key: string]: string;
   };
   artwork?: TGDBGameImages;
+}
+
+export interface FileTGDBData {
+  numberOfPlayers: string;
+  releaseDate: string;
+  description: string;
+  rating: string;
+  youtube: string;
 }

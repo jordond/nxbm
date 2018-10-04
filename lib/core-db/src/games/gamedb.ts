@@ -24,6 +24,16 @@ export class GameDB implements IGameDB {
 
   public toList = () => Array.from(this.games.values());
 
+  public uniqueTitleIds = (): Game[] =>
+    Array.from(
+      this.toList()
+        .reduce(
+          (map, item) => map.set(item.file.titleIDBaseGame, item),
+          new Map<string, Game>()
+        )
+        .values()
+    );
+
   public addAll = (games: Game[]) =>
     games.forEach(game => this.games.set(game.file.id(), game));
 

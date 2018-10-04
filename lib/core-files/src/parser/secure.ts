@@ -1,13 +1,9 @@
-import {
-  openReadNBytes,
-  readNBytes,
-  tempDir
-} from "@nxbm/utils";
+import { openReadNBytes, readNBytes, tempDir } from "@nxbm/utils";
 import { open, outputFile, remove } from "fs-extra";
 import { basename, join, resolve } from "path";
 
+import { decrypt } from "../python/decrypt";
 import { NCAHeader } from "./models/NCAHeader";
-import { decrypt } from "./py/decrypt";
 
 export function getNCADetails(details: Details): Detail {
   let master: number = -9223372036854775808;

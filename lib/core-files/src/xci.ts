@@ -10,6 +10,7 @@ import { XCI } from "./parser/models/XCI";
 import { XCIHeader } from "./parser/models/XCIHeader";
 import { decryptNCAHeader, getNCADetails } from "./parser/secure";
 import { findVersion } from "./parser/version";
+import { checkPython2 } from "./python/tools";
 
 export async function isXCI(path: string) {
   try {
@@ -34,6 +35,10 @@ export async function parseXCI(
   xciPath: string,
   options: FileParseOptions
 ): Promise<File> {
+  if (!(await checkPython2())) {
+    throw new Error("Unable to parse XCI file without python2 installed");
+  }
+
   const fd = await ensureOpenRead(xciPath);
 
   // Get root HFS0 details

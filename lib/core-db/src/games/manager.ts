@@ -141,9 +141,12 @@ function mergeExistingMetaData(existing: IFile, newData: IFile) {
   ];
 
   const parent = new File(newData.type, { ...existing });
-  newData.assign({
-    ...parent.assign(newData, { whitelist, truthy: true })
-  });
+  newData.assign(
+    {
+      ...parent.assign(newData)
+    },
+    { whitelist, truthy: true }
+  );
 }
 
 async function getNSWDBInfo(file: IFile) {

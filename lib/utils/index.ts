@@ -8,3 +8,4 @@ export * from "./src/misc";
 export * from "./src/parser";
 export * from "./src/string";
 export * from "./src/xmlToJson";
+export * from "./src/hasbin";

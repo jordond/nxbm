@@ -15,7 +15,7 @@ import {
   getTGDB,
   startScanner
 } from "@nxbm/core-db";
-import { ensureHactool, getKeys } from "@nxbm/core-files";
+import { checkPython2, ensureHactool, getKeys } from "@nxbm/core-files";
 import { IBackupConfig, IConfig } from "@nxbm/types";
 import { format } from "@nxbm/utils";
 import { mkdirp } from "fs-extra";
@@ -37,6 +37,7 @@ async function initSecondary(config: IConfig) {
   await saveConfig();
 
   await initKeys(config);
+  await initPython();
   await initHactool(config);
   await initFileScanner(config);
 
@@ -98,6 +99,22 @@ async function initKeys({ paths, backups: { downloadKeys } }: IConfig) {
   }
 }
 
+async function initPython() {
+  const log = genLogger("python");
+  log.info("Ensuring 'python2' exists on the path");
+
+  const exists = await checkPython2();
+  if (exists) {
+    log.verbose("'python2' was found on the path!");
+  } else {
+    log.error("Unable to find 'python2' on the PATH");
+    log.error("XCI parsing will be DISABLED until you install python2");
+    log.warn("Ensure you install python2 and NOT python3");
+    log.warn("python2 is required to decrypt the headers in the XCI file");
+    log.warn("Adding NSP files will still work");
+  }
+}
+
 async function initHactool({
   paths,
   backups: { autoInstallHactool }
@@ -120,7 +137,7 @@ async function initHactool({
           "Or enable `autoInstallHactool` (--autoHactool) in the config"
         );
       } else {
-        log.error("Was unable to find or download hactool!");
+        log.error("Was unable to find, download, or compile hactool!");
       }
       log.warn("Scanning files for information will not work!");
     }
@@ -181,7 +198,7 @@ async function getMissingMedia() {
       return;
     }
 
-    const result = await downloadMissingMedia(gamesdb.toList());
+    const result = await downloadMissingMedia(gamesdb.uniqueTitleIds());
     const success = result.filter(x => x);
 
     if (success.length) {

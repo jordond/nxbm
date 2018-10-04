@@ -33,6 +33,3 @@ jobs:
       - store_artifacts:
           path: ./build/bin
           destination: binaries
-      - store_artifacts:
-          path: ./build/lib
-          destination: lib

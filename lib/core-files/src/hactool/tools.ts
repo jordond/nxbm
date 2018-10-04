@@ -1,16 +1,37 @@
 import { createLogger, getConfig } from "@nxbm/core";
-import { downloadFile, getJSON, isWindows, tempDir, unzip } from "@nxbm/utils";
+import {
+  downloadFile,
+  getJSON,
+  isWindows,
+  outputFormattedJSON,
+  tempDir,
+  unzip
+} from "@nxbm/utils";
 import { exec as tmpExec } from "child_process";
-import { emptyDir, ensureDir, move, pathExists, rename } from "fs-extra";
-import { basename, join, resolve } from "path";
+import * as compare from "compare-semver";
+import {
+  emptyDir,
+  ensureDir,
+  move,
+  pathExists,
+  readJson,
+  rename
+} from "fs-extra";
+import { basename, dirname, join, resolve } from "path";
 import { promisify } from "util";
 
+import { HactoolVersion } from "./version";
+
 const exec = promisify(tmpExec);
+
+const TAG = "hactool";
 
 const GIT_ROOT = "https://github.com";
 const HACTOOL_ROOT = `${GIT_ROOT}/SciresM/hactool`;
 const LATEST_TAG = `${HACTOOL_ROOT}/releases/latest`;
+const HACTOOL_DIR = "hactool";
 const HACTOOL_NAME = `hactool${isWindows() ? ".exe" : ""}`;
+const HACTOOL_VERSION = "version.json";
 
 const generateDownloadURL = (tag: string) =>
   `${HACTOOL_ROOT}${
@@ -19,34 +40,42 @@ const generateDownloadURL = (tag: string) =>
       : `/archive/${tag}.zip`
   }`;
 
-const log = createLogger("hactool");
+const genHactoolFolder = (dataDir: string, extra: string = "") =>
+  resolve(dataDir, HACTOOL_DIR, extra);
 
 export function hactoolBinary(
   dataDirectory: string = getConfig().paths!.data
 ): string {
-  return resolve(dataDirectory, "hactool", HACTOOL_NAME);
+  return genHactoolFolder(dataDirectory, HACTOOL_NAME);
 }
 
 export async function ensureHactool(
   dataDirectory: string,
   downloadIfMissing: boolean = true
 ): Promise<boolean> {
-  const path = resolve(dataDirectory, "hactool", HACTOOL_NAME);
+  const log = createLogger(TAG);
+  const path = genHactoolFolder(dataDirectory, HACTOOL_NAME);
   log.info(`Looking for ${HACTOOL_NAME}`);
   log.verbose(`In ${path}`);
 
   const exists = await pathExists(path);
   if (exists) {
-    log.verbose("Hactool was found!");
-    return true;
-  }
-
-  if (!downloadIfMissing) {
+    log.verbose("Hactool was found! Checking it's version");
+    if (!(await shouldDownloadNewVersion(dataDirectory))) {
+      // No new version
+      return true;
+    }
+  } else if (!downloadIfMissing) {
     return false;
   }
 
+  return downloadHactool(path);
+}
+
+async function downloadHactool(path: string) {
+  const log = createLogger(`${TAG}:dl`);
   try {
-    const result = await downloadLatestVersion(path);
+    const result = await downloadHactoolVersion(path);
     emptyDir(tempDir());
 
     return result;
@@ -57,7 +86,38 @@ export async function ensureHactool(
   }
 }
 
+async function getExistingVersion(dataDir: string) {
+  try {
+    const version: HactoolVersion = await readJson(
+      genHactoolFolder(dataDir, HACTOOL_VERSION)
+    );
+    return version;
+  } catch (error) {
+    return;
+  }
+}
+
+async function shouldDownloadNewVersion(dataDirectory: string) {
+  const log = createLogger(`${TAG}:version`);
+  const version = await getExistingVersion(dataDirectory);
+  if (version) {
+    log.verbose(`Found existing version ${version.tag} on the disk`);
+    log.debug("Checking if there is a newer version available");
+
+    const latest = await getLatestHactoolVersion();
+    const newest = compare.max([version.tag, latest]);
+    if (newest === version.tag) {
+      log.verbose("Local version is up to date!");
+      return false;
+    }
+    log.info(`Newer version of hactool:${newest} is available!`);
+  }
+
+  return true;
+}
+
 async function getLatestHactoolVersion(): Promise<string> {
+  const log = createLogger(`${TAG}:latest`);
   log.debug(`Fetching latest tag from ${LATEST_TAG}`);
   const { data } = await getJSON(LATEST_TAG);
   if (data && data.tag_name) {
@@ -69,6 +129,7 @@ async function getLatestHactoolVersion(): Promise<string> {
 }
 
 async function moveBinary(source: string, destination: string) {
+  const log = createLogger(`${TAG}:move`);
   const finalOutput = resolve(destination);
   log.verbose(`Moving hactool to ${finalOutput}`);
 
@@ -83,6 +144,7 @@ async function moveBinary(source: string, destination: string) {
 }
 
 async function compileHactool(path: string) {
+  const log = createLogger(`${TAG}:compile`);
   const makeLog = createLogger("hactool:make");
   makeLog.info("Attempting to compile hactool, this might take awhile...");
 
@@ -105,6 +167,7 @@ async function handleDownloadedFile(
   finalDestination: string,
   tag: string
 ) {
+  const log = createLogger(`${TAG}:zip`);
   log.info(`Unzipping ${zipFile}`);
   try {
     const zipOutput = join(tempDir(), "hactool");
@@ -129,13 +192,16 @@ async function handleDownloadedFile(
   }
 }
 
-async function downloadLatestVersion(finalDestination: string) {
-  const tag = await getLatestHactoolVersion();
+async function downloadHactoolVersion(
+  finalDestination: string,
+  version?: string
+) {
+  const log = createLogger(`${TAG}:download`);
+  const tag = version || (await getLatestHactoolVersion());
   const downloadUrl = generateDownloadURL(tag);
   log.info(`Downloading ${basename(downloadUrl)}`);
   log.verbose(`from ${downloadUrl}`);
 
-  // Ensure download folder exists
   await ensureDir(tempDir());
 
   const destination = join(tempDir(), `${HACTOOL_NAME}.zip`);
@@ -143,7 +209,21 @@ async function downloadLatestVersion(finalDestination: string) {
 
   try {
     await downloadFile(downloadUrl, destination);
-    return handleDownloadedFile(destination, finalDestination, tag);
+    const handled = await handleDownloadedFile(
+      destination,
+      finalDestination,
+      tag
+    );
+
+    if (handled) {
+      const versionData: HactoolVersion = { tag, downloaded: new Date() };
+      await outputFormattedJSON(
+        join(dirname(finalDestination), HACTOOL_VERSION),
+        versionData
+      );
+    }
+
+    return handled;
   } catch (error) {
     log.error("Failed to download latest hactool");
     log.error(error);

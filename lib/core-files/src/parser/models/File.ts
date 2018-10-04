@@ -1,5 +1,6 @@
 import {
   ContentType,
+  FileTGDBData,
   FileType,
   GameUS,
   IFile,
@@ -9,7 +10,6 @@ import {
 } from "@nxbm/types";
 import { fileSize, hexToGbStr } from "@nxbm/utils";
 import { basename, extname } from "path";
-
 
 export class File implements IFile {
   public type: FileType;
@@ -36,12 +36,7 @@ export class File implements IFile {
   public sceneID = 0;
   public contentType = ContentType.NONE;
   public version = "";
-  public description = "";
-  public rating = "";
-  public youtube = "";
   public publisher = "";
-  public releaseDate = "";
-  public numberOfPlayers = "";
   public categories = [];
   public ESRB = 0;
   public media = {
@@ -49,6 +44,7 @@ export class File implements IFile {
     artwork: {}
   };
   public eshop?: GameUS = undefined;
+  public extras?: FileTGDBData = undefined;
 
   public titleID: string = "";
   public masterKeyRevision: string = "";
@@ -131,11 +127,13 @@ export class File implements IFile {
   }
 
   public assignTGDB(data: TGDBGame) {
-    this.numberOfPlayers = data.players.toString();
-    this.releaseDate = data.release_date;
-    this.description = data.overview;
-    this.rating = data.rating;
-    this.youtube = data.youtube;
+    this.extras = {
+      numberOfPlayers: data.players.toString(),
+      releaseDate: data.release_date,
+      description: data.overview,
+      rating: data.rating,
+      youtube: data.youtube
+    };
   }
 
   public id = () =>
