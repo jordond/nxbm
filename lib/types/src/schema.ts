@@ -77,7 +77,15 @@ export const schema: Schema<any> = {
   backups: {
     folders: {
       doc: "Folders to watch for XCI and NSP files",
-      format: Array,
+      format: (val: any[]) => {
+        val.forEach(({ id, path }) => {
+          if (!id || !path) {
+            throw new Error(
+              "Scanner folder is not correct, must have an ID and path property"
+            );
+          }
+        });
+      },
       default: []
     },
     watch: {

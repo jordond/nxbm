@@ -1,5 +1,5 @@
 import { createLogger, getConfig } from "@nxbm/core";
-import { IBackupConfig } from "@nxbm/types";
+import { IBackupConfig, ScannerFolder } from "@nxbm/types";
 import { filter } from "bluebird";
 import * as chokidar from "chokidar";
 import { pathExists } from "fs-extra";
@@ -20,6 +20,8 @@ export async function startScanner({
   watch,
   recursive
 }: IBackupConfig) {
+  stopScanner();
+
   log.info("Starting scanner...");
 
   if (!folders.length) {
@@ -27,7 +29,10 @@ export async function startScanner({
     return;
   }
 
-  const resolved = folders.map(path => resolve(path));
+  const resolved = folders.map(folder => ({
+    ...folder,
+    path: resolve(folder.path)
+  }));
   const existing = await filter(resolved, verifyFolderExists);
 
   if (!existing.length) {
@@ -69,14 +74,17 @@ export async function stopScanner() {
 }
 
 function scan(
-  paths: string[],
+  paths: ScannerFolder[],
   persistent: boolean = true,
   recursive: boolean = true
 ): Promise<void> {
   return new Promise((done, reject) => {
-    const watchPaths = paths.map(x =>
-      join(x, `${recursive ? "**/" : ""}*.(xci|nsp)`)
-    );
+    const watchPaths = paths.map(x => {
+      const isRecursive =
+        (x.recursive === undefined || x.recursive) && recursive;
+      return join(x.path, `${isRecursive ? "**/" : ""}*.(xci|nsp)`);
+    });
+
     watchPaths.forEach(x =>
       log.verbose(`${persistent ? "Watching" : "Scanning"}  -> ${x}`)
     );
@@ -98,7 +106,7 @@ function scan(
   });
 }
 
-async function verifyFolderExists(path: string) {
+async function verifyFolderExists({ path }: ScannerFolder) {
   const exists = await pathExists(path);
   log.debug(`Folder: ${path} -> ${exists ? "exists" : "N/A"}`);
   if (!exists) {
