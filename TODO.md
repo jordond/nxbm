@@ -1,3 +1,5 @@
+# TODO
+
 ## Architecture
 
 - Use Bonjour to broadcast server ip address
@@ -29,28 +31,6 @@
 
 - Have a "first run", that generates a config file the user can use to edit
 
-## Config structure
-
-- Watch folders:
-  - Current:
-    ```typescript
-    interface Backups {
-      folders: string[]
-      ...
-    }
-    ```
-  - Proposed:
-    ```typescript
-    interface Backups {
-      folders: ScannerFolder[];
-    }
-    interface ScannerFolder {
-      id: string /* Generate UUID */;
-      path: string;
-      recursive: boolean;
-    }
-    ```
-
 ## API
 
 ### Files (mvp)
@@ -74,20 +54,6 @@
     destination: ScannerFolder;
   }
   ```
-
-### Paths (mvp)
-
-- `GET : /paths`
-  - List all of the paths being scanned
-- `POST : /paths`
-  - payload: `ScannerFolder`
-  - Add a path to the scanner
-- `PUT : /paths/{id}`
-  - Change the folder path
-  - Requires restarting scanner
-- `DELETE : /paths/{id}`
-  - Stop scanning this path
-  - requires restarting scanner
 
 ## Niceties
 

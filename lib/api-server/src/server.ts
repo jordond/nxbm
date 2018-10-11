@@ -3,7 +3,7 @@ import { IConfig } from "@nxbm/types";
 import { Server } from "hapi";
 import goodWinston from "hapi-good-winston";
 
-import routes from "./api";
+import routes from "./";
 
 const log = createLogger("nxbm:API");
 
