@@ -39,9 +39,9 @@
     "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public"
   },
   "devDependencies": {
-    "commitizen": "^3.0.2",
     "@commitlint/cli": "^7.2.0",
     "@commitlint/config-conventional": "^7.1.2",
+    "commitizen": "^3.0.2",
     "concurrently": "^4.0.1",
     "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",

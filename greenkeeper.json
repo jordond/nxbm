@@ -1,6 +1,6 @@
 {
   "groups": {
-    "default": {
+    "lib": {
       "packages": [
         "lib/api-backend/package.json",
         "lib/api-client/package.json",
@@ -12,11 +12,18 @@
         "lib/tslint-rules/package.json",
         "lib/types/package.json",
         "lib/typings/package.json",
-        "lib/utils/package.json",
-        "package.json",
+        "lib/utils/package.json"
+      ]
+    },
+    "modules": {
+      "packages": [
         "packages/standalone/package.json",
         "packages/web/package.json"
       ]
+    },
+    "parent": {
+      "packages": ["package.json"]
     }
-  }
+  },
+  "ignore": ["winston"]
 }
