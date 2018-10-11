@@ -9,7 +9,7 @@ interface IConfigRoutes {
 
 const ROOT = "/config";
 
-export const routes: IConfigRoutes = {
+const routes: IConfigRoutes = {
   getAppConfig: {
     method: GET,
     path: "/config",

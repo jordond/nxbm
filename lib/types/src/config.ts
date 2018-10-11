@@ -16,7 +16,7 @@ export interface IPaths {
 }
 
 export interface IBackupConfig {
-  folders: string[];
+  folders: ScannerFolder[];
   watch: boolean;
   recursive: boolean;
   nswdb: INSWDBOptions;
@@ -27,6 +27,12 @@ export interface IBackupConfig {
   removeBlacklisted: boolean;
   getDetailedInfo: boolean;
   downloadGameMedia: boolean;
+}
+
+export interface ScannerFolder {
+  id: string;
+  path: string;
+  recursive?: boolean;
 }
 
 export interface INSWDBOptions {

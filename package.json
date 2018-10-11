@@ -6,7 +6,11 @@
   "engines": {
     "node": ">=8.11.1"
   },
-  "author": "Jordon de Hoog",
+  "author": "Jordon de Hoog <jordon.dehoog@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jordond/nxbm"
+  },
   "license": "MIT",
   "workspaces": [
     "lib/*",
@@ -24,10 +28,10 @@
     "dep": "./tools/dep.sh",
     "do": "./tools/run.sh",
     "copy:web": "cpx 'build/dist/web/**/*'",
-    "build": "npm run build:lib && npm run build:dist && npm run build:bin",
+    "build": "npm run build:lib && npm run build:web && npm run build:api",
     "build:lib": "tsc --build lib/",
-    "build:dist": "lerna run build --stream --scope @nxbm/web",
-    "build:bin": "lerna run build --stream --scope @nxbm/standalone",
+    "build:web": "lerna run build --stream --scope @nxbm/web",
+    "build:api": "lerna run build --stream --scope @nxbm/standalone",
     "dev:lib": "tsc --build --watch lib/",
     "dev:web": "lerna run serve --stream",
     "dev:api": "lerna run dev --stream --scope @nxbm/standalone",
@@ -36,6 +40,8 @@
   },
   "devDependencies": {
     "commitizen": "^3.0.2",
+    "@commitlint/cli": "^7.2.0",
+    "@commitlint/config-conventional": "^7.1.2",
     "concurrently": "^4.0.1",
     "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",
@@ -65,5 +71,10 @@
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
     }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }
