@@ -1,13 +1,12 @@
-import { createLogger, getMediaDir } from "@nxbm/core";
+import { createLogger, getConfig, getMediaDir } from "@nxbm/core";
 import { IFile } from "@nxbm/types";
 import { basename } from "path";
 
 import { getKeys } from "./keys";
 import { isNSP, parseNSP } from "./nsp";
 import { File } from "./parser/models/File";
+import { canUseXCI } from "./util";
 import { isXCI, parseXCI } from "./xci";
-
-// TODO - If parsed file is NSP - DLC, get extra data from DB's
 
 export async function parseFile(filePath: string): Promise<IFile | undefined> {
   const log = createLogger(`parse:${basename(filePath)}`);
@@ -65,10 +64,18 @@ export async function parseNSPFile(
 
 async function determineParserFunction(filePath: string) {
   const log = createLogger(`parse:${basename(filePath)}`);
+  const { backups } = getConfig();
   try {
     log.debug("Checking if file is an xci or nsp");
-    if (await isXCI(filePath)) {
+    if (backups.xci && (await isXCI(filePath))) {
       log.debug("Dectected an XCI!");
+      const canParse = await canUseXCI();
+      if (!canParse) {
+        log.error(
+          "Detected an XCI file, but unable to parse it due to missing python, or a key file"
+        );
+        return;
+      }
       return parseXCIFile;
     }
 
@@ -79,6 +86,9 @@ async function determineParserFunction(filePath: string) {
 
     log.warn("Is an unsupported file type!");
     log.warn("NSP and XCI files are supported!");
+    if (backups.xci) {
+      log.warn("XCI parsing is currently disabled in the config");
+    }
     log.warn(
       "Either your file is corrupted, or is an edge-case, enable more verbose logging '--level=debug'"
     );

@@ -1,6 +1,7 @@
-import { IConfig, LogLevel } from "@nxbm/types";
 import { resolve } from "path";
 import { Logger, LoggerInstance, LoggerOptions, transports } from "winston";
+
+import { IConfig, LogLevel } from "@nxbm/types";
 
 import { getConfig, getDataDir } from "./config";
 
@@ -39,7 +40,7 @@ export function createLogger(
       new File({
         ...common,
         filename: resolve(getDataDir(), FILENAME),
-        maxSize: 50 * 1024,
+        maxSize: 10 * 1024,
         maxFiles: 5,
         json: true
       })

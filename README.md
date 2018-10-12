@@ -49,19 +49,14 @@
 **nxbm** will be available in a couple different ways:
 
 1. standalone server
-
-- Download, and use Node to run **nxbm**
-- To be run locally on your computer, or a NAS server
-
-2. Docker container
-
-- an All-in-one solution for running **nxbm**
-- All of the runtimes and build tools required
-
-3. Desktop client
-
-- Using [electron](https://electronjs.org/), you can run **nxbm** as a desktop application
-- Has the ability to connect to a **nxbm** server instance
+   - Download, and use Node to run **nxbm**
+   - To be run locally on your computer, or a NAS server
+1. Docker container
+   - an All-in-one solution for running **nxbm**
+   - All of the runtimes and build tools required
+1. Desktop client
+   - Using [electron](https://electronjs.org/), you can run **nxbm** as a desktop application
+   - Has the ability to connect to a **nxbm** server instance
 
 ## Requirements
 
@@ -103,13 +98,13 @@ Once you have the project open, navigate to `localhost:9999` to see the Web UI.
 
 ## Configuration
 
-**WIP**
+### WIP
 
 After the first run find `./data/config.json`, and edit what you need. Or override the config by passing the flags to the CLI.
 
 ex:
 
-```
+```bash
 node ./nxbm.js --port 80 --level verbose --downloadKeys
 ```
 
@@ -119,17 +114,17 @@ All contributions are welcome! This repository uses [commitizen](https://github.
 
 This repo is setup as a monorepo using [TypeScript Project References](https://www.typescriptlang.org/docs/handbook/project-references.html). The core functionality of **nxbm** is located in the `lib/` folder, while the consumers of that functionality are located in the `packages/` folder.
 
-### Shared steps:
+### Shared steps
 
 1. Fork the repo, then clone it
 1. Install dependencies (`yarn` or `npm install`)
 
-### Working on the `lib` files:
+### Working on the `lib` files
 
 1. Run `yarn dev:lib`
 1. Make changes and TypeScript will automatically compile them.
 
-### Working on the backend api:
+### Working on the backend api
 
 1. Follow the steps for working on the `lib` files
 1. Open a seperate terminal session
@@ -158,7 +153,7 @@ This repo is setup as a monorepo using [TypeScript Project References](https://w
 
 ## License
 
-```
+```text
 MIT License
 
 Copyright (c) 2018 Jordon de Hoog

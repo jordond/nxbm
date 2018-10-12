@@ -1,4 +1,5 @@
 import { Schema } from "convict";
+import isUrl from "is-url";
 import { resolve } from "path";
 
 import { LogLevel } from "./logger";
@@ -9,6 +10,8 @@ export const ENV_PROD = "production";
 export const ENV_DEV = "development";
 export const ENV_TEST = "test";
 export const ENVIRONMENTS = [ENV_PROD, ENV_DEV, ENV_TEST];
+
+export const MAX_CONCURRENCY = 25;
 
 export const schema: Schema<any> = {
   env: {
@@ -95,10 +98,16 @@ export const schema: Schema<any> = {
       arg: "watch"
     },
     recursive: {
-      doc: "Scan folders recursively",
+      doc: "Enable/disable recursive scanning for ALL folders",
       format: Boolean,
       default: true,
       arg: "recursive"
+    },
+    concurrency: {
+      doc: "Max number of files to process at a time",
+      format: "nat",
+      default: 5,
+      arg: "concurrency"
     },
     nswdb: {
       force: {
@@ -142,11 +151,22 @@ export const schema: Schema<any> = {
       default: true,
       arg: "autoHactool"
     },
-    downloadKeys: {
-      doc: "Automatically download keys file if it cannot be found",
+    downloadKeysUrl: {
+      doc: "Automatically download the Switch key files from this URL",
+      format: (val: string) => {
+        if (val && !isUrl(val)) {
+          throw new Error("Needs to be a URL!");
+        }
+      },
+      default: "",
+      arg: "downloadKeysUrl"
+    },
+    xci: {
+      doc:
+        "Parsing XCI files requires python2 and a Switch keys file, use this to disable it if you don't want to use XCI files",
       format: Boolean,
-      default: false,
-      arg: "downloadKeys"
+      default: true,
+      arg: "xci"
     },
     removeBlacklisted: {
       doc: "Remove blacklisted files found in the db",

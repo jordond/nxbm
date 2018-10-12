@@ -1,8 +1,9 @@
-import { createLogger } from "@nxbm/core";
-import { Game, IFile, IGameDB } from "@nxbm/types";
 import { map as PromiseMap } from "bluebird";
 import { pathExists } from "fs-extra";
 import { basename } from "path";
+
+import { createLogger } from "@nxbm/core";
+import { Game, IFile, IGameDB } from "@nxbm/types";
 
 import { isBlacklisted } from "./blacklist";
 import { getGameDBPath, loadGameDB, saveGameDB } from "./db";
@@ -22,7 +23,7 @@ export class GameDB implements IGameDB {
       new Map<string, Game>()
     );
 
-  public toList = () => Array.from(this.games.values());
+  public toList = (): Game[] => Array.from(this.games.values());
 
   public uniqueTitleIds = (): Game[] =>
     Array.from(

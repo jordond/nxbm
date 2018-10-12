@@ -1,7 +1,8 @@
-import { createLogger } from "@nxbm/core";
 import { map } from "bluebird";
 import { outputFile, pathExists } from "fs-extra";
 import { resolve } from "path";
+
+import { createLogger } from "@nxbm/core";
 
 import aes128 from "./aes128";
 import xtsdecrypt from "./xtsdecrypt";

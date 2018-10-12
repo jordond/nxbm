@@ -1,10 +1,9 @@
-import { createLogger, getConfig } from "@nxbm/core";
-import { format, outputFormattedJSON, underscoreToCamel } from "@nxbm/utils";
 import axios from "axios";
 import { outputFile, pathExists, readFile } from "fs-extra";
 import { resolve } from "path";
 
-const KEY_URL = "https://pastebin.com/raw/ekSH9R8t";
+import { createLogger, getConfig } from "@nxbm/core";
+import { format, outputFormattedJSON, underscoreToCamel } from "@nxbm/utils";
 
 export interface Keys {
   headerKey: string;
@@ -53,14 +52,14 @@ function parseKeys(contentString: string): Keys {
   return parsed;
 }
 
-async function downloadKeys(destination: string) {
+async function downloadKeys(destination: string, downloadUrl: string = "") {
   const log = createLogger("Keys");
   log.info("Downloading keys file");
   log.verbose(`Saving to -> ${destination}`);
 
   try {
-    const { data } = await axios.get(KEY_URL);
-    log.verbose(`Successfully downloaded from ${KEY_URL}`);
+    const { data } = await axios.get(downloadUrl);
+    log.verbose(`Successfully downloaded from ${downloadUrl}`);
 
     log.debug(`Writing to disk\n${data}`);
     await outputFile(destination, data);
@@ -74,9 +73,9 @@ async function downloadKeys(destination: string) {
   return false;
 }
 
-async function keysExist(path: string, download: boolean) {
+export async function keysExist(path: string, downloadUrl: string = "") {
   if (!(await pathExists(path))) {
-    if (download) {
+    if (downloadUrl) {
       return downloadKeys(path);
     }
     return false;
@@ -88,7 +87,7 @@ let keyCache: Keys;
 
 export async function getKeys(
   keysPath: string = getConfig().paths!.keys,
-  shouldDownload: boolean = false
+  downloadKeysUrl: string = ""
 ): Promise<Keys | undefined> {
   if (keyCache) {
     return keyCache;
@@ -96,7 +95,7 @@ export async function getKeys(
 
   const log = createLogger("Keys");
 
-  if (!(await keysExist(keysPath, shouldDownload))) {
+  if (!(await keysExist(keysPath, downloadKeysUrl))) {
     return;
   }
 

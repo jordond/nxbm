@@ -1,11 +1,12 @@
-import { createLogger, getConfig } from "@nxbm/core";
-import { IBackupConfig, ScannerFolder } from "@nxbm/types";
 import { filter } from "bluebird";
 import * as chokidar from "chokidar";
 import { pathExists } from "fs-extra";
 import { join, resolve } from "path";
 
-import { addFile, markFileAsMissing } from "./games";
+import { createLogger, getConfig } from "@nxbm/core";
+import { IBackupConfig, ScannerFolder } from "@nxbm/types";
+
+import { queueAddFile, queueMarkMissingFile } from "./games";
 
 const log = createLogger("Scanner");
 
@@ -18,7 +19,8 @@ export function scannerIsActive() {
 export async function startScanner({
   folders,
   watch,
-  recursive
+  recursive,
+  xci
 }: IBackupConfig) {
   stopScanner();
 
@@ -43,7 +45,7 @@ export async function startScanner({
   log.info(`${watch ? "Watching" : "Scanning"} ${existing.length} folders`);
 
   try {
-    await scan(existing, watch, recursive);
+    await scan(existing, xci, watch, recursive);
     log.info(`${watch ? "Scanner is active" : "Scanning completed"}`);
   } catch (error) {
     log.error("Error starting scanner");
@@ -75,6 +77,7 @@ export async function stopScanner() {
 
 function scan(
   paths: ScannerFolder[],
+  watchXci: boolean,
   persistent: boolean = true,
   recursive: boolean = true
 ): Promise<void> {
@@ -82,7 +85,10 @@ function scan(
     const watchPaths = paths.map(x => {
       const isRecursive =
         (x.recursive === undefined || x.recursive) && recursive;
-      return join(x.path, `${isRecursive ? "**/" : ""}*.(xci|nsp)`);
+      return join(
+        x.path,
+        `${isRecursive ? "**/" : ""}*.(${watchXci ? "xci|" : ""}nsp)`
+      );
     });
 
     watchPaths.forEach(x =>
@@ -91,8 +97,8 @@ function scan(
 
     const instance = chokidar
       .watch(watchPaths, { persistent })
-      .on("add", (file: string) => addFile(file))
-      .on("unlink", (file: string) => markFileAsMissing(file))
+      .on("add", (file: string) => queueAddFile(file))
+      .on("unlink", (file: string) => queueMarkMissingFile(file))
       .on("ready", () => done())
       .on("error", error => {
         log.error("Scanner encountered an error");

@@ -59,7 +59,6 @@ export async function addFile(filePath: string) {
     return;
   }
 
-  // TODO - Check to see if the titleIDBaseGame exists in the DB, and grab their info
   const existingParent = db.findByID(parsed.titleIDBaseGame)[0];
   if (existingParent) {
     log.info(

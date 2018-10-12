@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "better-queue": "^3.8.10",
+    "better-queue-memory": "^1.0.3",
     "bluebird": "^3.5.2",
     "chokidar": "^2.0.4",
     "compare-semver": "^1.1.0",
@@ -23,6 +25,7 @@
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@nxbm/utils": "^0.0.0",
+    "@types/better-queue": "^3.8.0",
     "@types/bluebird": "^3.5.24",
     "@types/chokidar": "^1.7.5",
     "@types/fs-extra": "^5.0.4",

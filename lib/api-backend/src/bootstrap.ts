@@ -1,3 +1,6 @@
+import { mkdirp } from "fs-extra";
+import { join, resolve } from "path";
+
 import {
   configPath,
   createLogger,
@@ -13,13 +16,17 @@ import {
   getMissingDetailedInfo,
   getNSWDB,
   getTGDB,
+  initQueue,
   startScanner
 } from "@nxbm/core-db";
-import { checkPython2, ensureHactool, getKeys } from "@nxbm/core-files";
+import {
+  checkPython2,
+  ensureHactool,
+  getKeys,
+  writeScriptsIfNotExists
+} from "@nxbm/core-files";
 import { IBackupConfig, IConfig } from "@nxbm/types";
 import { format } from "@nxbm/utils";
-import { mkdirp } from "fs-extra";
-import { join, resolve } from "path";
 
 export async function bootstrap(config: IConfig) {
   // Core
@@ -36,8 +43,11 @@ export async function bootstrap(config: IConfig) {
 async function initSecondary(config: IConfig) {
   await saveConfig();
 
-  await initKeys(config);
-  await initPython();
+  if (config.backups.xci) {
+    await initKeys(config);
+    await initPython();
+  }
+
   await initHactool(config);
   await initFileScanner(config);
 
@@ -77,21 +87,25 @@ async function initConfig(config: IConfig) {
   log.verbose(`Using config:\n${format(config)}`);
 }
 
-async function initKeys({ paths, backups: { downloadKeys } }: IConfig) {
+async function initKeys({ paths, backups: { downloadKeysUrl } }: IConfig) {
   const log = genLogger("Keys");
   try {
     log.info("Looking for a valid keys file!");
-    const keys = await getKeys(paths!.keys, downloadKeys);
+    const keys = await getKeys(paths!.keys, downloadKeysUrl);
     if (keys) {
       log.info("Successfully found a valid key file");
     } else {
-      log.warn(`Key file was not found -> ${resolve(paths!.keys)}`);
-      log.warn("NXBM cannot function correctly without the keys file");
+      log.error(`Key file was not found -> ${resolve(paths!.keys)}`);
+      log.error("Using XCI files will be DISABLED without a valid keys file");
       log.warn("Either add `keys` path to the config (--keys)");
       log.warn(
-        "Or enable auto-download of keys in config (--downloadKeys true)"
+        "Or pass `--downloadKeysUrl` with a URL to download the keys file"
       );
-      throw new Error("Key file not found");
+      log.warn("Or dump the keys from your OWN console");
+      log.warn("Use something like https://github.com/shchmue/kezplez-nx");
+      log.warn(
+        "If you have no interest in using XCI, pass `--xci false` or edit the config.json"
+      );
     }
   } catch (error) {
     log.error("Program cannot proceed without a proper keys file");
@@ -112,6 +126,9 @@ async function initPython() {
     log.warn("Ensure you install python2 and NOT python3");
     log.warn("python2 is required to decrypt the headers in the XCI file");
     log.warn("Adding NSP files will still work");
+    log.warn(
+      "If you have no interest in using XCI, pass `--xci false` or edit the config.json"
+    );
   }
 }
 
@@ -139,7 +156,8 @@ async function initHactool({
       } else {
         log.error("Was unable to find, download, or compile hactool!");
       }
-      log.warn("Scanning files for information will not work!");
+      log.error("Scanning files for information will not work!");
+      throw new Error("Unable to use Hactool");
     }
   } catch (error) {
     log.error("Something bad happened when trying to get hactool");
@@ -151,6 +169,9 @@ async function initHactool({
 async function initFileScanner({ backups }: IConfig) {
   const { nswdb } = backups;
 
+  // Ensure the python scripts have been written to the disk
+  await writeScriptsIfNotExists();
+
   await getNSWDB(getDataDir(), nswdb);
   await getBlacklist();
 
@@ -158,6 +179,7 @@ async function initFileScanner({ backups }: IConfig) {
   await db.check(backups.removeBlacklisted);
 
   await initDatabases(backups);
+  await initQueue(backups);
   await startScanner(backups);
 }
 

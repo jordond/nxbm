@@ -60,7 +60,7 @@ if (isDev) {
     new NodemonPlugin({
       args: [
         "--root=../../tmp",
-        `--level=${argv.level || "debug"}`,
+        `--level=${argv.log || "debug"}`,
         "--env=development"
       ]
     })

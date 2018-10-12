@@ -19,11 +19,13 @@ export interface IBackupConfig {
   folders: ScannerFolder[];
   watch: boolean;
   recursive: boolean;
+  concurrent: number;
   nswdb: INSWDBOptions;
   tgdb: ITGDBOptions;
   eshop: EShopDBOptions;
   autoInstallHactool: boolean;
-  downloadKeys: boolean;
+  downloadKeysUrl: string;
+  xci: boolean;
   removeBlacklisted: boolean;
   getDetailedInfo: boolean;
   downloadGameMedia: boolean;

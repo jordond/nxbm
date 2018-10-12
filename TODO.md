@@ -5,14 +5,6 @@
 - Use Bonjour to broadcast server ip address
   - In the electron version, allow it to connect to a dedicated server (enter manually, or using bonjour)
     - or run it's own instance
-- Queue
-  - Add a queue for adding xci/nsp files. If the server starts up and tries to process 200 files at a time, but be crazy
-  - A\*) Maybe each add event, adds to the queue
-    - First add, starts a timeout timer (5 seconds?)
-  - When the timer runs out, or the max per run is hit (10?)
-  - Start processing files
-    - While queue is running, if a new file is added, add it to the backlog
-    - when queue is finished, go back to step A\*
 
 ### Final Outputs
 
@@ -46,8 +38,10 @@
 ### Files (future feat)
 
 - `POST : /games`
+
   - Upload a game from local to server
   - Once server retrieves it, move it to destination folder
+
   ```typescript
   interface AddGamePayload {
     path: string;
