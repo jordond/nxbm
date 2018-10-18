@@ -1,10 +1,15 @@
+import { emptyDir } from "fs-extra";
+
 import { initBackend } from "@nxbm/api-backend";
 import { createServer, startServer } from "@nxbm/api-server";
 import { createLogger, getConfig, isProduction } from "@nxbm/core";
-import { tempDir } from "@nxbm/utils";
-import { emptyDir } from "fs-extra";
+import { broadcastService, tempDir } from "@nxbm/utils";
 
-import { setupWebserver } from "./webserver";
+import {
+  registerServerPlugins,
+  setupMediaServer,
+  setupWebserver
+} from "./webserver";
 
 async function fatalExit(error: any) {
   const log = createLogger();
@@ -28,11 +33,15 @@ export async function start() {
 
     const server = await createServer(config);
 
+    await registerServerPlugins(server);
+    await setupMediaServer(server);
     if (isProduction()) {
       await setupWebserver(server);
     } else {
       log.info("Not starting webserver in dev mode");
     }
+
+    broadcastService(config);
 
     startServer(server);
   } catch (error) {

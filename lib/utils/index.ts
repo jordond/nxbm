@@ -9,3 +9,4 @@ export * from "./src/parser";
 export * from "./src/string";
 export * from "./src/xmlToJson";
 export * from "./src/hasbin";
+export * from "./src/bonjour";

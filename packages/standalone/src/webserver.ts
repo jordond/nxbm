@@ -1,9 +1,10 @@
-import { createLogger } from "@nxbm/core";
-import { GET } from "@nxbm/types";
 import { pathExists } from "fs-extra";
 import { Server } from "hapi";
 import * as inert from "inert";
 import { join, resolve } from "path";
+
+import { createLogger, getMediaDir } from "@nxbm/core";
+import { GET } from "@nxbm/types";
 
 function checkWebFilesExist(path: string) {
   const log = createLogger("nxbm:server");
@@ -16,11 +17,25 @@ function checkWebFilesExist(path: string) {
   }
 }
 
-export async function setupWebserver(server: Server) {
+export async function registerServerPlugins(server: Server) {
   await server.register(
     inert as any /* TODO - Temp fix until plugin issue resolved */
   );
+}
 
+export async function setupMediaServer(server: Server) {
+  const mediaDir = getMediaDir();
+
+  server.route({
+    method: GET,
+    path: "/media/{file*}",
+    handler: {
+      directory: { path: mediaDir, listing: true }
+    }
+  });
+}
+
+export async function setupWebserver(server: Server) {
   const webDir = resolve(__dirname, "public");
   const indexFile = join(webDir, "index.html");
 

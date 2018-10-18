@@ -32,11 +32,13 @@
     "build:lib": "tsc --build lib/",
     "build:web": "lerna run build --stream --scope @nxbm/web",
     "build:api": "lerna run build --stream --scope @nxbm/standalone",
+    "build:docker": "docker build -t jordond/nxbm packages/docker",
     "dev:lib": "tsc --build --watch lib/",
     "dev:web": "lerna run serve --stream",
     "dev:api": "lerna run dev --stream --scope @nxbm/standalone",
     "dev:bin": "concurrently --kill-others 'npm run dev:web' 'npm run dev:api'",
-    "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public"
+    "package:standalone": "npm run build && npm run copy:web build/bin/standalone/public",
+    "package:docker": "cpx 'packages/docker/**/*' build/bin/docker"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.2.0",
