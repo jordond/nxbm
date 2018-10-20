@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@babel/polyfill": "^7.0.0-beta.49",
-    "@mdi/font": "^2.7.94",
+    "@mdi/font": "^3.0.39",
     "@nxbm/api-client": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
