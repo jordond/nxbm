@@ -22,7 +22,7 @@ export async function parseFile(filePath: string): Promise<IFile | undefined> {
   } catch (error) {
     log.error("Failed to parse file!");
     log.error(`-> ${filePath}`);
-    log.error(error);
+    log.error(error.message);
   }
 }
 

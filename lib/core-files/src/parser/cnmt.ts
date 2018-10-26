@@ -9,10 +9,7 @@ import { map as mapPromise } from "bluebird";
 import { emptyDir, open, remove } from "fs-extra";
 import { join } from "path";
 
-import {
-  getUniqueLanguages,
-  LanguageIconData
-} from "./languages";
+import { getUniqueLanguages, LanguageIconData } from "./languages";
 import { CNMTEntry } from "./models/CNMTEntry";
 import { CNMTHeader } from "./models/CNMTHeader";
 import { processNCA, processNCAInfo } from "./nca";
@@ -69,14 +66,21 @@ async function gatherExtraInfoImpl(
     return {};
   }
 
-  const info: Info = await mapPromise(details, detail => {
+  const info: Info = await mapPromise(details, async detail => {
     const section0Dir = genSection0Dir(metaDir, detail.name);
-    return unpackCNMTSection0(fd, detail, section0Dir);
+    const unpackedDir = await unpackCNMTSection0(fd, detail, section0Dir);
+    return unpackedDir;
   })
     .filter(section0Dir => section0Dir !== "")
-    .map(section0Dir =>
-      extractInfoFromCNMT(fd, secureDetails, section0Dir, metaDir)
-    )
+    .map(async section0Dir => {
+      const result = await extractInfoFromCNMT(
+        fd,
+        secureDetails,
+        section0Dir,
+        metaDir
+      );
+      return result;
+    })
     .reduce(
       (acc: any, curr: Info) => {
         const prev = acc as Info;

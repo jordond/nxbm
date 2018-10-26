@@ -1,10 +1,12 @@
-import { GameRoutes } from "@nxbm/api-endpoints";
-import { getGameDB, removeFile } from "@nxbm/core-db";
-import { Game } from "@nxbm/types";
-import { getQuery, hasQuery } from "@nxbm/utils";
-import { internal, notFound } from "boom";
+import { badRequest, internal, notFound } from "boom";
 import { max } from "compare-semver";
 import { Lifecycle, ServerRoute } from "hapi";
+
+import { GameRoutes } from "@nxbm/api-endpoints";
+import { getFolders } from "@nxbm/core";
+import { getGameDB, removeFile } from "@nxbm/core-db";
+import { Game, ScannerFolder } from "@nxbm/types";
+import { getQuery, hasQuery } from "@nxbm/utils";
 
 const { Endpoints, QueryParams } = GameRoutes;
 
@@ -49,6 +51,26 @@ const getGameByTitleID: Lifecycle.Method = async (request, r) => {
   return found;
 };
 
+const postUploadGame: Lifecycle.Method = async (request, r) => {
+  const destinationFolder: string | undefined = ((request.payload as any) || {})
+    .destinationFolder;
+  if (!destinationFolder) {
+    throw badRequest("No destination folder was supplied");
+  }
+
+  const destFolder: ScannerFolder | undefined = getFolders().find(
+    x => x.id === destinationFolder || x.path === destinationFolder
+  );
+
+  if (destFolder) {
+    throw badRequest(`Could not find a folder matching ${destinationFolder}`);
+  }
+
+  // TODO Upload the file
+  console.log((request.payload as any).paths[0].hapi);
+  return true;
+};
+
 const deleteGameByTitleID: Lifecycle.Method = async (request, r) => {
   const deleteFromDisk = hasQuery(request, QueryParams.hardDelete);
 
@@ -67,6 +89,7 @@ const routes = { ...Endpoints };
 routes.getAllGames.handler = getAllGames;
 routes.getAllGamesByTitleID.handler = getAllGamesByTitleID;
 routes.getGameByTitleID.handler = getGameByTitleID;
+routes.postUploadGame.handler = postUploadGame;
 routes.deleteGameByTitleID.handler = deleteGameByTitleID;
 
 export default Object.values(routes) as ServerRoute[];

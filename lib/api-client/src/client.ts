@@ -7,7 +7,7 @@ interface ApiRequest extends AxiosRequestConfig {
 }
 
 function get<T>(url: string, options: ApiRequest = {}): AxiosPromise<T> {
-  return axios.get(createURL(url), options);
+  return axios.get(createURL(url, options), options);
 }
 
 function post<T, R>(
@@ -15,7 +15,7 @@ function post<T, R>(
   body: T,
   options: ApiRequest = {}
 ): AxiosPromise<R> {
-  return axios.post(createURL(url), body, options);
+  return axios.post(createURL(url, options), body, options);
 }
 
 function put<T, R>(
@@ -23,11 +23,11 @@ function put<T, R>(
   body: T,
   options: ApiRequest = {}
 ): AxiosPromise<R> {
-  return axios.put(createURL(url), body, options);
+  return axios.put(createURL(url, options), body, options);
 }
 
 function doDelete<T>(url: string, options: ApiRequest = {}): AxiosPromise<T> {
-  return axios.delete(createURL(url), options);
+  return axios.delete(createURL(url, options), options);
 }
 
 function createURL(url: string, { query }: ApiRequest = {}): string {

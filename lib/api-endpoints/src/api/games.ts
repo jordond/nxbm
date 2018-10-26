@@ -1,4 +1,11 @@
-import { DELETE, Game, GET } from "@nxbm/types";
+import {
+  DELETE,
+  Game,
+  GET,
+  OnUploadProgress,
+  POST,
+  UploadGamePayload
+} from "@nxbm/types";
 
 import { Endpoint, Route } from "../route";
 
@@ -11,6 +18,7 @@ interface IGameRoutes {
   getAllGames: Endpoint;
   getAllGamesByTitleID: Endpoint;
   getGameByTitleID: Endpoint;
+  postUploadGame: Endpoint;
   deleteGameByTitleID: Endpoint;
 }
 
@@ -34,6 +42,18 @@ const routes: IGameRoutes = {
     path: "/games/{titleid}/single",
     url: (titleid: string) => `${addTitleID(titleid)}/single`
   },
+  postUploadGame: {
+    method: POST,
+    path: "/games",
+    url: () => "/games",
+    options: {
+      payload: {
+        output: "stream",
+        allow: "multipart/form-data",
+        parse: true
+      }
+    }
+  },
   deleteGameByTitleID: {
     method: DELETE,
     path: "/games/{titleid}",
@@ -51,6 +71,10 @@ export abstract class GameRoutes extends Route {
     titleid: number,
     revision?: string
   ) => Promise<Game>;
+  public abstract postUploadGame: (
+    payload: UploadGamePayload,
+    onProgress?: OnUploadProgress
+  ) => Promise<boolean>;
   public abstract deleteGameByTitleID: (
     titleid: number,
     revision?: string,

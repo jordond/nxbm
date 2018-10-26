@@ -57,9 +57,7 @@ export async function runHactool(
     return stdout;
   } catch (error) {
     log.error("Failed to run hactool command");
-    log.error(fullCommand);
-    log.error(error);
-    return "";
+    throw error;
   }
 }
 

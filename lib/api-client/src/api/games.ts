@@ -1,5 +1,5 @@
 import { GameRoutes } from "@nxbm/api-endpoints";
-import { Game } from "@nxbm/types";
+import { Game, OnUploadProgress, UploadGamePayload } from "@nxbm/types";
 
 import { client } from "../client";
 
@@ -20,6 +20,24 @@ class Games extends GameRoutes {
   public getGameByTitleID = (titleid: number, revision?: string) => {
     const url = this.joinUrl(endpoints.getGameByTitleID.url(titleid));
     return client.get<Game>(url, { query: { revision } });
+  };
+
+  public postUploadGame = (
+    payload: UploadGamePayload,
+    onUploadProgress?: OnUploadProgress
+  ) => {
+    const url = this.joinUrl(endpoints.postUploadGame.url());
+
+    const formData = new FormData();
+    formData.append("destinationFolder", payload.destinationFolder);
+    payload.paths.forEach(path => formData.append("paths", path));
+
+    return client.post<FormData, boolean>(url, formData, {
+      onUploadProgress,
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
   };
 
   public deleteGameByTitleID = (

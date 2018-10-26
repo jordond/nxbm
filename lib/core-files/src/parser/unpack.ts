@@ -21,7 +21,7 @@ export function genSection0Dir(metaDir: string, name: string) {
   return `${file}${APPEND_TO_FILE}`;
 }
 
-export async function unpackCNMTSection0(
+export function unpackCNMTSection0(
   fd: number,
   detail: DetailNumbers,
   section0Dir: string
@@ -29,7 +29,7 @@ export async function unpackCNMTSection0(
   return unpackFile(UnpackTypes.SECTION0, fd, detail, section0Dir);
 }
 
-export async function unpackCNMTRomFS(
+export function unpackCNMTRomFS(
   fd: number,
   detail: DetailNumbers,
   romFSDir: string
@@ -59,8 +59,6 @@ async function unpackFile(
     }
     return outDir;
   } catch (error) {
-    console.error(error);
+    throw error;
   }
-
-  return "";
 }

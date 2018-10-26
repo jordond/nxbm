@@ -48,6 +48,10 @@ export function getConfig() {
   return cachedConfig;
 }
 
+export function getFolders() {
+  return getConfig().backups.folders;
+}
+
 export function validateConfig(convictConfig: convict.Config<any> = config) {
   convictConfig.validate(/* { allowed: "strict" } */);
 }
