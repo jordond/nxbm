@@ -34,6 +34,7 @@
     "fs-extra": "^7.0.0",
     "hapi": "^17.6.0",
     "inert": "^5.1.0",
+    "node-loader": "^0.6.0",
     "nodemon": "^1.18.3",
     "nodemon-webpack-plugin": "^4.0.3",
     "read-pkg": "^4.0.1",

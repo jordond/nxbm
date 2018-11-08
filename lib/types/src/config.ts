@@ -12,6 +12,7 @@ export interface IConfig {
 export interface IPaths {
   root: string;
   data: string;
+  upload: string;
   keys: string;
 }
 

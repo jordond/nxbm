@@ -12,6 +12,7 @@
     "url-join": "^4.0.0"
   },
   "devDependencies": {
+    "@nxbm/core": "^0.0.0",
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@types/url-join": "^0.8.2",

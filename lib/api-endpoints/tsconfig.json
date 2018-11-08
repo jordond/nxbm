@@ -4,5 +4,5 @@
     "outDir": "../../build/lib/api-endpoints"
   },
   "include": ["index.ts", "src/**/*"],
-  "references": [{ "path": "../../lib/types" }]
+  "references": [{ "path": "../../lib/types" }, { "path": "../../lib/core" }]
 }

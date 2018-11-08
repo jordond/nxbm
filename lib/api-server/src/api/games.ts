@@ -1,11 +1,10 @@
-import { badRequest, internal, notFound } from "boom";
+import { internal, notFound } from "boom";
 import { max } from "compare-semver";
 import { Lifecycle, ServerRoute } from "hapi";
 
 import { GameRoutes } from "@nxbm/api-endpoints";
-import { getFolders } from "@nxbm/core";
 import { getGameDB, removeFile } from "@nxbm/core-db";
-import { Game, ScannerFolder } from "@nxbm/types";
+import { Game } from "@nxbm/types";
 import { getQuery, hasQuery } from "@nxbm/utils";
 
 const { Endpoints, QueryParams } = GameRoutes;
@@ -52,23 +51,32 @@ const getGameByTitleID: Lifecycle.Method = async (request, r) => {
 };
 
 const postUploadGame: Lifecycle.Method = async (request, r) => {
-  const destinationFolder: string | undefined = ((request.payload as any) || {})
-    .destinationFolder;
-  if (!destinationFolder) {
-    throw badRequest("No destination folder was supplied");
-  }
+  // const {
+  //   destinationFolder,
+  //   files
+  // } = request.payload as UploadGamePayloadStream;
 
-  const destFolder: ScannerFolder | undefined = getFolders().find(
-    x => x.id === destinationFolder || x.path === destinationFolder
-  );
+  return request.payload;
 
-  if (destFolder) {
-    throw badRequest(`Could not find a folder matching ${destinationFolder}`);
-  }
+  // if (!destinationFolder) {
+  //   throw badRequest("No destination folder was supplied");
+  // }
 
-  // TODO Upload the file
-  console.log((request.payload as any).paths[0].hapi);
-  return true;
+  // const destFolder: ScannerFolder | undefined = getFolders().find(
+  //   x => x.id === destinationFolder || x.path === destinationFolder
+  // );
+
+  // if (!destFolder) {
+  //   throw badRequest(`Could not find a folder matching ${destinationFolder}`);
+  // }
+
+  // if (!files || (Array.isArray(files) && !files.length)) {
+  //   throw badRequest("No files were supplied");
+  // }
+
+  // const filesArray = ensureArray(files);
+  // const filenames = filesArray.map(x => x.hapi.filename);
+  // return { filenames, message: `Starting upload for ${filenames.join(",")}` };
 };
 
 const deleteGameByTitleID: Lifecycle.Method = async (request, r) => {

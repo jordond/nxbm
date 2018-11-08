@@ -1,3 +1,4 @@
+import { getConfig } from "@nxbm/core";
 import {
   DELETE,
   Game,
@@ -48,9 +49,12 @@ const routes: IGameRoutes = {
     url: () => "/games",
     options: {
       payload: {
-        output: "stream",
+        output: "file",
         allow: "multipart/form-data",
-        parse: true
+        parse: true,
+        timeout: false,
+        maxBytes: 64 * (1024 * 1024 * 1024),
+        uploads: getConfig().paths!.upload
       }
     }
   },

@@ -43,6 +43,10 @@ const config = {
         test: /\.mjs$/,
         use: [],
         type: "javascript/auto"
+      },
+      {
+        test: /\.node$/,
+        use: "node-loader"
       }
     ]
   },

@@ -30,7 +30,7 @@ class Games extends GameRoutes {
 
     const formData = new FormData();
     formData.append("destinationFolder", payload.destinationFolder);
-    payload.paths.forEach(path => formData.append("paths", path));
+    payload.files.forEach(file => formData.append("files", file));
 
     return client.post<FormData, boolean>(url, formData, {
       onUploadProgress,

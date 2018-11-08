@@ -20,7 +20,7 @@ export async function addFile(filePath: string) {
 
   // TODO - Verify the file size matches == same file
   if (foundFilename && !foundFilename.missing) {
-    log.info(
+    log.verbose(
       `Skipping ${foundFilename.file.displayName()}, matched filename to an existing file`
     );
     return foundFilename;

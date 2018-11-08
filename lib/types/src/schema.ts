@@ -1,5 +1,6 @@
 import { Schema } from "convict";
 import isUrl from "is-url";
+import { tmpdir } from "os";
 import { resolve } from "path";
 
 import { LogLevel } from "./logger";
@@ -49,6 +50,13 @@ export const schema: Schema<any> = {
       default: "",
       env: "DATA_DIR",
       arg: "data"
+    },
+    upload: {
+      doc: "Temporary directory for uploading files",
+      format: String,
+      default: resolve(tmpdir(), "nxbm"),
+      env: "UPLOAD_DIR",
+      arg: "uploadDir"
     },
     keys: {
       doc: "Path to the `keys` file to use with hactool",

@@ -1,4 +1,4 @@
-import { ENV_DEV, ENV_PROD, IConfig, schema } from "@nxbm/types";
+import { ENV_DEV, ENV_PROD, IConfig, IPaths, schema } from "@nxbm/types";
 import * as convict from "convict";
 import { outputJSON } from "fs-extra";
 import { join, resolve } from "path";
@@ -77,13 +77,13 @@ export async function saveConfig(data?: IConfig) {
     }
 
     // Resolve the relative paths to absolute
-    const paths: Partial<IConfig> = {
-      paths: {
-        root: resolve(config.get("paths.root")),
-        data: resolve(config.get("paths.data")),
-        keys: resolve(config.get("paths.keys"))
-      }
-    };
+    const paths: IPaths = Object.keys(cachedConfig.paths || {}).reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: resolve(config.get(`paths.${key}`))
+      }),
+      {} as any
+    );
 
     // Save the config file
     await outputJSON(

@@ -1,4 +1,4 @@
 export interface UploadGamePayload {
-  paths: string[];
+  files: string[];
   destinationFolder: string;
 }

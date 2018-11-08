@@ -1,10 +1,11 @@
-import { createLogger } from "@nxbm/core";
+import * as diskusage from "diskusage";
 import {
   createReadStream,
   ensureDir,
   ensureFile,
   open,
   outputJSON,
+  pathExists,
   remove
 } from "fs-extra";
 import * as originalGlob from "glob";
@@ -13,6 +14,9 @@ import { extname, resolve } from "path";
 import * as recursiveReaddir from "recursive-readdir";
 import { Extract } from "unzipper";
 import { promisify } from "util";
+
+import { createLogger } from "@nxbm/core";
+import { fileSize } from "./parser";
 
 const glob = promisify(originalGlob);
 
@@ -88,4 +92,34 @@ export async function safeRemove(path: string, throws: boolean = false) {
 
 export function getFileTree(path: string) {
   return recursiveReaddir(resolve(path));
+}
+
+export async function getDiskspace(
+  path: string
+): Promise<{
+  available: number;
+  free: number;
+  total: number;
+}> {
+  if (!(await pathExists(path))) {
+    throw Error("Path does not exist!");
+  }
+
+  return new Promise((done, reject) =>
+    diskusage.check(path, (err, result) => (err ? reject(err) : done(result)))
+  ) as Promise<any>;
+}
+
+export async function getFreeSpace(path: string) {
+  try {
+    const { free } = await getDiskspace(path);
+    return free;
+  } catch (error) {
+    return void 0;
+  }
+}
+
+export async function getFreeSpaceString(path: string) {
+  const freeSpace = await getFreeSpace(path);
+  return freeSpace ? fileSize(freeSpace) : "";
 }

@@ -26,11 +26,12 @@ import {
   writeScriptsIfNotExists
 } from "@nxbm/core-files";
 import { IBackupConfig, IConfig } from "@nxbm/types";
-import { format } from "@nxbm/utils";
+import { format, getFreeSpaceString, tempDir } from "@nxbm/utils";
 
 export async function bootstrap(config: IConfig) {
   // Core
   await initData(config);
+  await initUploadDir(config);
   await initConfig(config);
 
   initSecondary(config).catch(err => {
@@ -69,6 +70,29 @@ async function initData({ paths }: IConfig) {
   createLogger("Bootstrap").verbose(
     `Using ${paths!.data} as the data directory`
   );
+}
+
+async function initUploadDir({ paths }: IConfig) {
+  const log = createLogger("bootstrap:upload");
+  try {
+    await mkdirp(resolve(paths!.upload));
+    if (paths!.upload === tempDir()) {
+      log.warn(
+        "Using the default value for the upload directory, depending on your setup, there might not be enough storage space."
+      );
+      log.warn(
+        `Ensure you have enough space in ${tempDir()}, or change the path in the config or pass the flag '--uploadDir <path>'`
+      );
+
+      const freeSpace = await getFreeSpaceString(paths!.upload);
+      freeSpace &&
+        log.warn(`There is ${freeSpace} available in your upload dir`);
+    }
+  } catch (error) {
+    log.error(`Unable to find or create the upload directory ${paths!.upload}`);
+    log.error(`You will be unable to upload files`);
+    throw error;
+  }
 }
 
 async function initConfig(config: IConfig) {
