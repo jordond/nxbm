@@ -22,7 +22,7 @@
     "@nxbm/utils": "^0.0.0",
     "@types/bluebird": "^3.5.24",
     "@types/fs-extra": "^5.0.4",
-    "@types/node": "10.10.0",
+    "@types/node": "10.12.3",
     "@types/python-shell": "^0.4.1",
     "tslint": "^5.11.0",
     "typescript": "^3.0.1"
