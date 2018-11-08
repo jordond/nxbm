@@ -1,7 +1,7 @@
 import { createLogger } from "@nxbm/core";
 import * as Fuse from "fuse.js";
 
-const defaultOptions: Fuse.FuseOptions = {
+const defaultOptions: Fuse.FuseOptions<any> = {
   shouldSort: true,
   includeScore: true,
   threshold: 0.5,
@@ -11,7 +11,7 @@ const defaultOptions: Fuse.FuseOptions = {
   minMatchCharLength: 1
 };
 
-export interface FuseOptions extends Fuse.FuseOptions {
+export interface FuseOptions extends Fuse.FuseOptions<any> {
   keys: string[];
   threshold?: number;
 }
@@ -26,8 +26,8 @@ export function matchString<T>(
   search: string,
   options: FuseOptions
 ) {
-  const fuse = new Fuse(list, { ...defaultOptions, ...options });
-  return fuse.search<T>(search);
+  const fuse = new Fuse<T>(list, { ...defaultOptions, ...options } as any);
+  return fuse.search(search);
 }
 
 export function findSingle<T>(list: T[], search: string, options: FuseOptions) {
