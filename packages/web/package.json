@@ -25,7 +25,7 @@
     "@nxbm/tslint-rules": "^0.0.0",
     "@nxbm/types": "^0.0.0",
     "@types/jest": "^23.1.4",
-    "@types/node": "10.12.9",
+    "@types/node": "10.12.10",
     "@vue/cli-plugin-babel": "^3.0.1",
     "@vue/cli-plugin-e2e-cypress": "^3.0.1",
     "@vue/cli-plugin-typescript": "^3.1.1",
