@@ -28,7 +28,7 @@
     "@types/inert": "^5.1.1",
     "@types/node": "10.12.9",
     "@types/read-pkg": "^3.0.0",
-    "@types/webpack": "^4.4.12",
+    "@types/webpack": "^4.4.21",
     "@types/yargs": "^12.0.0",
     "copy-webpack-plugin": "^4.5.2",
     "fs-extra": "^7.0.0",
