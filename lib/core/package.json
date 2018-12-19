@@ -17,7 +17,7 @@
     "@nxbm/types": "^0.0.0",
     "@types/convict": "^4.2.0",
     "@types/fs-extra": "^5.0.4",
-    "@types/node": "10.12.9",
+    "@types/node": "10.12.18",
     "@types/winston": "^2.4.4",
     "tslint": "^5.11.0",
     "typescript": "^3.0.1"
