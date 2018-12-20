@@ -29,7 +29,7 @@
     "@types/node": "10.12.9",
     "@types/read-pkg": "^3.0.0",
     "@types/webpack": "^4.4.12",
-    "@types/yargs": "^12.0.0",
+    "@types/yargs": "^12.0.2",
     "copy-webpack-plugin": "^4.5.2",
     "fs-extra": "^7.0.0",
     "hapi": "^17.6.0",
