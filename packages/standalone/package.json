@@ -35,7 +35,7 @@
     "hapi": "^17.6.0",
     "inert": "^5.1.0",
     "nodemon": "^1.18.6",
-    "nodemon-webpack-plugin": "^4.0.3",
+    "nodemon-webpack-plugin": "^4.0.7",
     "read-pkg": "^4.0.1",
     "rimraf": "^2.6.2",
     "ts-loader": "^5.2.1",
